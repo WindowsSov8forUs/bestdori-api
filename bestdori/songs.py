@@ -70,7 +70,9 @@ class Song:
         '''
         if len(self._info) <= 0:
             # 如果没有歌曲信息存储
-            response = Api(API['songs']['info'].format(id=self.id), proxy=self.proxy).request('get')
+            response = Api(
+                API['songs']['info'].format(id=self.id), proxy=self.proxy
+            ).request('get')
             self._info = dict(response.json())
         return self._info
     

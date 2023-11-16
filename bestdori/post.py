@@ -4,10 +4,9 @@
 from typing_extensions import overload, NotRequired
 from typing import TypedDict, Optional, Literal, Union, Any
 
-from .songs import Song
 from .charts import Chart
-from .utils.utils import API
-from .utils.network import Api
+from .utils.utils import API, ASSETS
+from .utils.network import Api, Assets
 from .exceptions import (
     AssetsNotExistError,
     PostHasNoChartError,
@@ -370,17 +369,43 @@ class Post:
             # 获取歌曲 ID
             if (id_ := song.get('id', None)) is None:
                 raise ValueError('未能获取歌曲 ID。')
-            # 创建歌曲对象
-            song = Song(id_, self.proxy)
+            # 获取歌曲信息
+            info = Api(API['songs']['info'].format(id=id_), self.proxy).request('get').json()
+            # 获取歌曲所在服务器
+            if (published_at := info.get('publishedAt', None)) is None:
+                raise Exception('无法获取歌曲发布时间。')
+            # 根据 publishedAt 数据判断服务器
+            if published_at[0] is not None: server = 'jp'
+            elif published_at[1] is not None: server = 'en'
+            elif published_at[2] is not None: server = 'tw'
+            elif published_at[3] is not None: server = 'cn'
+            elif published_at[4] is not None: server = 'kr'
+            else:
+                raise Exception('无法获取歌曲服务器。')
             # 获取歌曲音频
             try:
-                result['audio'] = song.get_bgm()
+                result['audio'] = Assets(
+                    ASSETS['songs']['sound'].format(id=id_), server, self.proxy
+                ).get()
             except Exception as exception:
                 print(f'获取 BanG Dream! 歌曲音频时失败：{type(exception).__name__}: {exception}')
                 result['audio'] = None
             # 获取歌曲封面
             try:
-                result['cover'] = song.get_jacket()[-1]
+                # 获取数据包序列号
+                quotient, remainder = divmod(int(self.id), 10)
+                if remainder == 0:
+                    index = self.id
+                else:
+                    index = str((quotient + 1) * 10)
+                
+                if (jacket_image := info.get('jacketImage', None)) is None:
+                    raise Exception('歌曲封面资源未找到。')
+                result['cover'] = Assets(
+                    ASSETS['songs']['musicjacket'].format(
+                        index=index, jacket_image=jacket_image[-1]
+                    ), server, self.proxy
+                ).get()
             except Exception as exception:
                 print(f'获取 BanG Dream! 歌曲封面时失败：{type(exception).__name__}: {exception}')
                 result['cover'] = None
