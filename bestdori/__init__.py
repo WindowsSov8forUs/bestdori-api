@@ -14,7 +14,6 @@ from .events import Event
 from .eventarchives import EventArchive
 from .gacha import Gacha
 from .songs import Song
-import songmeta as SongMeta
 from .logincampaigns import LoginCampaign
 from .miracleticket import MiracleTicketExchange
 from .comics import Comic
@@ -84,7 +83,6 @@ __all__ = [
     'EventArchive',
     'Gacha',
     'Song',
-    'SongMeta',
     'LoginCampaign',
     'MiracleTicketExchange',
     'Comic',
