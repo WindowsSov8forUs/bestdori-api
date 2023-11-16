@@ -22,8 +22,6 @@ class Api:
     参数:
         api (str): 请求的 API 地址
         
-        method (Literal[&#39;post&#39;, &#39;get&#39;]): 请求方法
-        
         proxy (Optional[str]): 代理服务器'''
     api: str
     '''请求的 API 地址'''
@@ -66,10 +64,15 @@ class Api:
         返回:
             Response: 收到的响应
         '''
+        # 处理接收到的 API
+        if self.api.startswith('http://') or self.api.startswith('https://'):
+            self.api = self.api
+        else:
+            self.api = 'https://bestdori.com/api/' + self.api
         # 构建一个请求体
         request = Request(
             method,
-            'https://bestdori.com/api/' + self.api,
+            self.api,
             cookies=cookies,
             params=params,
             data=cast(dict, dumps(data)) if data is not None else data
@@ -87,6 +90,13 @@ class Api:
         
         # 处理接收到的响应
         response.raise_for_status()
+        # 判断接收到的响应是否为 json 格式
+        if 'application/json' not in (content_type := response.headers.get('content-type', None)):
+            if content_type is not None:
+                return response
+            else:
+                raise Exception('接收到的响应没有 content-type。')
+        
         if isinstance((response_data := response.json()), dict):
             if (result := response_data.get('result', None)) is not None:
                 if result is False:
