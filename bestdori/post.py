@@ -385,7 +385,7 @@ class Post:
             # 获取歌曲音频
             try:
                 result['audio'] = Assets(
-                    ASSETS['songs']['sound'].format(id=id_), server, self.proxy
+                    ASSETS['songs']['sound'].format(id=str(id_)), server, self.proxy
                 ).get()
             except Exception as exception:
                 print(f'获取 BanG Dream! 歌曲音频时失败：{type(exception).__name__}: {exception}')
@@ -393,9 +393,9 @@ class Post:
             # 获取歌曲封面
             try:
                 # 获取数据包序列号
-                quotient, remainder = divmod(int(self.id), 10)
+                quotient, remainder = divmod(id_, 10)
                 if remainder == 0:
-                    index = self.id
+                    index = str(id_)
                 else:
                     index = str((quotient + 1) * 10)
                 

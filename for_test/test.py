@@ -4,4 +4,4 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bestdori.post import Post
 proxy = 'http://127.0.0.1:2802'
-print(Post('112340', proxy).get_song())
+print(Post('131271', proxy).get_song())
