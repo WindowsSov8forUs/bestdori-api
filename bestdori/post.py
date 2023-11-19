@@ -1,10 +1,11 @@
 '''`bestdori.post`
 
 社区帖子相关操作'''
-from typing_extensions import overload, NotRequired
-from typing import TypedDict, Optional, Literal, Union, Any
+from typing_extensions import overload
+from typing import TypedDict, Optional, Literal, Union, TYPE_CHECKING, Any
 
 from .charts import Chart
+from .utils.content import Content
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -13,23 +14,8 @@ from .exceptions import (
     PostHasNoSongError
 )
 
-# 基础作者信息
-class BasicAuthor(TypedDict):
-    '''基础作者信息'''
-    username: str
-    '''用户名'''
-
-# 基础信息类
-class Basic(TypedDict):
-    '''基础信息类'''
-    result: bool
-    '''是否有结果'''
-    title: NotRequired[Optional[str]]
-    '''帖子标题'''
-    author: NotRequired[BasicAuthor]
-    '''作者信息'''
-    code: NotRequired[str]
-    '''错误信息'''
+if TYPE_CHECKING:
+    from .user import Me
 
 # 标签类
 class Tag(TypedDict):
@@ -39,13 +25,31 @@ class Tag(TypedDict):
     data: str
     '''标签数据'''
 
-# 歌曲信息类
-class SongInfo(TypedDict):
-    '''歌曲信息类'''
+# 歌曲资源类
+class SongRes(TypedDict):
+    '''歌曲资源类'''
     audio: Union[bytes, None]
     '''音频字节'''
     cover: Union[bytes, None]
     '''封面字节'''
+
+# 自定义歌曲信息类
+class CustomSong(TypedDict):
+    '''自定义歌曲信息类'''
+    type: Literal['custom']
+    '''歌曲类型'''
+    audio: Optional[str]
+    '''歌曲音频'''
+    cover: Optional[str]
+    '''歌曲封面'''
+
+# 服务器歌曲信息类
+class ProvidedSong(TypedDict):
+    '''服务器歌曲信息类'''
+    type: Literal['bandori', 'llsif']
+    '''歌曲类型'''
+    id: int
+    '''歌曲 ID'''
 
 # 搜索社区谱面
 @overload
@@ -126,54 +130,6 @@ def get_list(
     '''
     ...
 
-# 搜索评论
-@overload
-def get_list(
-    proxy: Optional[str]=None,
-    *,
-    category_id: str,
-    category_name: Literal[
-        'POST_COMMENT',
-        'CHARACTER_COMMENT', 
-        'CARD_COMMENT',
-        'COSTUME_COMMENT',
-        'EVENT_COMMENT',
-        'EVENTARCHIVE_COMMENT',
-        'GACHA_COMMENT',
-        'SONG_COMMENT',
-        'LOGINCAMPAIGN_COMMENT',
-        'COMIC_COMMENT',
-        'MISSION_COMMENT'
-    ],
-    limit: int=10,
-    offset: int=0,
-    order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-) -> dict[str, Any]:
-    '''搜索评论
-
-    参数:
-        proxy (Optional[str], optional): 代理服务器
-        
-        category_id (str): 对象 ID
-        
-        category_name (str): 搜索的评论类型
-        
-        limit (int, optional): 展示出的评论数，默认 10
-        
-        offset (int, optional): 忽略前面的 `offset` 个评论，默认 0
-        
-        order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 评论排序，默认时间顺序
-
-    返回:
-        dict[str, Any]: 搜索结果
-        ```python
-        result: bool # 是否有响应
-        count: int # 搜索到的评论总数
-        posts: list[dict[str, Any]] # 列举出的评论
-        ```
-    '''
-    ...
-
 # 搜索帖子
 @overload
 def get_list(
@@ -230,6 +186,228 @@ def get_list(proxy: Optional[str]=None, **kwargs: Any) -> dict[str, Any]:
     response = Api(API['post']['list'], proxy).request('post', data=kwargs)
     return response.json()
 
+# 搜索标签
+def search_tags(
+    type_: str,
+    data: str='',
+    fuzzy: bool=True,
+    proxy: Optional[str]=None
+) -> list[Tag]:
+    '''搜索已有标签
+
+    参数:
+        type (str): 标签类型
+        
+        data (str, optional): 搜索标签数据关键词
+        
+        fuzzy (bool, optional): 是否使用模糊搜索
+        
+        proxy (Optional[str], optional): 代理服务器
+
+    返回:
+        list[Tag]: 标签类 `Tag` 列表
+    '''
+    response = Api(API['post']['tag'], proxy).request(
+        'get',
+        params={
+            'type': type_,
+            'data': data,
+            'fuzzy': fuzzy
+        }
+    )
+    if (tags := response.json().get('tags', None)) is not None:
+        return [Tag(tag) for tag in tags]
+    else:
+        raise Exception('搜索标签时出现未知错误。')
+
+# 发表谱面
+@overload
+def post(
+    me: 'Me',
+    proxy: Optional[str]=None,
+    *,
+    artists: str,
+    category_id: Literal['chart']='chart',
+    category_name: Literal['SELF_POST']='SELF_POST',
+    chart: Chart,
+    content: list[Content],
+    diff: Literal[0, 1, 2, 3, 4],
+    level: int,
+    song: Union[CustomSong, ProvidedSong],
+    tags: list[Tag]=[],
+    title: str
+) -> int:
+    '''发表谱面
+
+    参数:
+        me (Me): 自身用户对象
+        
+        proxy (Optional[str], optional): 代理服务器
+        
+        artists (str): 歌手
+        
+        category_id (Literal[&#39;chart&#39;], optional): 谱面画廊 ID `chart`
+        
+        category_name (Literal[&#39;SELF_POST&#39;], optional): 谱面画廊名称 `SELF_POST`
+        
+        chart (Chart): 谱面
+        
+        content (list[Content]): 帖子内容
+        
+        diff (Literal[0, 1, 2, 3, 4]): 难度
+        
+        level (int): 等级
+        
+        song (Union[CustomSong, ProvidedSong]): 歌曲
+        
+        tags (list[Tag], optional): 谱面标签
+        
+        title (str): 谱面标题
+
+    返回:
+        int: 谱面 ID
+    '''
+    ...
+
+# 发表文本帖子
+@overload
+def post(
+    me: 'Me',
+    proxy: Optional[str]=None,
+    *,
+    category_id: Literal['text']='text',
+    category_name: Literal['SELF_POST']='SELF_POST',
+    content: list[Content],
+    tags: list[Tag]=[],
+    title: str
+) -> int:
+    '''发表文本帖子
+
+    参数:
+        me (Me): 自身用户对象
+        
+        proxy (Optional[str], optional): 代理服务器
+        
+        category_id (Literal[&#39;text&#39;], optional): 帖子画廊 ID `text`
+        
+        category_name (Literal[&#39;SELF_POST&#39;], optional): 帖子画廊名称 `SELF_POST`
+        
+        content (list[Content]): 帖子内容
+        
+        tags (list[Tag], optional): 帖子标签
+        
+        title (str): 帖子标题
+
+    返回:
+        int: 帖子 ID
+    '''
+    ...
+
+# 发表帖子
+@overload
+def post(
+    me: 'Me',
+    proxy: Optional[str]=None,
+    *,
+    artists: Optional[str]=None,
+    category_id: str,
+    category_name: str,
+    chart: Optional[Chart]=None,
+    content: list[Content],
+    diff: Optional[Literal[0, 1, 2, 3, 4]]=None,
+    level: Optional[int]=None,
+    song: Optional[Union[CustomSong, ProvidedSong]]=None,
+    tags: Optional[list[Tag]]=None,
+    title: Optional[str]=None
+) -> int:
+    '''发表帖子
+
+    参数:
+        me (Me): 自身用户对象
+        
+        proxy (Optional[str], optional): 代理服务器
+        
+        artists (Optional[str], optional): 歌手
+        
+        category_id (str): 帖子画廊 ID
+        
+        category_name (str): 帖子画廊名称
+        
+        chart (Optional[Chart], optional): 谱面
+        
+        content (list[Content]): 帖子内容
+        
+        diff (Optional[Literal[0, 1, 2, 3, 4]], optional): 难度
+        
+        level (Optional[int], optional): 等级
+        
+        song (Optional[Union[CustomSong, ProvidedSong]], optional): 歌曲
+        
+        tags (Optional[list[Tag]], optional): 帖子标签
+        
+        title (Optional[str], optional): 帖子标题
+
+    返回:
+        int: 帖子 ID
+    '''
+    ...
+
+# 发表帖子
+def post(
+    me: 'Me',
+    proxy: Optional[str]=None,
+    **kwargs: Any
+) -> int:
+    # 转换特定字段
+    if 'chart' in kwargs:
+        kwargs['chart'] = kwargs['chart'].to_list()
+    if 'content' in kwargs:
+        content = kwargs['content']
+        kwargs['content'] = [seg.__dict__ for seg in content]
+    
+    # 去除 None 值字段
+    kwargs = {key: value for key, value in kwargs.items() if value is not None}
+    # 将下划线字段名转换为小驼峰字段名
+    kwargs = {
+        (
+            "".join(x.capitalize() if i > 0 else x for i, x in enumerate(key.split("_")))
+        ): value for key, value in kwargs.items() if value is not None
+    }
+    response = Api(API['post']['post'], proxy).request(
+        'post',
+        cookies=me.cookies,
+        data=kwargs
+    )
+    if (id_ := response.json().get('id', None)) is None:
+        raise ValueError('发表帖子时出现未知错误。')
+    return id_
+
+# 查询帖子顺序
+def find_post(category_name: str, category_id: str, id_: int, proxy: Optional[str]=None) -> int:
+    '''查询帖子顺序
+
+    参数:
+        category_name (str): 画廊名称
+        
+        category_id (str): 画廊 ID
+        
+        id (int): 查询的帖子 ID
+        
+        proxy (Optional[str], optional): 代理服务器
+
+    Returns:
+        int: 帖子在该画廊的时间顺序
+    '''
+    params = {
+        'categoryName': category_name,
+        'categoryId': category_id,
+        'id': id_
+    }
+    response = Api(API['post']['find'], proxy).request('get', params=params)
+    if (position := response.json().get('position', None)) is None:
+        raise ValueError('查询帖子顺序时出现未知错误。')
+    return position
+
 # 社区帖子类
 class Post:
     '''社区帖子类
@@ -252,21 +430,21 @@ class Post:
             raise ValueError('帖子 ID 必须为纯数字。')
         self.id: str = id_
         '''社区帖子 ID'''
-        self._post: dict[str, Any] = {}
-        '''社区帖子内容'''
         self.proxy: Optional[str] = proxy
         '''代理服务器'''
+        self._post: dict[str, Any] = self.get_details()
+        '''社区帖子内容'''
         return
     
     # 获取帖子基础信息
-    def get_basic(self) -> Basic:
+    def get_basic(self) -> dict[str, Any]:
         '''获取帖子基础信息
 
         返回:
-            Basic: 基础信息
+            dict[str, Any]: 基础信息
         '''
         response = Api(API['post']['basic'], self.proxy).request('get', params={'id': self.id,})
-        return Basic(response.json())
+        return response.json()
     
     # 获取帖子信息
     def get_details(self) -> dict[str, Any]:
@@ -328,7 +506,7 @@ class Post:
         return result
     
     # 获取歌曲信息对象
-    def get_song(self) -> SongInfo:
+    def get_song(self) -> SongRes:
         '''获取歌曲信息对象
 
         返回:
@@ -409,10 +587,31 @@ class Post:
             except Exception as exception:
                 print(f'获取 BanG Dream! 歌曲封面时失败：{type(exception).__name__}: {exception}')
                 result['cover'] = None
+        elif type_ == 'llsif': # LoveLive! 歌曲
+            # 获取歌曲 ID
+            if (id_ := song.get('id', None)) is None:
+                raise ValueError('未能获取歌曲 ID。')
+            # 获取歌曲信息
+            info = Api(API['misc']['llsif'].format(index=10), self.proxy).request('get').json()[str(id_)]
+            # 获取歌曲资源库
+            live_icon_asset = info.get('live_icon_asset', None)
+            sound_asset = info.get('sound_asset', None)
+            # 获取歌曲音频
+            try:
+                result['audio'] = Assets(sound_asset, 'llsif', self.proxy).get()
+            except Exception as exception:
+                print(f'获取 LoveLive! 歌曲音频时失败：{type(exception).__name__}: {exception}')
+                result['audio'] = None
+            # 获取歌曲封面
+            try:
+                result['cover'] = Assets(live_icon_asset, 'llsif', self.proxy).get()
+            except Exception as exception:
+                print(f'获取 LoveLive! 歌曲封面时失败：{type(exception).__name__}: {exception}')
+                result['cover'] = None
         else:
             raise AssetsNotExistError(f'{type_} 歌曲')
         
-        return SongInfo(**result)
+        return SongRes(**result)
     
     # 获取帖子评论
     def get_comment(
@@ -445,4 +644,24 @@ class Post:
             order=order,
             limit=limit,
             offset=offset
+        )
+    
+    # 评论帖子
+    def comment(self, me: 'Me', content: list[Content]) -> int:
+        '''评论帖子
+
+        参数:
+            me (Me): 自身用户对象
+            
+            content (list[Content]): 评论内容
+
+        返回:
+            int: 评论 ID
+        '''
+        return post(
+            me,
+            self.proxy,
+            category_id=self.id,
+            category_name='POST_COMMENT',
+            content=content
         )
