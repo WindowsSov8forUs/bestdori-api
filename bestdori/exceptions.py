@@ -20,7 +20,7 @@ class BaseException(Exception):
 class RequestException(BaseException):
     '''请求发送错误'''
     # 初始化
-    def __init__(self, api: str, msg: str, **kwargs: Any) -> None:
+    def __init__(self, api: str, msg: str='无错误代码获取。', **kwargs: Any) -> None:
         if len(kwargs) > 0:
             msg += f': {kwargs}'
         else:
@@ -49,15 +49,6 @@ class AssetsException(BaseException):
     def __str__(self) -> str:
         '''输出字符串'''
         return f'获取资源时出错。{self.message}'
-
-# 请求无效
-class RequestInvalidError(RequestException):
-    '''请求无效'''
-    # 初始化
-    def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '请求无效'
-        super().__init__(api, msg, **kwargs)
-        return
 
 # 帖子不是社区谱面
 class PostHasNoChartError(BaseException):
@@ -105,6 +96,15 @@ class DiffNotExistError(BaseException):
         '''错误信息'''
         return
 
+# 请求无效
+class RequestInvalidError(RequestException):
+    '''请求无效'''
+    # 初始化
+    def __init__(self, api: str, **kwargs: Any) -> None:
+        msg = '请求无效'
+        super().__init__(api, msg, **kwargs)
+        return
+
 # 需要登录
 class LoginRequiredError(RequestException):
     '''需要登录'''
@@ -129,6 +129,24 @@ class UserInvalidError(RequestException):
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
         msg = '用户无效'
+        super().__init__(api, msg, **kwargs)
+        return
+
+# 文件已经被上传过
+class AlreadyUploadedError(RequestException):
+    '''文件已经被上传过'''
+    # 初始化
+    def __init__(self, api: str, **kwargs: Any) -> None:
+        msg = '文件已经被上传过'
+        super().__init__(api, msg, **kwargs)
+        return
+
+# 帖子无效
+class PostInvalidError(RequestException):
+    '''帖子无效'''
+    # 初始化
+    def __init__(self, api: str, **kwargs: Any) -> None:
+        msg = '帖子无效'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -260,3 +278,14 @@ class EventHasNoStampError(BaseException):
         self.message = msg
         '''错误信息'''
         return
+
+# 请求错误集合
+REQUEST_EXCEPTION: dict[str, type[RequestException]] = {
+    'REQUEST_INVALID': RequestInvalidError,
+    'LOGIN_REQUIRED': LoginRequiredError,
+    'CREDENTIALS_INVALID': CredentialsInvalidError,
+    'USER_INVALID': UserInvalidError,
+    'ALREADY_UPLOADED': AlreadyUploadedError,
+    'POST_INVALID': PostInvalidError
+}
+'''请求错误集合'''

@@ -208,24 +208,30 @@ class Me(User):
         '''用户 Cookies'''
         self._me: dict[str, Any] = {}
         '''用户自我信息'''
-        self.login()
         return
     
     # 用户登录
-    def login(self) -> bool:
+    @classmethod
+    def login(cls, username: str, password: str, proxy: Optional[str]=None) -> 'Me':
         '''用户登录
 
+        参数:
+            username (str): 用户名
+            
+            password (str): 密码
+            
+            proxy (Optional[str], optional): 代理服务器
+
         返回:
-            bool: 登录是否成功
+            Me: 自身用户对象
         '''
-        if self.cookies is not None:
-            return True
+        me = cls(username, password, proxy)
         response = Api(
-            API['user']['login'], self.proxy
-        ).request('get', data={'username': self.username, 'password': self.password})
-        self.cookies = response.cookies
-        self.me()
-        return True
+            API['user']['login'], me.proxy
+        ).request('post', data={'username': me.username, 'password': me.password})
+        me.cookies = response.cookies
+        me.me()
+        return me
     
     # 获取用户自我信息
     def me(self) -> dict[str, Any]:
@@ -235,7 +241,6 @@ class Me(User):
             dict[str, Any]: 自我信息
         '''
         if len(self._me) == 0:
-            self.login()
             response = Api(API['user']['me'], self.proxy).request('get', cookies=self.cookies)
             self._me = dict(response.json())
         return self._me

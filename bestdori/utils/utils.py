@@ -11,7 +11,10 @@ API = {
     'post': {
         'basic': 'post/basic',
         'details': 'post/details',
-        'list': 'post/list'
+        'list': 'post/list',
+        'tag': 'post/tag',
+        'post': 'post',
+        'find': 'post/find'
     },
     'charts': {
         'info': 'charts/{id}/{diff}.json'
@@ -49,6 +52,15 @@ API = {
         'all': 'bands/all.{index}.json',
         'main': 'bands/main.{index}.json'
     },
+    'upload': {
+        'file': 'upload/file/{hash}',
+        'prepare': 'upload/prepare',
+        'upload': 'upload',
+        'status': 'upload/status/{hash}'
+    },
+    'misc': {
+        'llsif': 'misc/llsif.{index}.json'
+    },
     'all': {
         'skills': 'skills/all.{index}.json',
         'stamps': 'stamps/all.{index}.json',
@@ -63,7 +75,7 @@ API = {
 
 ASSETS = {
     'characters': {
-        'character_kv_image': 'ui/character_kv_image/{id:>03s}_rip/image.png',
+        'character_kv_image': 'ui/character_kv_image/{id:>03d}_rip/image.png',
         'resourceset': 'characters/resourceset/{resource_set_name}_rip/{name}_{type}.png',
         'livesd': 'characters/livesd/{sd_resource_name}_rip/sdchara.png'
     },
@@ -74,12 +86,12 @@ ASSETS = {
         'loginbouns': 'event/loginbonus/{asset_bundle_name}_rip/background.png'
     },
     'songs': {
-        'musicjacket': 'musicjacket/musicjacket{index:>03s}_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket{index:>03s}-{jacket_image}-jacket.png',
-        'sound': 'sound/bgm{id:>03s}_rip/bgm{id:>03s}.mp3',
+        'musicjacket': 'musicjacket/musicjacket{index:>03d}_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket{index:>03d}-{jacket_image}-jacket.png',
+        'sound': 'sound/bgm{id:>03d}_rip/bgm{id:>03d}.mp3',
         'musicscore': ''
     },
     'thumb': {
-        'chara': 'thumb/chara/card{id:>05s}_rip/{resource_set_name}_{type}.png',
+        'chara': 'thumb/chara/card{id:>05d}_rip/{resource_set_name}_{type}.png',
         'degree': 'thumb/degree_rip/{degree_name}.png',
         'costume': 'thumb/costume/group{id}_rip/{asset_bundle_name}.png',
     },
@@ -101,7 +113,7 @@ ASSETS = {
         'all': 'missions/all.{index}.json'
     },
     'band': {
-        'logo': 'band/logo/{id:>03s}_rip/{type}.png'
+        'logo': 'band/logo/{id:>03d}_rip/{type}.png'
     },
     'live2d': {
         'buildData': 'live2d/chara/{asset_bundle_name}_rip/buildData.asset'
