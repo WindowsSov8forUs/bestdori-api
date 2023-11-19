@@ -2,4 +2,4 @@
 /bestdori_api.egg-info/
 /build/
 /dist/
-**/test.py
+/for_test/test.py
