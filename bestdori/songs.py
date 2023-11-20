@@ -14,11 +14,11 @@ from .exceptions import (
 )
 
 # 获取总歌曲信息
-def get_all(index: Literal['0', '5']='5', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取总歌曲信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `all.json`
+        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
             `0`: 仅获取所有已有歌曲 ID `all.0.json`
             `5`: 获取所有已有歌曲的简洁信息 `all.5.json`，默认为该项
         
@@ -34,30 +34,28 @@ class Song:
     '''歌曲类
 
     参数:
-        id_ (str): 歌曲 ID
+        id_ (int): 歌曲 ID
         
         proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: str, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
         '''歌曲类
 
         参数:
-            id_ (str): 歌曲 ID
+            id_ (int): 歌曲 ID
             
             proxy (Optional[str], optional): 代理服务器
         '''
-        if not id_.isdigit():
-            raise ValueError('歌曲 ID 必须为纯数字。')
-        self.id: str = id_
+        self.id: int = id_
         '''歌曲 ID'''
         self._info: dict[str, Any] = {}
         '''歌曲信息'''
         self.proxy: Optional[str] = proxy
         '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all('0', proxy=proxy)
-        if not id_ in all_id.keys():
+        all_id = get_all(0, proxy=proxy)
+        if not str(id_) in all_id.keys():
             raise SongNotExistError(id_)
         return
     
@@ -201,7 +199,7 @@ class Song:
         return get_list(
             proxy=self.proxy,
             category_name='SONG_COMMENT',
-            category_id=self.id,
+            category_id=str(self.id),
             order=order,
             limit=limit,
             offset=offset

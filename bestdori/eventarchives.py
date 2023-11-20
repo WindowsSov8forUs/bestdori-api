@@ -11,11 +11,11 @@ from .exceptions import (
 )
 
 # 获取总活动数据信息
-def get_all(index: Literal['5']='5', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取总活动信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `all.json`
+        index (Literal[5], optional): 指定获取哪种 `all.json`
             `5`: 获取所有已有活动数据的简洁信息 `all.5.json`
         
         proxy (Optional[str], optional): 代理服务器
@@ -30,30 +30,28 @@ class EventArchive():
     '''活动数据类
 
     参数:
-        id_ (str): 活动 ID
+        id_ (int): 活动 ID
         
         proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: str, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
         '''活动数据类
 
         参数:
-            id_ (str): 活动 ID
+            id_ (int): 活动 ID
             
             proxy (Optional[str], optional): 代理服务器
         '''
-        if not id_.isdigit():
-            raise ValueError('活动 ID 必须为纯数字。')
-        self.id: str = id_
+        self.id: int = id_
         '''活动 ID'''
         self._info: dict[str, Any] = {}
         '''活动信息'''
         self.proxy: Optional[str] = proxy
         '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all('5', proxy=proxy)
-        if not id_ in all_id.keys():
+        all_id = get_all(5, proxy=proxy)
+        if not str(id_) in all_id.keys():
             raise EventNotExistError(id_)
         return
     
@@ -116,7 +114,7 @@ class EventArchive():
         '''
         return get_list(
             proxy=self.proxy,
-            category_id=self.id,
+            category_id=str(self.id),
             category_name='EVENTARCHIVE_COMMENT',
             limit=limit,
             offset=offset,

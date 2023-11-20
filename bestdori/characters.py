@@ -12,11 +12,11 @@ from .exceptions import (
 )
 
 # 获取总角色信息
-def get_all(index: Literal['2']='2', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[2]=2, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取总角色信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `all.json`
+        index (Literal[2], optional): 指定获取哪种 `all.json`
             `2`: 获取所有已有角色信息 `all.2.json`
         
         proxy (Optional[str], optional): 代理服务器
@@ -27,11 +27,11 @@ def get_all(index: Literal['2']='2', proxy: Optional[str]=None) -> dict[str, dic
     return Api(API['characters']['all'].format(index), proxy=proxy).request('get').json()
 
 # 获取主要角色信息
-def get_main(index: Literal['3']='3', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_main(index: Literal[3]=3, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取主要角色信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `all.json`
+        index (Literal[3], optional): 指定获取哪种 `all.json`
             `3`: 获取所有已有主要角色信息 `all.3.json`
         
         proxy (Optional[str], optional): 代理服务器
@@ -46,30 +46,28 @@ class Character:
     '''角色类
 
     参数:
-        id_ (str): 角色 ID
+        id_ (int): 角色 ID
         
         proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: str, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
         '''角色类
 
         参数:
-            id_ (str): 角色 ID
+            id_ (int): 角色 ID
             
             proxy (Optional[str], optional): 代理服务器
         '''
-        if not id_.isdigit():
-            raise ValueError('角色 ID 必须为纯数字。')
-        self.id: str = id_
+        self.id: int = id_
         '''角色 ID'''
         self._info: dict[str, Any] = {}
         '''角色信息'''
         self.proxy: Optional[str] = proxy
         '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all('2', proxy=proxy)
-        if not id_ in all_id.keys():
+        all_id = get_all(2, proxy=proxy)
+        if not str(id_) in all_id.keys():
             raise CharacterNotExistError(id_)
         return
     
@@ -115,7 +113,7 @@ class Character:
         return get_list(
             proxy=self.proxy,
             category_name='CHARACTER_COMMENT',
-            category_id=self.id,
+            category_id=str(self.id),
             order=order,
             limit=limit,
             offset=offset

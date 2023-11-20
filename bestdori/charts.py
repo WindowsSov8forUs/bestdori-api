@@ -1,7 +1,7 @@
 '''`bestdori.charts`
 
 谱面相关操作'''
-from json import dumps
+from json import dumps, loads
 from typing import Optional, Literal, Any
 
 from .utils.note import *
@@ -207,18 +207,31 @@ class Chart(list[NoteType]):
         '''将 `Chart` 谱面转换为 `json` 字符串'''
         return dumps(self.to_list(), ensure_ascii=False)
 
+    # 通过 json 字符串转换为 Chart 谱面
+    @classmethod
+    def from_json(cls, data: str) -> 'Chart':
+        '''通过 `json` 字符串转换为 `Chart` 谱面
+
+        参数:
+            data (str): 谱面 `json` 字符串
+
+        返回:
+            Chart: 谱面对象 `bestdori.chart.Chart`
+        '''
+        return cls(loads(data))
+    
     # 获取官方谱面
     @classmethod
     def get_chart(
         cls,
-        id_: str,
+        id_: int,
         diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert',
         proxy: Optional[str]=None
     ) -> 'Chart':
         '''获取官方谱面
 
         参数:
-            id_ (str): 谱面 ID
+            id_ (int): 谱面 ID
             
             diff (Literal[&#39;easy&#39;, &#39;normal&#39;, &#39;hard&#39;, &#39;expert&#39;, &#39;special&#39;], optional): 难度名称
             
