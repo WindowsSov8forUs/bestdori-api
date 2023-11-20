@@ -4,8 +4,7 @@ Bestdori 文件相关操作'''
 from pathlib import Path
 from hashlib import sha1
 from io import BufferedReader
-from httpx import Request, Client
-from typing import Optional, Union, cast, TYPE_CHECKING, Any
+from typing import Optional, Union, TYPE_CHECKING
 
 from .utils.utils import API
 from .utils.network import Api

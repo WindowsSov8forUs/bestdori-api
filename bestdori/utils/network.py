@@ -47,7 +47,7 @@ class Api:
         cookies: Optional[Cookies]=None,
         params: Optional[dict[str, Any]]=None,
         data: Optional[dict[str, Any]]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader]]]=None,
+        files: Optional[dict[str, tuple[str, BufferedReader]]]=None
     ) -> Response:
         '''请求发送
 

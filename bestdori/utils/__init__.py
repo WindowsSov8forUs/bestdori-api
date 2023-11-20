@@ -152,3 +152,5 @@ def get_server_icon(server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
         bytes: 服务器图标字节数据
     '''
     return Res(RES['icon']['svg'].format(name=server)).get()
+
+from .content import Content
