@@ -14,7 +14,8 @@ API = {
         'list': 'post/list',
         'tag': 'post/tag',
         'post': 'post',
-        'find': 'post/find'
+        'find': 'post/find',
+        'like': 'post/like'
     },
     'charts': {
         'info': 'charts/{id}/{diff}.json'

@@ -418,21 +418,19 @@ class Post:
         proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: str, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
         '''社区帖子类
 
         参数:
-            id_ (str): 社区帖子 ID
+            id_ (int): 社区帖子 ID
             
             proxy (Optional[str], optional): 代理服务器
         '''
-        if not id_.isdigit():
-            raise ValueError('帖子 ID 必须为纯数字。')
-        self.id: str = id_
+        self.id: int = id_
         '''社区帖子 ID'''
         self.proxy: Optional[str] = proxy
         '''代理服务器'''
-        self._post: dict[str, Any] = self.get_details()
+        self._post: dict[str, Any] = {}
         '''社区帖子内容'''
         return
     
@@ -640,7 +638,7 @@ class Post:
         return get_list(
             proxy=self.proxy,
             category_name='POST_COMMENT',
-            category_id=self.id,
+            category_id=str(self.id),
             order=order,
             limit=limit,
             offset=offset
@@ -661,7 +659,23 @@ class Post:
         return post(
             me,
             self.proxy,
-            category_id=self.id,
+            category_id=str(self.id),
             category_name='POST_COMMENT',
             content=content
         )
+    
+    # 喜欢 / 取消喜欢帖子
+    def like(self, me: 'Me', value: bool=True) -> None:
+        '''喜欢 / 取消喜欢帖子
+
+        参数:
+            me (Me): 自身用户对象
+            
+            value (bool, optional): 值 `True`: 喜欢帖子 `False`: 取消喜欢帖子
+        '''
+        Api(API['post']['like'], self.proxy).request(
+            'post',
+            data={'id': self.id, 'value': value},
+            cookies=me.cookies
+        )
+        return
