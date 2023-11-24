@@ -2,6 +2,7 @@
 
 谱面音符相关模块'''
 from typing import Literal, Any
+from typing_extensions import override
 
 # 谱面音符类
 class NoteType:
@@ -18,6 +19,15 @@ class NoteType:
                 continue
             setattr(self, key, value)
         return
+    
+    # 节拍数增减
+    def beat_move(self, beat: float) -> None:
+        '''节拍数增减
+
+        参数:
+            beat (float): 移动的节拍数
+        '''
+        self.beat += beat
 
 # 滑条节点
 class Connection:
@@ -35,6 +45,10 @@ class Connection:
     '''轨道数'''
     hidden: bool = False
     '''是否隐藏'''
+    flick: bool = False
+    '''是否为滑键'''
+    skill: bool = False
+    '''是否为技能键'''
     # 初始化
     def __init__(self, **values) -> None:
         '''初始化'''
@@ -49,6 +63,10 @@ class Connection:
         note = {'beat': self.beat, 'lane': self.lane}
         if self.hidden:
             note['hidden'] = self.hidden
+        if self.flick:
+            note['flick'] = self.flick
+        if self.skill:
+            note['skill'] = self.skill
         return note
 
 # BPM
@@ -178,6 +196,14 @@ class Slide(NoteType):
         if self.connections:
             note['connections'] = [connection.__dict__ for connection in self.connections]
         return note
+    
+    # 节拍数增减
+    @override
+    def beat_move(self, beat: float) -> None:
+        for connection in self.connections:
+            connection.beat += beat
+        self.beat = self.connections[0].beat
+        return
 
 __all__ = [
     'NoteType',
