@@ -84,11 +84,50 @@ class Chart(list[NoteType]):
         normalized_chart: cls = cls(chart)
         # 对谱面进行排序
         normalized_chart.sort(key=lambda x: x.beat)
+        # 处理可能出现的 BPM 错位
+        if not isinstance(normalized_chart[0], BPM):
+            offset: float = -1.0 # 记录 offset 修正
+            # 第一位不是 BPM，找寻真正的 BPM 线
+            for note in normalized_chart:
+                if isinstance(note, BPM):
+                    offset = note.beat
+                    break
+            if offset < 0: # 没有找到 BPM
+                raise ValueError('谱面内未找到 BPM 线。')
+            # 对谱面节拍进行修正
+            for note in normalized_chart:
+                note.beat_move(-offset)
+                if isinstance(note, Slide):
+                    for connection in note.connections:
+                        if connection.beat < 0:
+                            connection.beat = 0
+                        else:
+                            break
+                else:
+                    if note.beat < 0:
+                        note.beat = 0
+                    else:
+                        break
+        
+        # 处理可能出现的不合法滑条节点
+        for note in normalized_chart:
+            if not isinstance(note, Slide):
+                continue
+            index: int = 0
+            for connection in note.connections:
+                if index < (len(note.connections) - 1):
+                    if connection.flick:
+                        connection.flick = False
+                if 0 < index < (len(note.connections) - 1):
+                    if connection.skill:
+                        connection.skill = False
+                index += 1
+        
         # 对谱面节拍进行修正
         if normalized_chart[0].beat != 0:
             offset = normalized_chart[0].beat
             for note in normalized_chart:
-                note.beat -= offset
+                note.beat_move(-offset)
         return normalized_chart
     
     # 谱面数据统计
