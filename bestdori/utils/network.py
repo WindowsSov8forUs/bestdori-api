@@ -155,6 +155,38 @@ class Assets:
         self.proxy = proxy
         return
     
+    # 获取资源连接
+    def get_url(self) -> str:
+        '''获取资源连接
+
+        返回:
+            str: 获取的资源连接 `str`
+        '''
+        # 如果服务器为 llsif 则转接方法
+        if self.server == 'llsif':
+            return self._get_niconi_url()
+        
+        # 处理接收到的 URL
+        if self.url.startswith('http://') or self.url.startswith('https://'):
+            self.url = self.url
+        else:
+            self.url = f'https://bestdori.com/assets/{self.server}/' + self.url
+        return self.url
+    
+    # 从 card.niconi.co.ni 获取资源连接
+    def _get_niconi_url(self) -> str:
+        '''从 card.niconi.co.ni 获取资源连接
+
+        返回:
+            str: 获取的资源连接 `str`
+        '''
+        # 处理接收到的 URL
+        if self.url.startswith('http://') or self.url.startswith('https://'):
+            self.url = self.url
+        else:
+            self.url = f'https://card.niconi.co.ni/asset/' + self.url
+        return self.url
+    
     # 获取资源
     def get(self) -> bytes:
         '''获取资源
