@@ -29,6 +29,52 @@ def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict
     '''
     return Api(API['songs']['all'].format(index=index), proxy=proxy).request('get').json()
 
+# 歌曲封面内部类
+class Jacket:
+    '''歌曲封面类
+
+    参数:
+        url (str): 封面链接
+        bytes (bytes): 封面字节数据
+    '''
+    # 初始化
+    def __init__(
+        self,
+        index: int,
+        jacket_image: str,
+        server: Literal['jp', 'en', 'tw', 'cn', 'kr'],
+        proxy: Optional[str]=None) -> None:
+        '''歌曲封面类'''
+        self._index: int = index
+        '''数据包序列号'''
+        self._jacket_image: str = jacket_image
+        '''封面文件名'''
+        self._server: Literal['jp', 'en', 'tw', 'cn', 'kr'] = server
+        '''封面所在服务器'''
+        self._proxy: Optional[str] = proxy
+        '''代理服务器'''
+        return
+    
+    # 获取封面 url
+    @property
+    def url(self) -> str:
+        '''获取封面 url'''
+        return Assets(
+            ASSETS['songs']['musicjacket'].format(
+                index=self._index, jacket_image=self._jacket_image
+            ), self._server, self._proxy
+        ).get_url()
+    
+    # 获取封面字节数据
+    @property
+    def bytes(self) -> bytes:
+        '''获取封面字节数据'''
+        return Assets(
+            ASSETS['songs']['musicjacket'].format(
+                index=self._index, jacket_image=self._jacket_image
+            ), self._server, self._proxy
+        ).get()
+
 # 歌曲类
 class Song:
     '''歌曲类
@@ -134,32 +180,26 @@ class Song:
             raise DiffNotExistError(diff)
     
     # 获取歌曲封面
-    def get_jacket(self) -> list[bytes]:
+    def get_jacket(self) -> list[Jacket]:
         '''获取歌曲封面
 
         返回:
-            bytes: 歌曲封面字节数据 `bytes`
+            Jacket: 歌曲封面对象 `Jacket`
         '''
         # 获取数据包序列号
-        quotient, remainder = divmod(int(self.id), 10)
+        quotient, remainder = divmod(self.id, 10)
         if remainder == 0:
             index = self.id
         else:
-            index = str((quotient + 1) * 10)
+            index = (quotient + 1) * 10
         
         info = self.get_info()
         if (jacket_image := info.get('jacketImage', None)) is None:
             raise Exception('歌曲封面资源未找到。')
-        jacket: list[bytes] = []
+        jacket: list[Jacket] = []
         
         for image in jacket_image:
-            jacket.append(
-                Assets(
-                    ASSETS['songs']['musicjacket'].format(
-                        index=index, jacket_image=image
-                    ), self.server, self.proxy
-                ).get()
-            )
+            jacket.append(Jacket(index, image, self.server, self.proxy))
         
         return jacket
     
