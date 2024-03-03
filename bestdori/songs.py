@@ -14,13 +14,14 @@ from .exceptions import (
 )
 
 # 获取总歌曲信息
-def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5, 7]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取总歌曲信息
 
     参数:
         index (Literal[0, 5], optional): 指定获取哪种 `all.json`
             `0`: 仅获取所有已有歌曲 ID `all.0.json`
             `5`: 获取所有已有歌曲的简洁信息 `all.5.json`，默认为该项
+            `7`: 获取所有已有歌曲的较为详细信息 `all.7.json`
         
         proxy (Optional[str], optional): 代理服务器
 

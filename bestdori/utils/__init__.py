@@ -57,11 +57,11 @@ def get_degree(
         raise AssetsNotExistError(f'称号 {degree_name}-{server}')
 
 # 获取总技能信息
-def get_skill_all(index: Literal['10']='10', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_skill_all(index: Literal[10]=10, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取总技能信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `all.json`
+        index (Literal[10], optional): 指定获取哪种 `all.json`
             `10`: 获取所有已有技能的信息 `all.5.json`
         
         proxy (Optional[str], optional): 代理服务器
@@ -72,11 +72,11 @@ def get_skill_all(index: Literal['10']='10', proxy: Optional[str]=None) -> dict[
     return Api(API['all']['skills'].format(index=index), proxy=proxy).request('get').json()
 
 # 获取总乐队信息
-def get_bands_all(index: Literal['1']='1', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_bands_all(index: Literal[1]=1, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取总乐队信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `all.json`
+        index (Literal[1], optional): 指定获取哪种 `all.json`
             `1`: 获取所有已有乐队的名称信息 `all.1.json`，默认为该项
         
         proxy (Optional[str], optional): 代理服务器
@@ -87,11 +87,11 @@ def get_bands_all(index: Literal['1']='1', proxy: Optional[str]=None) -> dict[st
     return Api(API['bands']['all'].format(index=index), proxy=proxy).request('get').json()
 
 # 获取主要乐队信息
-def get_bands_main(index: Literal['1']='1', proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_bands_main(index: Literal[1]=1, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
     '''获取主要乐队信息
 
     参数:
-        index (Literal[&#39;0&#39;, &#39;5&#39;], optional): 指定获取哪种 `main.json`
+        index (Literal[1], optional): 指定获取哪种 `main.json`
             `1`: 获取所有主要乐队的名称信息 `main.1.json`，默认为该项
         
         proxy (Optional[str], optional): 代理服务器
@@ -103,14 +103,14 @@ def get_bands_main(index: Literal['1']='1', proxy: Optional[str]=None) -> dict[s
 
 # 获取乐队 logo
 def get_band_logo(
-    id_: str,
+    id_: int,
     type_: Literal['logoS', 'logoL', 'logoL_Mask'],
     server: Literal['jp', 'en', 'tw', 'cn', 'kr']
 ) -> bytes:
     '''获取乐队 logo
 
     参数:
-        id_ (str): 乐队 ID
+        id_ (int): 乐队 ID
         
         type_ (Literal[&#39;logoS&#39;, &#39;logoL&#39;, &#39;logoL_Mask&#39;]): logo 类型
             `logoS`: 小 logo
