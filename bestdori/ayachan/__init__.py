@@ -7,7 +7,7 @@ from typing import Optional, Literal, Union, Any
 
 from ..charts import Chart
 from .utils import Api, API
-from .._settings import settings
+from ._settings import settings
 
 # 自定义谱面分析
 def chart_analysis(map_: Chart, diff: Literal['0', '1', '2', '3', '4']) -> dict[str, Any]:
