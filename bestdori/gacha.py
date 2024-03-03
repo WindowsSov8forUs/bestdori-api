@@ -4,6 +4,7 @@ BanG Dream! 招募相关操作'''
 from typing import Optional, Literal, Any
 
 from .post import get_list
+from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -13,20 +14,18 @@ from .exceptions import (
 )
 
 # 获取总招募信息
-def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     '''获取总招募信息
 
     参数:
         index (Literal[0, 5], optional): 指定获取哪种 `all.json`
             `0`: 仅获取所有已有招募 ID `all.0.json`
             `5`: 获取所有已有招募的简洁信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总招募信息
     '''
-    return Api(API['gacha']['all'].format(index), proxy=proxy).request('get').json()
+    return Api(API['gacha']['all'].format(index), settings.proxy).request('get').json()
 
 # 招募类
 class Gacha:
@@ -34,26 +33,20 @@ class Gacha:
 
     参数:
         id_ (int): 招募 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''招募类
 
         参数:
             id_ (int): 招募 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''招募 ID'''
         self._info: dict[str, Any] = {}
         '''招募信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all(0, proxy=proxy)
+        all_id = get_all(0)
         if not id_ in all_id.keys():
             raise GachaNotExistError(id_)
         return
@@ -68,7 +61,7 @@ class Gacha:
         if len(self._info) <= 0:
             # 如果没有招募信息存储
             response = Api(
-                API['gacha']['info'].format(self.id), proxy=self.proxy
+                API['gacha']['info'].format(self.id), settings.proxy
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -84,9 +77,7 @@ class Gacha:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
@@ -98,7 +89,6 @@ class Gacha:
             ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='GACHA_COMMENT',
             category_id=str(self.id),
             order=order,
@@ -169,7 +159,7 @@ class Gacha:
         return Assets(
             ASSETS['homebanner']['get'].format(
                 banner_asset_bundle_name=banner_asset_bundle_name
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()
     
     # 获取招募 pickup 图像
@@ -191,7 +181,7 @@ class Gacha:
                     Assets(
                         ASSETS['gacha']['screen'].format(
                             id=self.id, asset_name=pickup
-                        ), server, self.proxy
+                        ), server, settings.proxy
                     ).get()
                 )
             except:
@@ -215,7 +205,7 @@ class Gacha:
             return Assets(
                 ASSETS['gacha']['screen'].format(
                     id=self.id, asset_name='logo'
-                ), server, self.proxy
+                ), server, settings.proxy
             ).get()
         except:
             raise AssetsNotExistError('招募 logo 图像')

@@ -4,6 +4,7 @@ BanG Dream! 活动相关操作'''
 from typing import Optional, Literal, Any
 
 from .post import get_list
+from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .eventarchives import EventArchive
@@ -15,7 +16,7 @@ from .exceptions import (
 )
 
 # 获取总活动信息
-def get_all(index: Literal[0, 5, 6]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
     '''获取总活动信息
 
     参数:
@@ -23,13 +24,11 @@ def get_all(index: Literal[0, 5, 6]=5, proxy: Optional[str]=None) -> dict[str, d
             `0`: 仅获取所有已有活动 ID `all.0.json`
             `5`: 获取所有已有活动的简洁信息 `all.5.json`
             `6`: 获取所有已有活动的简洁信息 `all.6.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总活动信息
     '''
-    return Api(API['events']['all'].format(index), proxy=proxy).request('get').json()
+    return Api(API['events']['all'].format(index), settings.proxy).request('get').json()
 
 # 活动类
 class Event:
@@ -37,28 +36,22 @@ class Event:
 
     参数:
         id_ (int): 活动 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''活动类
 
         参数:
             id_ (int): 活动 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''活动 ID'''
-        self.archive: EventArchive = EventArchive(self.id, self.proxy)
+        self.archive: EventArchive = EventArchive(self.id)
         '''活动数据'''
         self._info: dict[str, Any] = {}
         '''活动信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all(0, proxy=proxy)
+        all_id = get_all(0)
         if not str(id_) in all_id.keys():
             raise EventNotExistError(id_)
         return
@@ -73,7 +66,7 @@ class Event:
         if len(self._info) <= 0:
             # 如果没有活动信息存储
             response = Api(
-                API['events']['info'].format(self.id), proxy=self.proxy
+                API['events']['info'].format(self.id), settings.proxy
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -89,9 +82,7 @@ class Event:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
@@ -103,7 +94,6 @@ class Event:
             ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='EVENT_COMMENT',
             category_id=str(self.id),
             order=order,
@@ -174,7 +164,7 @@ class Event:
         return Assets(
             ASSETS['event']['banner'].format(
                 asset_bundle_name=asset_bundle_name
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()
     
     # 获取活动 logo 图像
@@ -201,7 +191,7 @@ class Event:
         return Assets(
             ASSETS['event']['logo'].format(
                 asset_bundle_name=asset_bundle_name
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()
 
     # 获取活动主界面图像
@@ -236,7 +226,7 @@ class Event:
         return Assets(
             ASSETS['event']['topscreen'].format(
                 asset_bundle_name=asset_bundle_name, type=type_
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()
     
     # 获取活动奖励稀有表情
@@ -263,14 +253,14 @@ class Event:
         stamp_id = reward['rewardId']
         # 获取全部贴纸资源
         stamps = Api(
-            API['all']['stamps'].format(index='2'), proxy=self.proxy
+            API['all']['stamps'].format(index='2'), settings.proxy
         ).request('get').json()
         if (stamp := stamps.get(stamp_id, None)) is None:
             raise AssetsNotExistError(f'贴纸 {stamp_id}')
         # 获取贴纸资源
         image_name = stamp['imageName']
         return Assets(
-            ASSETS['stamp']['get'].format(image_name=image_name), self.server, self.proxy
+            ASSETS['stamp']['get'].format(image_name=image_name), self.server, settings.proxy
         ).get()
 
     # 获取排名分数线
@@ -289,9 +279,7 @@ class Event:
                 `2`: 台服
                 `3`: 国服
                 `4`: 韩服
-            
             mid (Literal[&#39;0&#39;], optional): 指定是否为中间分数线，默认为 `0`
-            
             latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
 
         返回:

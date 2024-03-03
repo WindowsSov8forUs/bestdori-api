@@ -45,8 +45,6 @@ def get_degree(
             `tw`: 台服
             `cn`: 国服
             `kr`: 韩服
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         bytes: 称号资源字节数据 `bytes`
@@ -63,8 +61,6 @@ def get_skill_all(index: Literal[10]=10, proxy: Optional[str]=None) -> dict[str,
     参数:
         index (Literal[10], optional): 指定获取哪种 `all.json`
             `10`: 获取所有已有技能的信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总技能信息
@@ -78,8 +74,6 @@ def get_bands_all(index: Literal[1]=1, proxy: Optional[str]=None) -> dict[str, d
     参数:
         index (Literal[1], optional): 指定获取哪种 `all.json`
             `1`: 获取所有已有乐队的名称信息 `all.1.json`，默认为该项
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总乐队信息
@@ -93,8 +87,6 @@ def get_bands_main(index: Literal[1]=1, proxy: Optional[str]=None) -> dict[str, 
     参数:
         index (Literal[1], optional): 指定获取哪种 `main.json`
             `1`: 获取所有主要乐队的名称信息 `main.1.json`，默认为该项
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的主要乐队信息

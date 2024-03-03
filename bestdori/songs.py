@@ -6,6 +6,7 @@ from requests.exceptions import HTTPError
 
 from .charts import Chart
 from .post import get_list
+from ._settings import settings
 from .utils.utils import ASSETS, API
 from .utils.network import Assets, Api
 from .exceptions import (
@@ -14,7 +15,7 @@ from .exceptions import (
 )
 
 # 获取总歌曲信息
-def get_all(index: Literal[0, 5, 7]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5, 7]=5) -> dict[str, dict[str, Any]]:
     '''获取总歌曲信息
 
     参数:
@@ -22,13 +23,11 @@ def get_all(index: Literal[0, 5, 7]=5, proxy: Optional[str]=None) -> dict[str, d
             `0`: 仅获取所有已有歌曲 ID `all.0.json`
             `5`: 获取所有已有歌曲的简洁信息 `all.5.json`，默认为该项
             `7`: 获取所有已有歌曲的较为详细信息 `all.7.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总歌曲信息
     '''
-    return Api(API['songs']['all'].format(index=index), proxy=proxy).request('get').json()
+    return Api(API['songs']['all'].format(index=index), settings.proxy).request('get').json()
 
 # 歌曲封面内部类
 class Jacket:
@@ -43,8 +42,8 @@ class Jacket:
         self,
         index: int,
         jacket_image: str,
-        server: Literal['jp', 'en', 'tw', 'cn', 'kr'],
-        proxy: Optional[str]=None) -> None:
+        server: Literal['jp', 'en', 'tw', 'cn', 'kr']
+    ) -> None:
         '''歌曲封面类'''
         self._index: int = index
         '''数据包序列号'''
@@ -52,8 +51,6 @@ class Jacket:
         '''封面文件名'''
         self._server: Literal['jp', 'en', 'tw', 'cn', 'kr'] = server
         '''封面所在服务器'''
-        self._proxy: Optional[str] = proxy
-        '''代理服务器'''
         return
     
     # 获取封面 url
@@ -63,7 +60,7 @@ class Jacket:
         return Assets(
             ASSETS['songs']['musicjacket'].format(
                 index=self._index, jacket_image=self._jacket_image
-            ), self._server, self._proxy
+            ), self._server, settings.proxy
         ).get_url()
     
     # 获取封面字节数据
@@ -73,7 +70,7 @@ class Jacket:
         return Assets(
             ASSETS['songs']['musicjacket'].format(
                 index=self._index, jacket_image=self._jacket_image
-            ), self._server, self._proxy
+            ), self._server, settings.proxy
         ).get()
 
 # 歌曲类
@@ -82,26 +79,20 @@ class Song:
 
     参数:
         id_ (int): 歌曲 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''歌曲类
 
         参数:
             id_ (int): 歌曲 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''歌曲 ID'''
         self._info: dict[str, Any] = {}
         '''歌曲信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all(0, proxy=proxy)
+        all_id = get_all(0)
         if not str(id_) in all_id.keys():
             raise SongNotExistError(id_)
         return
@@ -116,7 +107,7 @@ class Song:
         if len(self._info) <= 0:
             # 如果没有歌曲信息存储
             response = Api(
-                API['songs']['info'].format(id=self.id), proxy=self.proxy
+                API['songs']['info'].format(id=self.id), settings.proxy
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -174,7 +165,7 @@ class Song:
             Chart: 获取到的谱面对象
         '''
         try:
-            chart = Chart.get_chart(self.id, diff, self.proxy)
+            chart = Chart.get_chart(self.id, diff)
             return chart
         except HTTPError:
             # 难度不存在
@@ -200,7 +191,7 @@ class Song:
         jacket: list[Jacket] = []
         
         for image in jacket_image:
-            jacket.append(Jacket(index, image, self.server, self.proxy))
+            jacket.append(Jacket(index, image, self.server))
         
         return jacket
     
@@ -211,7 +202,7 @@ class Song:
         返回:
             bytes: 歌曲音频字节数据 `bytes`
         '''
-        return Assets(ASSETS['songs']['sound'].format(id=self.id), self.server, self.proxy).get()
+        return Assets(ASSETS['songs']['sound'].format(id=self.id), self.server, settings.proxy).get()
     
     # 获取歌曲评论
     def get_comment(
@@ -224,21 +215,18 @@ class Song:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
             dict[str, Any]: 搜索结果
-            ```python
-            result: bool # 是否有响应
-            count: int # 搜索到的评论总数
-            posts: list[dict[str, Any]] # 列举出的评论
-            ```
+                ```python
+                result: bool # 是否有响应
+                count: int # 搜索到的评论总数
+                posts: list[dict[str, Any]] # 列举出的评论
+                ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='SONG_COMMENT',
             category_id=str(self.id),
             order=order,

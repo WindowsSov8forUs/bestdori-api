@@ -4,6 +4,7 @@ BanG Dream! 漫画相关操作'''
 from typing import Optional, Literal, Any
 
 from .post import get_list
+from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -12,19 +13,17 @@ from .exceptions import (
 )
 
 # 获取总漫画信息
-def get_all(index: Literal[5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
     '''获取总漫画信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
             `5`: 获取所有已有漫画信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总漫画信息
     '''
-    return Api(API['all']['comics'].format(index), proxy=proxy).request('get').json()
+    return Api(API['all']['comics'].format(index), settings.proxy).request('get').json()
 
 # 漫画类
 class Comic:
@@ -32,26 +31,20 @@ class Comic:
 
     参数:
         id_ (int): 漫画 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''漫画类
 
         参数:
             id_ (int): 漫画 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''漫画 ID'''
         self._info: dict[str, Any] = {}
         '''漫画信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_ = get_all(5, proxy=proxy)
+        all_ = get_all(5)
         if not str(id_) in all_.keys():
             raise ComicNotExistError(id_)
         self._info = all_[str(id_)]
@@ -77,9 +70,7 @@ class Comic:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
@@ -91,7 +82,6 @@ class Comic:
             ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='COMIC_COMMENT',
             category_id=str(self.id),
             order=order,
@@ -198,7 +188,7 @@ class Comic:
         return Assets(
             ASSETS['comic']['thumbnail'].format(
                 type=self.type, asset_bundle_name=asset_bundle_name
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()
     
     # 获取漫画图像
@@ -225,5 +215,5 @@ class Comic:
         return Assets(
             ASSETS['comic']['comic'].format(
                 type=self.type, asset_bundle_name=asset_bundle_name
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()

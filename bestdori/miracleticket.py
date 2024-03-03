@@ -5,26 +5,25 @@ from typing import Optional, Literal, Any
 
 from .utils.utils import API
 from .utils.network import Api
+from ._settings import settings
 from .exceptions import (
     MiracleTicketExchangeNotExistError,
     ServerNotAvailableError
 )
 
 # 获取总自选券信息
-def get_all(index: Literal[5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
     '''获取总自选券信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
             `5`: 获取所有已有自选券信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总自选券信息
     '''
     return Api(
-        API['all']['miracleTicketExchanges'].format(index), proxy=proxy
+        API['all']['miracleTicketExchanges'].format(index), settings.proxy
     ).request('get').json()
 
 # 自选券类
@@ -33,26 +32,20 @@ class MiracleTicketExchange:
 
     参数:
         id_ (int): 自选券 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''自选券类
 
         参数:
             id_ (int): 自选券 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''自选券 ID'''
         self._info: dict[str, Any] = {}
         '''自选券信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_ = get_all(5, proxy=proxy)
+        all_ = get_all(5)
         if not str(id_) in all_.keys():
             raise MiracleTicketExchangeNotExistError(id_)
         self._info = all_[str(id_)]

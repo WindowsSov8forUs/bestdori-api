@@ -6,25 +6,24 @@ from typing import Optional, Literal, Any
 from .post import get_list
 from .utils.utils import API
 from .utils.network import Api
+from ._settings import settings
 from .exceptions import (
     MissionNotExistError
 )
 
 # 获取总任务信息
-def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     '''获取总任务信息
 
     参数:
         index (Literal[0, 5], optional): 指定获取哪种 `all.json`
             `0`: 仅获取所有已有任务 ID `all.0.json`
             `5`: 获取所有已有任务的简洁信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总任务信息
     '''
-    return Api(API['missions']['all'].format(index), proxy=proxy).request('get').json()
+    return Api(API['missions']['all'].format(index), settings.proxy).request('get').json()
 
 # 任务类
 class Mission:
@@ -32,26 +31,20 @@ class Mission:
 
     参数:
         id_ (int): 任务 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''任务类
 
         参数:
             id_ (int): 任务 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''任务 ID'''
         self._info: dict[str, Any] = {}
         '''任务信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all(0, proxy=proxy)
+        all_id = get_all(0)
         if not str(id_) in all_id.keys():
             raise MissionNotExistError(id_)
         return
@@ -66,7 +59,7 @@ class Mission:
         if len(self._info) <= 0:
             # 如果没有任务信息存储
             response = Api(
-                API['missions']['info'].format(self.id), proxy=self.proxy
+                API['missions']['info'].format(self.id), settings.proxy
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -82,9 +75,7 @@ class Mission:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
@@ -96,7 +87,6 @@ class Mission:
             ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='MISSION_COMMENT',
             category_id=str(self.id),
             order=order,

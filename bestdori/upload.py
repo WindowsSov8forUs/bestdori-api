@@ -8,24 +8,23 @@ from typing import Optional, Union, TYPE_CHECKING
 
 from .utils.utils import API
 from .utils.network import Api
+from ._settings import settings
 from .exceptions import AlreadyUploadedError
 
 if TYPE_CHECKING:
     from .user import Me
 
 # 从 Bestdori 获取指定哈希文件字节
-def download(hash_: str, proxy: Optional[str]=None) -> bytes:
+def download(hash_: str) -> bytes:
     '''从 Bestdori 获取指定哈希文件字节
 
     参数:
         hash_ (str): 文件哈希值
-        
-        proxy (Optional[str]): 代理服务器
 
     返回:
         bytes: 文件字节 `bytes`
     '''
-    return Api(API['upload']['file'].format(hash=hash_), proxy).request('get').content
+    return Api(API['upload']['file'].format(hash=hash_), settings.proxy).request('get').content
 
 # 通过哈希值构建 Bestdori 文件 URL
 def hash_to_url(hash_: str) -> str:
@@ -41,7 +40,13 @@ def hash_to_url(hash_: str) -> str:
 
 # 上传文件类
 class Upload:
-    ''''''
+    '''上传文件类
+
+    参数:
+        file_bytes (bytes): 文件字节
+        name (str): 文件名
+        reader (BufferedReader): 文件字节流
+    '''
     # 初始化
     def __init__(self, file_bytes: bytes, name: str, reader: BufferedReader) -> None:
         # 处理文件字节
@@ -81,17 +86,15 @@ class Upload:
         return cls(file_bytes, file_name, file)
     
     # 上传文件
-    def upload(self, me: 'Me', proxy: Optional[str]=None) -> str:
+    def upload(self) -> str:
         '''上传文件
-
-        参数:
-            me (Me): 自身用户对象
-            
-            proxy (Optional[str]): 代理服务器
 
         返回:
             str: 上传文件的哈希值
         '''
+        if not settings.cookies:
+            raise ValueError('未设置用户 Cookies。')
+        
         if self._reader.closed:
             raise ValueError('文件流已关闭。')
         
@@ -103,25 +106,25 @@ class Upload:
         }
         # 发送预上传请求
         try:
-            Api(API['upload']['prepare'], proxy).request('post', cookies=me.cookies, data=payload)
+            Api(API['upload']['prepare'], settings.proxy).request('post', cookies=settings.cookies, data=payload)
         except AlreadyUploadedError:
             self._reader.close()
             return self._hash
         # 发送上传请求
         with self._reader:
-            response = Api(API['upload']['upload'], proxy).request(
+            response = Api(API['upload']['upload'], settings.proxy).request(
                 'post',
                 files={
                     'file': (self._name, self._reader)
                 },
-                cookies=me.cookies
+                cookies=settings.cookies
             )
         # 获取文件的哈希值
         hash_get = response.json()['hash']
         #重复查询至多 5 次上传状态
         for _ in range(5):
             # 发送上传状态查询请求
-            response = Api(API['upload']['status'].format(hash=hash_get), proxy).request('get')
+            response = Api(API['upload']['status'].format(hash=hash_get), settings.proxy).request('get')
             # 获取上传状态
             status = response.json()['status']
             # 若上传成功则返回

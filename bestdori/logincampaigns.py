@@ -4,6 +4,7 @@ BanG Dream! 登录奖励相关操作'''
 from typing import Optional, Literal, Any
 
 from .post import get_list
+from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -12,20 +13,18 @@ from .exceptions import (
 )
 
 # 获取总登录奖励信息
-def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     '''获取总登录奖励信息
 
     参数:
         index (Literal[0, 5], optional): 指定获取哪种 `all.json`
             `0`: 仅获取所有已有登录奖励 ID `all.0.json`
             `5`: 获取所有已有登录奖励的简洁信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总登录奖励信息
     '''
-    return Api(API['loginCampaigns']['all'].format(index), proxy=proxy).request('get').json()
+    return Api(API['loginCampaigns']['all'].format(index), settings.proxy).request('get').json()
 
 # 登录奖励类
 class LoginCampaign:
@@ -33,26 +32,20 @@ class LoginCampaign:
 
     参数:
         id_ (int): 登录奖励 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''登录奖励类
 
         参数:
             id_ (int): 登录奖励 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''登录奖励 ID'''
         self._info: dict[str, Any] = {}
         '''登录奖励信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_id = get_all(0, proxy=proxy)
+        all_id = get_all(0)
         if not str(id_) in all_id.keys():
             raise LoginCampaignNotExistError(id_)
         return
@@ -67,7 +60,7 @@ class LoginCampaign:
         if len(self._info) <= 0:
             # 如果没有登录奖励信息存储
             response = Api(
-                API['loginCampaigns']['info'].format(self.id), proxy=self.proxy
+                API['loginCampaigns']['info'].format(self.id), settings.proxy
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -83,9 +76,7 @@ class LoginCampaign:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
@@ -97,7 +88,6 @@ class LoginCampaign:
             ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='LOGINCAMPAIGN_COMMENT',
             category_id=str(self.id),
             order=order,
@@ -166,5 +156,5 @@ class LoginCampaign:
         return Assets(
             ASSETS['event']['loginbouns'].format(
                 asset_bundle_name=asset_bundle_name[index]
-            ), server, self.proxy
+            ), server, settings.proxy
         ).get()

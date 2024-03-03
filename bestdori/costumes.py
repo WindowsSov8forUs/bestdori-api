@@ -4,6 +4,7 @@ BanG Dream! 服装相关操作'''
 from typing import Optional, Literal, Any
 
 from .post import get_list
+from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -12,20 +13,18 @@ from .exceptions import (
 )
 
 # 获取总服装信息
-def get_all(index: Literal[0, 5]=5, proxy: Optional[str]=None) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     '''获取总服装信息
 
     参数:
         index (Literal[0, 5], optional): 指定获取哪种 `all.json`
             `0`: 仅获取所有已有服装 ID `all.0.json`
             `5`: 获取所有已有服装的简洁信息 `all.5.json`
-        
-        proxy (Optional[str], optional): 代理服务器
 
     返回:
         dict[str, dict[str, Any]]: 获取到的总服装信息
     '''
-    return Api(API['costumes']['all'].format(index), proxy=proxy).request('get').json()
+    return Api(API['costumes']['all'].format(index), settings.proxy).request('get').json()
 
 # 服装类
 class Costume:
@@ -33,26 +32,20 @@ class Costume:
 
     参数:
         id_ (int): 服装 ID
-        
-        proxy (Optional[str], optional): 代理服务器
     '''
     # 初始化
-    def __init__(self, id_: int, proxy: Optional[str]=None) -> None:
+    def __init__(self, id_: int) -> None:
         '''服装类
 
         参数:
             id_ (int): 服装 ID
-            
-            proxy (Optional[str], optional): 代理服务器
         '''
         self.id: int = id_
         '''服装 ID'''
         self._info: dict[str, Any] = {}
         '''服装信息'''
-        self.proxy: Optional[str] = proxy
-        '''代理服务器'''
         # 检测 ID 是否存在
-        all_ = get_all(0, proxy=proxy)
+        all_ = get_all(0)
         if not str(id_) in all_.keys():
             raise CostumeNotExistError(id_)
         return
@@ -67,7 +60,7 @@ class Costume:
         if len(self._info) <= 0:
             # 如果没有服装信息存储
             response = Api(
-                API['costumes']['info'].format(self.id), proxy=self.proxy
+                API['costumes']['info'].format(self.id), settings.proxy
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -83,9 +76,7 @@ class Costume:
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
-            
             offset (int, optional): 忽略前面的 `offset` 条评论，默认为 0
-            
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
@@ -97,7 +88,6 @@ class Costume:
             ```
         '''
         return get_list(
-            proxy=self.proxy,
             category_name='COSTUME_COMMENT',
             category_id=str(self.id),
             order=order,
@@ -182,7 +172,7 @@ class Costume:
             return Assets(
                 ASSETS['live2d']['buildData'].format(
                     asset_bundle_name=asset_bundle_name
-                ), self.server, self.proxy
+                ), self.server, settings.proxy
             ).get()
         except AssetsNotExistError:
             raise AssetsNotExistError(f'服装模型 {asset_bundle_name}-{self.server}')
@@ -203,7 +193,7 @@ class Costume:
             return Assets(
                 ASSETS['thumb']['costume'].format(
                     id=str(int(self.id) // 50), asset_bundle_name=asset_bundle_name
-                ), self.server, self.proxy
+                ), self.server, settings.proxy
             ).get()
         except AssetsNotExistError:
             raise AssetsNotExistError(f'服装图标 {asset_bundle_name}-{self.server}')

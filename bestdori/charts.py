@@ -7,6 +7,7 @@ from typing import Optional, Literal, Any
 from .utils.note import *
 from .utils.utils import API
 from .utils.network import Api
+from ._settings import settings
 
 # 谱面数据类
 class Statistics:
@@ -14,24 +15,20 @@ class Statistics:
 
     参数:
         time (float): 谱面时长
-        
         notes (int): 谱面音符总数
-        
         bpm (list[float]): 谱面 BPM 范围
-        
-        main_bpm (float): 谱面主 BPM'''
+        main_bpm (float): 谱面主 BPM
+    '''
     # 初始化
     def __init__(self, time: float, notes: int, bpm: list[float], main_bpm: float) -> None:
         '''谱面数据类
 
         参数:
             time (float): 谱面时长
-            
             notes (int): 谱面音符总数
-            
             bpm (list[float]): 谱面 BPM 范围
-            
-            main_bpm (float): 谱面主 BPM'''
+            main_bpm (float): 谱面主 BPM
+        '''
         self.time: float = time
         '''谱面时长'''
         self.notes: int = notes
@@ -69,6 +66,19 @@ class Chart(list[NoteType]):
                 # 删除其他音符
                 continue
         return
+    
+    # 检查是否为 SP 谱面
+    @property
+    def is_sp_rhythm(self) -> bool:
+        '''是否为使用了 SP 键的谱面'''
+        for note in self:
+            if isinstance(note, Slide):
+                for connection in note.connections:
+                    if connection.hidden:
+                        return True
+            elif isinstance(note, Directional):
+                return True
+        return False
     
     # 谱面规范化处理
     @classmethod
@@ -264,20 +274,16 @@ class Chart(list[NoteType]):
     def get_chart(
         cls,
         id_: int,
-        diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert',
-        proxy: Optional[str]=None
+        diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert'
     ) -> 'Chart':
         '''获取官方谱面
 
         参数:
             id_ (int): 谱面 ID
-            
             diff (Literal[&#39;easy&#39;, &#39;normal&#39;, &#39;hard&#39;, &#39;expert&#39;, &#39;special&#39;], optional): 难度名称
-            
-            proxy (Optional[str], optional): 代理服务器
 
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = Api(API['charts']['info'].format(id=id_, diff=diff), proxy).request('get')
+        response = Api(API['charts']['info'].format(id=id_, diff=diff), settings.proxy).request('get')
         return cls.normalize(response.json())

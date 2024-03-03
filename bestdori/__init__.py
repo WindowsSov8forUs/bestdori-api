@@ -71,6 +71,8 @@ from . import (
     missions
 )
 
+from ._settings import settings
+
 __all__ = [
     'User',
     'Me',
@@ -128,5 +130,6 @@ __all__ = [
     'logincampaigns',
     'miracleticket',
     'comics',
-    'missions'
+    'missions',
+    'settings'
 ]
