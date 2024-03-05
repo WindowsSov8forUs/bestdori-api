@@ -87,7 +87,7 @@ ASSETS = {
         'loginbouns': 'event/loginbonus/{asset_bundle_name}_rip/background.png'
     },
     'songs': {
-        'musicjacket': 'musicjacket/musicjacket{index:>03d}_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket{index:>03d}-{jacket_image}-jacket.png',
+        'musicjacket': 'musicjacket/musicjacket{index:>02d}_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket{index:>02d}-{jacket_image}-jacket.png',
         'sound': 'sound/bgm{id:>03d}_rip/bgm{id:>03d}.mp3',
         'musicscore': ''
     },
