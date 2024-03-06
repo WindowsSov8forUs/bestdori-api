@@ -80,8 +80,9 @@ class Api:
             proxies = None
         
         # 发送请求并获取响应
-        with settings.client or Client(proxies=cast(dict, proxies)) as client:
-            response = client.send(request)
+        client = settings.client or Client(proxies=cast(dict, proxies))
+        response = client.send(request)
+        if not settings.client:
             client.close()
         
         # 处理接收到的响应
