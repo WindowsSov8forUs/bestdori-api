@@ -71,7 +71,7 @@ from . import (
     missions
 )
 
-from ._settings import settings
+from .utils._settings import settings
 
 __all__ = [
     'User',

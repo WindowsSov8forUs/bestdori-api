@@ -1,12 +1,11 @@
 '''`bestdori.missions`
 
 BanG Dream! 任务相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
 from .utils.utils import API
 from .utils.network import Api
-from ._settings import settings
 from .exceptions import (
     MissionNotExistError
 )
@@ -23,7 +22,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总任务信息
     '''
-    return Api(API['missions']['all'].format(index), settings.proxy).request('get').json()
+    return Api(API['missions']['all'].format(index)).request('get').json()
 
 # 任务类
 class Mission:
@@ -59,7 +58,7 @@ class Mission:
         if len(self._info) <= 0:
             # 如果没有任务信息存储
             response = Api(
-                API['missions']['info'].format(self.id), settings.proxy
+                API['missions']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info

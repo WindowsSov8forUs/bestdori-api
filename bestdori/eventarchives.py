@@ -1,12 +1,11 @@
 '''`bestdori.eventarchives`
 
 BanG Dream! 活动数据相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
 from .utils.utils import API
 from .utils.network import Api
-from ._settings import settings
 from .exceptions import (
     EventNotExistError
 )
@@ -22,7 +21,7 @@ def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总活动信息
     '''
-    return Api(API['all']['archives'].format(index), settings.proxy).request('get').json()
+    return Api(API['all']['archives'].format(index)).request('get').json()
 
 # 活动数据类
 class EventArchive():
@@ -70,7 +69,7 @@ class EventArchive():
         返回:
             dict[str, list[dict[str, Any]]]: 排名分数线数据
         '''
-        return Api(API['events']['top'], settings.proxy).request(
+        return Api(API['events']['top']).request(
             'get', params={
                 'server': server,
                 'event': self.id,

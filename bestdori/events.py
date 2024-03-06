@@ -1,10 +1,9 @@
 '''`bestdori.events`
 
 BanG Dream! 活动相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal, Optional
 
 from .post import get_list
-from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .eventarchives import EventArchive
@@ -28,7 +27,7 @@ def get_all(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总活动信息
     '''
-    return Api(API['events']['all'].format(index), settings.proxy).request('get').json()
+    return Api(API['events']['all'].format(index)).request('get').json()
 
 # 活动类
 class Event:
@@ -66,7 +65,7 @@ class Event:
         if len(self._info) <= 0:
             # 如果没有活动信息存储
             response = Api(
-                API['events']['info'].format(self.id), settings.proxy
+                API['events']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -164,7 +163,7 @@ class Event:
         return Assets(
             ASSETS['event']['banner'].format(
                 asset_bundle_name=asset_bundle_name
-            ), server, settings.proxy
+            ), server
         ).get()
     
     # 获取活动 logo 图像
@@ -191,7 +190,7 @@ class Event:
         return Assets(
             ASSETS['event']['logo'].format(
                 asset_bundle_name=asset_bundle_name
-            ), server, settings.proxy
+            ), server
         ).get()
 
     # 获取活动主界面图像
@@ -226,7 +225,7 @@ class Event:
         return Assets(
             ASSETS['event']['topscreen'].format(
                 asset_bundle_name=asset_bundle_name, type=type_
-            ), server, settings.proxy
+            ), server
         ).get()
     
     # 获取活动奖励稀有表情
@@ -253,14 +252,14 @@ class Event:
         stamp_id = reward['rewardId']
         # 获取全部贴纸资源
         stamps = Api(
-            API['all']['stamps'].format(index='2'), settings.proxy
+            API['all']['stamps'].format(index='2')
         ).request('get').json()
         if (stamp := stamps.get(stamp_id, None)) is None:
             raise AssetsNotExistError(f'贴纸 {stamp_id}')
         # 获取贴纸资源
         image_name = stamp['imageName']
         return Assets(
-            ASSETS['stamp']['get'].format(image_name=image_name), self.server, settings.proxy
+            ASSETS['stamp']['get'].format(image_name=image_name), self.server
         ).get()
 
     # 获取排名分数线

@@ -1,10 +1,9 @@
 '''`bestdori.comics`
 
 BanG Dream! 漫画相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
-from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -23,7 +22,7 @@ def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总漫画信息
     '''
-    return Api(API['all']['comics'].format(index), settings.proxy).request('get').json()
+    return Api(API['all']['comics'].format(index)).request('get').json()
 
 # 漫画类
 class Comic:
@@ -188,7 +187,7 @@ class Comic:
         return Assets(
             ASSETS['comic']['thumbnail'].format(
                 type=self.type, asset_bundle_name=asset_bundle_name
-            ), server, settings.proxy
+            ), server
         ).get()
     
     # 获取漫画图像
@@ -215,5 +214,5 @@ class Comic:
         return Assets(
             ASSETS['comic']['comic'].format(
                 type=self.type, asset_bundle_name=asset_bundle_name
-            ), server, settings.proxy
+            ), server
         ).get()

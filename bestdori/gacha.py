@@ -1,10 +1,9 @@
 '''`bestdori.gacha`
 
 BanG Dream! 招募相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
-from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -25,7 +24,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总招募信息
     '''
-    return Api(API['gacha']['all'].format(index), settings.proxy).request('get').json()
+    return Api(API['gacha']['all'].format(index)).request('get').json()
 
 # 招募类
 class Gacha:
@@ -61,7 +60,7 @@ class Gacha:
         if len(self._info) <= 0:
             # 如果没有招募信息存储
             response = Api(
-                API['gacha']['info'].format(self.id), settings.proxy
+                API['gacha']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -159,7 +158,7 @@ class Gacha:
         return Assets(
             ASSETS['homebanner']['get'].format(
                 banner_asset_bundle_name=banner_asset_bundle_name
-            ), server, settings.proxy
+            ), server
         ).get()
     
     # 获取招募 pickup 图像
@@ -181,7 +180,7 @@ class Gacha:
                     Assets(
                         ASSETS['gacha']['screen'].format(
                             id=self.id, asset_name=pickup
-                        ), server, settings.proxy
+                        ), server
                     ).get()
                 )
             except:
@@ -205,7 +204,7 @@ class Gacha:
             return Assets(
                 ASSETS['gacha']['screen'].format(
                     id=self.id, asset_name='logo'
-                ), server, settings.proxy
+                ), server
             ).get()
         except:
             raise AssetsNotExistError('招募 logo 图像')

@@ -4,7 +4,9 @@
 from json import dumps
 from io import BufferedReader
 from httpx import Response, Request, Client
-from typing import Optional, Literal, Union, cast, Any
+from typing import Any, Literal, Optional, cast
+
+from ._settings import settings
 
 # 向 ayachan 发送 API 请求类
 class Api:
@@ -26,7 +28,7 @@ class Api:
     ) -> None:
         '''初始化'''
         self.api = api
-        self.proxy = proxy
+        self.proxy = proxy or settings.proxy
         return
     
     # 请求发送
@@ -78,7 +80,7 @@ class Api:
             proxies = None
         
         # 发送请求并获取响应
-        with Client(proxies=cast(dict, proxies)) as client:
+        with settings.client or Client(proxies=cast(dict, proxies)) as client:
             response = client.send(request)
             client.close()
         

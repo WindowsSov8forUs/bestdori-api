@@ -4,11 +4,12 @@ Bestdori 文件相关操作'''
 from pathlib import Path
 from hashlib import sha1
 from io import BufferedReader
-from typing import Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
+from .user import Me
 from .utils.utils import API
 from .utils.network import Api
-from ._settings import settings
+from .utils._settings import settings
 from .exceptions import AlreadyUploadedError
 
 if TYPE_CHECKING:
@@ -24,7 +25,7 @@ def download(hash_: str) -> bytes:
     返回:
         bytes: 文件字节 `bytes`
     '''
-    return Api(API['upload']['file'].format(hash=hash_), settings.proxy).request('get').content
+    return Api(API['upload']['file'].format(hash=hash_)).request('get').content
 
 # 通过哈希值构建 Bestdori 文件 URL
 def hash_to_url(hash_: str) -> str:
@@ -92,8 +93,14 @@ class Upload:
         返回:
             str: 上传文件的哈希值
         '''
-        if not settings.cookies:
-            raise ValueError('未设置用户 Cookies。')
+        try:
+            cookies = settings._cookies()
+        except:
+            if settings._username is None or settings._password is None:
+                raise ValueError('未添加用户信息。')
+            else:
+                settings._me = Me(settings._username, settings._password)
+                cookies = settings._cookies()
         
         if self._reader.closed:
             raise ValueError('文件流已关闭。')
@@ -106,25 +113,25 @@ class Upload:
         }
         # 发送预上传请求
         try:
-            Api(API['upload']['prepare'], settings.proxy).request('post', cookies=settings.cookies, data=payload)
+            Api(API['upload']['prepare']).request('post', cookies=cookies, data=payload)
         except AlreadyUploadedError:
             self._reader.close()
             return self._hash
         # 发送上传请求
         with self._reader:
-            response = Api(API['upload']['upload'], settings.proxy).request(
+            response = Api(API['upload']['upload']).request(
                 'post',
                 files={
                     'file': (self._name, self._reader)
                 },
-                cookies=settings.cookies
+                cookies=cookies
             )
         # 获取文件的哈希值
         hash_get = response.json()['hash']
         #重复查询至多 5 次上传状态
         for _ in range(5):
             # 发送上传状态查询请求
-            response = Api(API['upload']['status'].format(hash=hash_get), settings.proxy).request('get')
+            response = Api(API['upload']['status'].format(hash=hash_get)).request('get')
             # 获取上传状态
             status = response.json()['status']
             # 若上传成功则返回

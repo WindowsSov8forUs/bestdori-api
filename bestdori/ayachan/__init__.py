@@ -3,11 +3,10 @@
 ayachan 的各种 API 调用整合'''
 from pathlib import Path
 from mimetypes import guess_type
-from typing import Optional, Literal, Union, Any
+from typing import Any, Union, Literal, Optional
 
 from ..charts import Chart
 from .utils import Api, API
-from ._settings import settings
 
 # 自定义谱面分析
 def chart_analysis(map_: Chart, diff: Literal['0', '1', '2', '3', '4']) -> dict[str, Any]:
@@ -27,7 +26,7 @@ def chart_analysis(map_: Chart, diff: Literal['0', '1', '2', '3', '4']) -> dict[
         'map': map_.to_list(),
         'map_format_in': 'BestdoriV2'
     }
-    return Api(API['map-info'], settings.proxy).request('post', data=payload).json()
+    return Api(API['map-info']).request('post', data=payload).json()
 
 # Bestdori 谱面分析
 def bestdori_chart_analysis(
@@ -43,7 +42,7 @@ def bestdori_chart_analysis(
     返回:
         dict[str, Any]: 分析结果
     '''
-    return Api(API['bestdori'].format(id=id_), settings.proxy).request(
+    return Api(API['bestdori'].format(id=id_)).request(
         'get',
         params={
             'diff': diff
@@ -92,7 +91,7 @@ def sonolus_test(
     files = {'bgm': (bgm_name, file, guess_type(bgm)[0])}
     
     # 发送请求
-    response = Api(API['levels'], settings.proxy).request('post', data=data, files=files)
+    response = Api(API['levels']).request('post', data=data, files=files)
     file.close()
     if (uid := response.json().get('uid', None)) is None:
         raise Exception('上传测试服失败。')
@@ -118,4 +117,6 @@ def diff_analysis(
         params['diff'] = diff
     
     # 获取结果
-    return Api(API['DiffAnalysis'], settings.proxy).request('get', params=params).json()
+    return Api(API['DiffAnalysis']).request('get', params=params).json()
+
+from .utils._settings import settings as settings

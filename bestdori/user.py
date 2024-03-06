@@ -2,9 +2,8 @@
 
 BanG Dream! 歌曲相关操作'''
 from httpx._models import Cookies
-from typing import Optional, Literal, Any
+from typing import Any, Literal, Optional
 
-from ._settings import settings
 from .post import get_list
 from .utils.utils import API
 from .utils.network import Api
@@ -39,7 +38,7 @@ class User:
         if len(self._info) <= 0:
             # 若无用户信息存储
             response = Api(
-                API['user']['info'], settings.proxy
+                API['user']['info']
             ).request('get', params={'username': self.username})
             self._info = dict(response.json())
         return self._info
@@ -202,7 +201,7 @@ class Me(User):
         '''
         me = cls(username, password)
         response = Api(
-            API['user']['login'], settings.proxy
+            API['user']['login']
         ).request('post', data={'username': me.username, 'password': me.password})
         me._cookies = response.cookies
         me.me()
@@ -214,7 +213,7 @@ class Me(User):
         '''获取用户 Cookies'''
         if self._cookies is None:
             response = Api(
-                API['user']['login'], settings.proxy
+                API['user']['login']
             ).request('post', data={'username': self.username, 'password': self.password})
             self._cookies = response.cookies
         return self._cookies
@@ -227,6 +226,6 @@ class Me(User):
             dict[str, Any]: 自我信息
         '''
         if len(self._me) == 0:
-            response = Api(API['user']['me'], settings.proxy).request('get', cookies=self.cookies)
+            response = Api(API['user']['me']).request('get', cookies=self.cookies)
             self._me = dict(response.json())
         return self._me

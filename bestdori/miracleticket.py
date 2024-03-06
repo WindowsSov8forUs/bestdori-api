@@ -1,11 +1,10 @@
 '''`bestdori.miracleticket`
 
 BanG Dream! 自选券相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .utils.utils import API
 from .utils.network import Api
-from ._settings import settings
 from .exceptions import (
     MiracleTicketExchangeNotExistError,
     ServerNotAvailableError
@@ -23,7 +22,7 @@ def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
         dict[str, dict[str, Any]]: 获取到的总自选券信息
     '''
     return Api(
-        API['all']['miracleTicketExchanges'].format(index), settings.proxy
+        API['all']['miracleTicketExchanges'].format(index)
     ).request('get').json()
 
 # 自选券类

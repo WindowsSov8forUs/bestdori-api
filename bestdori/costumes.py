@@ -1,10 +1,9 @@
 '''`bestdori.costumes`
 
 BanG Dream! 服装相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
-from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -24,7 +23,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总服装信息
     '''
-    return Api(API['costumes']['all'].format(index), settings.proxy).request('get').json()
+    return Api(API['costumes']['all'].format(index)).request('get').json()
 
 # 服装类
 class Costume:
@@ -60,7 +59,7 @@ class Costume:
         if len(self._info) <= 0:
             # 如果没有服装信息存储
             response = Api(
-                API['costumes']['info'].format(self.id), settings.proxy
+                API['costumes']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -172,7 +171,7 @@ class Costume:
             return Assets(
                 ASSETS['live2d']['buildData'].format(
                     asset_bundle_name=asset_bundle_name
-                ), self.server, settings.proxy
+                ), self.server
             ).get()
         except AssetsNotExistError:
             raise AssetsNotExistError(f'服装模型 {asset_bundle_name}-{self.server}')
@@ -193,7 +192,7 @@ class Costume:
             return Assets(
                 ASSETS['thumb']['costume'].format(
                     id=str(int(self.id) // 50), asset_bundle_name=asset_bundle_name
-                ), self.server, settings.proxy
+                ), self.server
             ).get()
         except AssetsNotExistError:
             raise AssetsNotExistError(f'服装图标 {asset_bundle_name}-{self.server}')

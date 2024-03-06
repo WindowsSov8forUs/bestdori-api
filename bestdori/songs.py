@@ -1,12 +1,11 @@
 '''`bestdori.songs`
 
 BanG Dream! 歌曲相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 from requests.exceptions import HTTPError
 
 from .charts import Chart
 from .post import get_list
-from ._settings import settings
 from .utils.utils import ASSETS, API
 from .utils.network import Assets, Api
 from .exceptions import (
@@ -27,7 +26,7 @@ def get_all(index: Literal[0, 5, 7]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总歌曲信息
     '''
-    return Api(API['songs']['all'].format(index=index), settings.proxy).request('get').json()
+    return Api(API['songs']['all'].format(index=index)).request('get').json()
 
 # 歌曲封面内部类
 class Jacket:
@@ -60,7 +59,7 @@ class Jacket:
         return Assets(
             ASSETS['songs']['musicjacket'].format(
                 index=self._index, jacket_image=self._jacket_image
-            ), self._server, settings.proxy
+            ), self._server
         ).get_url()
     
     # 获取封面字节数据
@@ -70,7 +69,7 @@ class Jacket:
         return Assets(
             ASSETS['songs']['musicjacket'].format(
                 index=self._index, jacket_image=self._jacket_image
-            ), self._server, settings.proxy
+            ), self._server
         ).get()
 
 # 歌曲类
@@ -107,7 +106,7 @@ class Song:
         if len(self._info) <= 0:
             # 如果没有歌曲信息存储
             response = Api(
-                API['songs']['info'].format(id=self.id), settings.proxy
+                API['songs']['info'].format(id=self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -202,7 +201,7 @@ class Song:
         返回:
             bytes: 歌曲音频字节数据 `bytes`
         '''
-        return Assets(ASSETS['songs']['sound'].format(id=self.id), self.server, settings.proxy).get()
+        return Assets(ASSETS['songs']['sound'].format(id=self.id), self.server).get()
     
     # 获取歌曲评论
     def get_comment(

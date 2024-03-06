@@ -2,12 +2,11 @@
 
 谱面相关操作'''
 from json import dumps, loads
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .utils.note import *
 from .utils.utils import API
 from .utils.network import Api
-from ._settings import settings
 
 # 谱面数据类
 class Statistics:
@@ -285,5 +284,5 @@ class Chart(list[NoteType]):
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = Api(API['charts']['info'].format(id=id_, diff=diff), settings.proxy).request('get')
+        response = Api(API['charts']['info'].format(id=id_, diff=diff)).request('get')
         return cls.normalize(response.json())

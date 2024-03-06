@@ -1,10 +1,9 @@
 '''`bestdori.logincampaigns`
 
 BanG Dream! 登录奖励相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
-from ._settings import settings
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
@@ -24,7 +23,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总登录奖励信息
     '''
-    return Api(API['loginCampaigns']['all'].format(index), settings.proxy).request('get').json()
+    return Api(API['loginCampaigns']['all'].format(index)).request('get').json()
 
 # 登录奖励类
 class LoginCampaign:
@@ -60,7 +59,7 @@ class LoginCampaign:
         if len(self._info) <= 0:
             # 如果没有登录奖励信息存储
             response = Api(
-                API['loginCampaigns']['info'].format(self.id), settings.proxy
+                API['loginCampaigns']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -156,5 +155,5 @@ class LoginCampaign:
         return Assets(
             ASSETS['event']['loginbouns'].format(
                 asset_bundle_name=asset_bundle_name[index]
-            ), server, settings.proxy
+            ), server
         ).get()

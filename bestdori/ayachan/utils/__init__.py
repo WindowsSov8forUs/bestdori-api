@@ -2,5 +2,5 @@
 
 ayachan 杂项模块'''
 
-from .network import Api
-from .utils import API
+from .utils import API as API
+from .network import Api as Api

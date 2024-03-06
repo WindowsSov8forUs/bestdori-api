@@ -7,6 +7,7 @@ from httpx._models import Cookies
 from httpx import Response, Request, Client
 from typing import Optional, Literal, cast, Any
 
+from ._settings import settings
 from ..exceptions import (
     AssetsNotExistError,
     RequestException,
@@ -35,7 +36,7 @@ class Api:
     ) -> None:
         '''初始化'''
         self.api = api
-        self.proxy = proxy
+        self.proxy = proxy or settings.proxy
         self.headers = {'Content-Type': 'application/json;charset=UTF-8'}
         return
     
@@ -87,7 +88,7 @@ class Api:
             proxies = None
         
         # 发送请求并获取响应
-        with Client(proxies=cast(dict, proxies)) as client:
+        with settings.client or Client(proxies=cast(dict, proxies)) as client:
             response = client.send(request)
             client.close()
         
@@ -152,7 +153,7 @@ class Assets:
         '''
         self.url = url
         self.server = server
-        self.proxy = proxy
+        self.proxy = proxy or settings.proxy
         return
     
     # 获取资源连接
@@ -212,7 +213,7 @@ class Assets:
             proxies = None
         
         # 发送请求并获取响应
-        with Client(proxies=cast(dict, proxies)) as client:
+        with settings.client or Client(proxies=cast(dict, proxies)) as client:
             response = client.send(request)
             client.close()
         
@@ -244,7 +245,7 @@ class Assets:
             proxies = None
         
         # 发送请求并获取响应
-        with Client(proxies=cast(dict, proxies)) as client:
+        with settings.client or Client(proxies=cast(dict, proxies)) as client:
             response = client.send(request)
             client.close()
         
@@ -281,7 +282,7 @@ class Res:
             proxy (Optional[str]): 代理服务器
         '''
         self.url = url
-        self.proxy = proxy
+        self.proxy = proxy or settings.proxy
         return
     
     # 获取资源
@@ -308,7 +309,7 @@ class Res:
             proxies = None
         
         # 发送请求并获取响应
-        with Client(proxies=cast(dict, proxies)) as client:
+        with settings.client or Client(proxies=cast(dict, proxies)) as client:
             response = client.send(request)
             client.close()
         

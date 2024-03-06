@@ -1,11 +1,10 @@
 '''`bestdori.characters`
 
 BanG Dream! 角色相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
 from .utils import hex_to_rgb
-from ._settings import settings
 from .utils.utils import API, RES, ASSETS
 from .utils.network import Api, Res, Assets
 from .exceptions import (
@@ -23,7 +22,7 @@ def get_all(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总角色信息
     '''
-    return Api(API['characters']['all'].format(index), settings.proxy).request('get').json()
+    return Api(API['characters']['all'].format(index)).request('get').json()
 
 # 获取主要角色信息
 def get_main(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
@@ -36,7 +35,7 @@ def get_main(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的主要角色信息
     '''
-    return Api(API['characters']['main'].format(index), settings.proxy).request('get').json()
+    return Api(API['characters']['main'].format(index)).request('get').json()
 
 # 角色类
 class Character:
@@ -72,7 +71,7 @@ class Character:
         if len(self._info) <= 0:
             # 如果没有角色信息存储
             response = Api(
-                API['characters']['info'].format(self.id), proxy=settings.proxy
+                API['characters']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -161,5 +160,5 @@ class Character:
             bytes: 主视觉图资源字节 `bytes`
         '''
         return Assets(
-            ASSETS['characters']['character_kv_image'].format(id=self.id), 'jp', settings.proxy
+            ASSETS['characters']['character_kv_image'].format(id=self.id), 'jp'
         ).get()

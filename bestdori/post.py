@@ -2,10 +2,10 @@
 
 社区帖子相关操作'''
 from typing_extensions import overload
-from typing import TypedDict, Optional, Literal, Union, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union, Literal, Optional, TypedDict
 
 from .charts import Chart
-from ._settings import settings
+from .utils._settings import settings
 from .utils.content import Content
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
@@ -158,7 +158,7 @@ def get_list(**kwargs: Any) -> dict[str, Any]:
             "".join(x.capitalize() if i > 0 else x for i, x in enumerate(key.split("_")))
         ): value for key, value in kwargs.items() if value is not None
     }
-    response = Api(API['post']['list'], settings.proxy).request('post', data=kwargs)
+    response = Api(API['post']['list']).request('post', data=kwargs)
     return response.json()
 
 # 搜索标签
@@ -177,7 +177,7 @@ def search_tags(
     返回:
         list[Tag]: 标签类 `Tag` 列表
     '''
-    response = Api(API['post']['tag'], settings.proxy).request(
+    response = Api(API['post']['tag']).request(
         'get',
         params={
             'type': type_,
@@ -308,7 +308,7 @@ def post(
             "".join(x.capitalize() if i > 0 else x for i, x in enumerate(key.split("_")))
         ): value for key, value in kwargs.items() if value is not None
     }
-    response = Api(API['post']['post'], settings.proxy).request(
+    response = Api(API['post']['post']).request(
         'post',
         cookies=me.cookies,
         data=kwargs
@@ -334,7 +334,7 @@ def find_post(category_name: str, category_id: str, id_: int) -> int:
         'categoryId': category_id,
         'id': id_
     }
-    response = Api(API['post']['find'], settings.proxy).request('get', params=params)
+    response = Api(API['post']['find']).request('get', params=params)
     if (position := response.json().get('position', None)) is None:
         raise ValueError('查询帖子顺序时出现未知错误。')
     return position
@@ -366,7 +366,7 @@ class Post:
         返回:
             dict[str, Any]: 基础信息
         '''
-        response = Api(API['post']['basic'], settings.proxy).request('get', params={'id': self.id,})
+        response = Api(API['post']['basic']).request('get', params={'id': self.id,})
         return response.json()
     
     # 获取帖子信息
@@ -378,7 +378,7 @@ class Post:
         '''
         if len(self._post) <= 0:
             # 如果没有帖子内容存储
-            response = Api(API['post']['details'], settings.proxy).request('get', params={'id': self.id,})
+            response = Api(API['post']['details']).request('get', params={'id': self.id,})
             if (post := response.json().get('post', None)) is not None:
                 self._post = dict(post)
             else:
@@ -449,7 +449,7 @@ class Post:
                 result['audio'] = None
             else:
                 try:
-                    response = Api(audio, settings.proxy).request('get')
+                    response = Api(audio).request('get')
                     response.raise_for_status()
                     result['audio'] = response.content
                 except Exception as exception:
@@ -461,7 +461,7 @@ class Post:
                 result['cover'] = None
             else:
                 try:
-                    response = Api(cover, settings.proxy).request('get')
+                    response = Api(cover).request('get')
                     response.raise_for_status()
                     result['cover'] = response.content
                 except Exception as exception:
@@ -473,7 +473,7 @@ class Post:
             if (id_ := song.get('id', None)) is None:
                 raise ValueError('未能获取歌曲 ID。')
             # 获取歌曲信息
-            info = Api(API['songs']['info'].format(id=id_), settings.proxy).request('get').json()
+            info = Api(API['songs']['info'].format(id=id_)).request('get').json()
             # 获取歌曲所在服务器
             if (published_at := info.get('publishedAt', None)) is None:
                 raise Exception('无法获取歌曲发布时间。')
@@ -488,7 +488,7 @@ class Post:
             # 获取歌曲音频
             try:
                 result['audio'] = Assets(
-                    ASSETS['songs']['sound'].format(id=str(id_)), server, settings.proxy
+                    ASSETS['songs']['sound'].format(id=str(id_)), server
                 ).get()
             except Exception as exception:
                 if settings.print:
@@ -508,7 +508,7 @@ class Post:
                 result['cover'] = Assets(
                     ASSETS['songs']['musicjacket'].format(
                         index=index, jacket_image=jacket_image[-1]
-                    ), server, settings.proxy
+                    ), server
                 ).get()
             except Exception as exception:
                 if settings.print:
@@ -519,20 +519,20 @@ class Post:
             if (id_ := song.get('id', None)) is None:
                 raise ValueError('未能获取歌曲 ID。')
             # 获取歌曲信息
-            info = Api(API['misc']['llsif'].format(index=10), settings.proxy).request('get').json()[str(id_)]
+            info = Api(API['misc']['llsif'].format(index=10)).request('get').json()[str(id_)]
             # 获取歌曲资源库
             live_icon_asset = info.get('live_icon_asset', None)
             sound_asset = info.get('sound_asset', None)
             # 获取歌曲音频
             try:
-                result['audio'] = Assets(sound_asset, 'llsif', settings.proxy).get()
+                result['audio'] = Assets(sound_asset, 'llsif').get()
             except Exception as exception:
                 if settings.print:
                     print(f'获取 LoveLive! 歌曲音频时失败：{type(exception).__name__}: {exception}')
                 result['audio'] = None
             # 获取歌曲封面
             try:
-                result['cover'] = Assets(live_icon_asset, 'llsif', settings.proxy).get()
+                result['cover'] = Assets(live_icon_asset, 'llsif').get()
             except Exception as exception:
                 if settings.print:
                     print(f'获取 LoveLive! 歌曲封面时失败：{type(exception).__name__}: {exception}')
@@ -598,7 +598,7 @@ class Post:
             me (Me): 自身用户对象
             value (bool, optional): 值 `True`: 喜欢帖子 `False`: 取消喜欢帖子
         '''
-        Api(API['post']['like'], settings.proxy).request(
+        Api(API['post']['like']).request(
             'post',
             data={'id': self.id, 'value': value},
             cookies=me.cookies

@@ -1,10 +1,9 @@
 '''`bestdori.cards`
 
 BanG Dream! 卡牌相关操作'''
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
 from .post import get_list
-from ._settings import settings
 from .utils.utils import API, RES, ASSETS
 from .utils.network import Api, Res, Assets
 from .exceptions import (
@@ -23,7 +22,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总卡牌信息
     '''
-    return Api(API['cards']['all'].format(index), proxy=settings.proxy).request('get').json()
+    return Api(API['cards']['all'].format(index)).request('get').json()
 
 # 获取属性图标
 def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy']) -> bytes:
@@ -39,7 +38,7 @@ def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy']) 
     返回:
         bytes: 属性图标字节数据
     '''
-    return Res(RES['icon']['svg'].format(name=f'{attribute}'), settings.proxy).get()
+    return Res(RES['icon']['svg'].format(name=f'{attribute}')).get()
 
 # 获取星星图标
 def get_star_icon(star: Literal['star', 'star_trained']) -> bytes:
@@ -53,7 +52,7 @@ def get_star_icon(star: Literal['star', 'star_trained']) -> bytes:
     返回:
         bytes: 星星图标字节数据
     '''
-    return Res(RES['icon']['png'].format(name=f'{star}'), settings.proxy).get()
+    return Res(RES['icon']['png'].format(name=f'{star}')).get()
 
 # 获取卡牌完整边框
 def get_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -65,7 +64,7 @@ def get_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌完整边框字节数据
     '''
-    return Res(RES['image']['png'].format(f'frame-{level}'), settings.proxy).get()
+    return Res(RES['image']['png'].format(f'frame-{level}')).get()
 
 # 获取卡牌缩略图边框
 def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -77,7 +76,7 @@ def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌缩略图边框字节数据
     '''
-    return Res(RES['image']['png'].format(f'card-{level}'), settings.proxy).get()
+    return Res(RES['image']['png'].format(f'card-{level}')).get()
 
 # 卡牌类
 class Card:
@@ -113,7 +112,7 @@ class Card:
         if len(self._info) <= 0:
             # 如果没有卡牌信息存储
             response = Api(
-                API['cards']['info'].format(self.id), proxy=settings.proxy
+                API['cards']['info'].format(self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -204,7 +203,7 @@ class Card:
         return Assets(
             ASSETS['characters']['resourceset'].format(
                 resource_set_name=resource_set_name, name='card', type=type_
-            ), self.server, settings.proxy
+            ), self.server
         ).get()
     
     # 获取卡牌无背景图片
@@ -224,7 +223,7 @@ class Card:
         return Assets(
             ASSETS['characters']['resourceset'].format(
                 resource_set_name=resource_set_name, name='trim', type=type_
-            ), self.server, settings.proxy
+            ), self.server
         ).get()
     
     # 获取卡牌缩略图图片
@@ -244,7 +243,7 @@ class Card:
         return Assets(
             ASSETS['thumb']['chara'].format(
                 id=str(int(self.id) // 50), resource_set_name=resource_set_name, type=type_
-            ), self.server, settings.proxy
+            ), self.server
         ).get()
     
     # 获取 LIVE 服装图片
@@ -261,5 +260,5 @@ class Card:
         return Assets(
             ASSETS['characters']['livesd'].format(
                 sd_resource_name=sd_resource_name
-            ), self.server, settings.proxy
+            ), self.server
         ).get()
