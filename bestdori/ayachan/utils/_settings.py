@@ -9,7 +9,5 @@ class Settings:
     '''代理服务器'''
     client: Optional[Client] = None
     '''HTTP 客户端'''
-    print: bool = False
-    '''是否打印输出信息'''
 
 settings = Settings()

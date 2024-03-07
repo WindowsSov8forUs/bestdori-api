@@ -19,8 +19,6 @@ class Settings:
     不建议直接设置，推荐通过 `Settings.set_user` 方法，
     传入传入用户名与密码设置
     '''
-    print: bool = False
-    '''是否打印输出信息'''
     client: Optional[Client] = None
     '''HTTP 客户端'''
     _username: Optional[str] = None

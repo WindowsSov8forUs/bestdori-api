@@ -450,26 +450,16 @@ class Post:
             if (audio := song.get('audio', None)) is None:
                 result['audio'] = None
             else:
-                try:
-                    response = Api(audio).request('get')
-                    response.raise_for_status()
-                    result['audio'] = response.content
-                except Exception as exception:
-                    if settings.print:
-                        print(f'获取自定义歌曲音频时失败：{type(exception).__name__}: {exception}')
-                    result['audio'] = None
+                response = Api(audio).request('get')
+                response.raise_for_status()
+                result['audio'] = response.content
             # 获取歌曲封面
             if (cover := song.get('cover', None)) is None:
                 result['cover'] = None
             else:
-                try:
-                    response = Api(cover).request('get')
-                    response.raise_for_status()
-                    result['cover'] = response.content
-                except Exception as exception:
-                    if settings.print:
-                        print(f'获取自定义歌曲封面时失败：{type(exception).__name__}: {exception}')
-                    result['cover'] = None
+                response = Api(cover).request('get')
+                response.raise_for_status()
+                result['cover'] = response.content
         elif type_ == 'bandori': # BanG Dream! 歌曲
             # 获取歌曲 ID
             if (id_ := song.get('id', None)) is None:
@@ -488,34 +478,24 @@ class Post:
             else:
                 raise NoDataException('歌曲服务器')
             # 获取歌曲音频
-            try:
-                result['audio'] = Assets(
-                    ASSETS['songs']['sound'].format(id=str(id_)), server
-                ).get()
-            except Exception as exception:
-                if settings.print:
-                    print(f'获取 BanG Dream! 歌曲音频时失败：{type(exception).__name__}: {exception}')
-                result['audio'] = None
+            result['audio'] = Assets(
+                ASSETS['songs']['sound'].format(id=str(id_)), server
+            ).get()
             # 获取歌曲封面
-            try:
-                # 获取数据包序列号
-                quotient, remainder = divmod(id_, 10)
-                if remainder == 0:
-                    index = str(id_)
-                else:
-                    index = str((quotient + 1) * 10)
-                
-                if (jacket_image := info.get('jacketImage', None)) is None:
-                    raise NoDataException('歌曲封面资源')
-                result['cover'] = Assets(
-                    ASSETS['songs']['musicjacket'].format(
-                        index=index, jacket_image=jacket_image[-1]
-                    ), server
-                ).get()
-            except Exception as exception:
-                if settings.print:
-                    print(f'获取 BanG Dream! 歌曲封面时失败：{type(exception).__name__}: {exception}')
-                result['cover'] = None
+            # 获取数据包序列号
+            quotient, remainder = divmod(id_, 10)
+            if remainder == 0:
+                index = str(id_)
+            else:
+                index = str((quotient + 1) * 10)
+            
+            if (jacket_image := info.get('jacketImage', None)) is None:
+                raise NoDataException('歌曲封面资源')
+            result['cover'] = Assets(
+                ASSETS['songs']['musicjacket'].format(
+                    index=index, jacket_image=jacket_image[-1]
+                ), server
+            ).get()
         elif type_ == 'llsif': # LoveLive! 歌曲
             # 获取歌曲 ID
             if (id_ := song.get('id', None)) is None:
@@ -526,19 +506,9 @@ class Post:
             live_icon_asset = info.get('live_icon_asset', None)
             sound_asset = info.get('sound_asset', None)
             # 获取歌曲音频
-            try:
-                result['audio'] = Assets(sound_asset, 'llsif').get()
-            except Exception as exception:
-                if settings.print:
-                    print(f'获取 LoveLive! 歌曲音频时失败：{type(exception).__name__}: {exception}')
-                result['audio'] = None
+            result['audio'] = Assets(sound_asset, 'llsif').get()
             # 获取歌曲封面
-            try:
-                result['cover'] = Assets(live_icon_asset, 'llsif').get()
-            except Exception as exception:
-                if settings.print:
-                    print(f'获取 LoveLive! 歌曲封面时失败：{type(exception).__name__}: {exception}')
-                result['cover'] = None
+            result['cover'] = Assets(live_icon_asset, 'llsif').get()
         else:
             raise AssetsNotExistError(f'{type_} 歌曲')
         
