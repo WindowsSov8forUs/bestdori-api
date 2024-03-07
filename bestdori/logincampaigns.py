@@ -7,8 +7,9 @@ from .post import get_list
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
-    LoginCampaignNotExistError,
-    ServerNotAvailableError
+    NoDataException,
+    ServerNotAvailableError,
+    LoginCampaignNotExistError
 )
 
 # 获取总登录奖励信息
@@ -105,12 +106,12 @@ class LoginCampaign:
         info = self.get_info()
         # 获取 eventName 数据
         if (caption := info.get('caption', None)) is None:
-            raise Exception('无法获取登录奖励标题。')
+            raise NoDataException('登录奖励标题')
         # 获取第一个非 None 登录奖励标题
         try:
             return next(filter(lambda x: x is not None, caption))
         except StopIteration:
-            raise Exception('无法获取登录奖励标题。')
+            raise NoDataException('登录奖励标题')
     
     # 获取登录奖励默认服务器
     @property
@@ -123,7 +124,7 @@ class LoginCampaign:
         info = self.get_info()
         # 获取 startAt 数据
         if (published_at := info.get('publishedAt', None)) is None:
-            raise Exception('无法获取登录奖励起始时间。')
+            raise NoDataException('登录奖励起始时间')
         # 根据 startAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -131,7 +132,7 @@ class LoginCampaign:
         elif published_at[3] is not None: return 'cn'
         elif published_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取登录奖励所在服务器。')
+            raise NoDataException('登录奖励所在服务器')
     
     # 获取登录奖励背景图图像
     def get_background(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:

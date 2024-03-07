@@ -6,8 +6,9 @@ from typing import Any, Literal
 from .utils.utils import API
 from .utils.network import Api
 from .exceptions import (
-    MiracleTicketExchangeNotExistError,
-    ServerNotAvailableError
+    NoDataException,
+    ServerNotAvailableError,
+    MiracleTicketExchangeNotExistError
 )
 
 # 获取总自选券信息
@@ -70,12 +71,12 @@ class MiracleTicketExchange:
         info = self.get_info()
         # 获取 eventName 数据
         if (name := info.get('name', None)) is None:
-            raise Exception('无法获取自选券标题。')
+            raise NoDataException('自选券标题')
         # 获取第一个非 None 自选券标题
         try:
             return next(filter(lambda x: x is not None, name))
         except StopIteration:
-            raise Exception('无法获取自选券标题。')
+            raise NoDataException('自选券标题')
     
     # 获取自选券默认服务器
     @property
@@ -88,7 +89,7 @@ class MiracleTicketExchange:
         info = self.get_info()
         # 获取 ids 数据
         if (ids := info.get('ids', None)) is None:
-            raise Exception('无法获取自选券 ID 列表。')
+            raise NoDataException('自选券 ID 列表')
         # 根据 ids 数据判断服务器
         if ids[0] is not None: return 'jp'
         elif ids[1] is not None: return 'en'
@@ -96,7 +97,7 @@ class MiracleTicketExchange:
         elif ids[3] is not None: return 'cn'
         elif ids[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取自选券所在服务器。')
+            raise NoDataException('自选券所在服务器')
     
     # 获取自选券 ID 列表
     def get_ids(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> list[int]:
@@ -111,7 +112,7 @@ class MiracleTicketExchange:
         info = self.get_info()
         # 获取 ids 数据
         if (ids := info.get('ids', None)) is None:
-            raise Exception('无法获取自选券 ID 列表。')
+            raise NoDataException('自选券 ID 列表')
         # 判断服务器
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)

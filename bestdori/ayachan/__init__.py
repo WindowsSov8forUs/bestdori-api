@@ -7,6 +7,7 @@ from typing import Any, Union, Literal, Optional
 
 from ..charts import Chart
 from .utils import Api, API
+from .exceptions import SonolusException
 
 # 自定义谱面分析
 def chart_analysis(map_: Chart, diff: Literal['0', '1', '2', '3', '4']) -> dict[str, Any]:
@@ -94,7 +95,7 @@ def sonolus_test(
     response = Api(API['levels']).request('post', data=data, files=files)
     file.close()
     if (uid := response.json().get('uid', None)) is None:
-        raise Exception('上传测试服失败。')
+        raise SonolusException('上传测试服失败。')
     return uid
 
 # 难度分析

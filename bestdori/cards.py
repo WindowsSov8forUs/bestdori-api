@@ -7,6 +7,7 @@ from .post import get_list
 from .utils.utils import API, RES, ASSETS
 from .utils.network import Api, Res, Assets
 from .exceptions import (
+    NoDataException,
     CardNotExistError
 )
 
@@ -158,12 +159,12 @@ class Card:
         info = self.get_info()
         # 获取 prefix 数据
         if (prefix := info.get('prefix', None)) is None:
-            raise Exception('无法获取卡牌标题。')
+            raise NoDataException('卡牌标题')
         # 获取第一个非 None 卡牌标题
         try:
             return next(filter(lambda x: x is not None, prefix))
         except StopIteration:
-            raise Exception('无法获取卡牌标题。')
+            raise NoDataException('卡牌标题')
     
     # 获取卡牌所在服务器
     @property
@@ -176,7 +177,7 @@ class Card:
         info = self.get_info()
         # 获取 releasedAt 数据
         if (released_at := info.get('releasedAt', None)) is None:
-            raise Exception('无法获取卡牌发布时间。')
+            raise NoDataException('卡牌发布时间')
         # 根据 releasedAt 数据判断服务器
         if released_at[0] is not None: return 'jp'
         elif released_at[1] is not None: return 'en'
@@ -184,7 +185,7 @@ class Card:
         elif released_at[3] is not None: return 'cn'
         elif released_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取卡牌所在服务器。')
+            raise NoDataException('卡牌所在服务器')
     
     # 获取卡牌完整图片
     def get_card(self, type_: Literal['normal', 'after_training']) -> bytes:

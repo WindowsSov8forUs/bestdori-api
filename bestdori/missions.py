@@ -7,6 +7,7 @@ from .post import get_list
 from .utils.utils import API
 from .utils.network import Api
 from .exceptions import (
+    NoDataException,
     MissionNotExistError
 )
 
@@ -104,12 +105,12 @@ class Mission:
         info = self.get_info()
         # 获取 title 数据
         if (title := info.get('title', None)) is None:
-            raise Exception('无法获取任务标题。')
+            raise NoDataException('任务标题')
         # 获取第一个非 None 任务标题
         try:
             return next(filter(lambda x: x is not None, title))
         except StopIteration:
-            raise Exception('无法获取任务标题。')
+            raise NoDataException('任务标题')
     
     # 获取任务所在服务器
     @property
@@ -122,7 +123,7 @@ class Mission:
         info = self.get_info()
         # 获取 startAt 数据
         if (start_at := info.get('startAt', None)) is None:
-            raise Exception('无法获取任务起始时间。')
+            raise NoDataException('任务起始时间')
         # 根据 startAt 数据判断服务器
         if start_at[0] is not None: return 'jp'
         elif start_at[1] is not None: return 'en'
@@ -130,5 +131,5 @@ class Mission:
         elif start_at[3] is not None: return 'cn'
         elif start_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取任务所在服务器。')
+            raise NoDataException('任务所在服务器')
     

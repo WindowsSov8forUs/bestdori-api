@@ -3,15 +3,17 @@
 向 Bestdori 发送请求相关模块'''
 from json import dumps
 from io import BufferedReader
+from typing import Optional, Literal, cast, Any
+
 from httpx._models import Cookies
 from httpx import Response, Request, Client
-from typing import Optional, Literal, cast, Any
 
 from ._settings import settings
 from ..exceptions import (
-    AssetsNotExistError,
+    REQUEST_EXCEPTION,
     RequestException,
-    REQUEST_EXCEPTION
+    NoContentTypeError,
+    AssetsNotExistError
 )
 
 # 向 Bestdori 发送 API 请求类
@@ -100,7 +102,7 @@ class Api:
             if content_type is not None:
                 return response
             else:
-                raise Exception('接收到的响应没有 content-type。')
+                raise NoContentTypeError(response)
         
         if isinstance((response_data := response.json()), dict):
             if (result := response_data.get('result', None)) is not None:

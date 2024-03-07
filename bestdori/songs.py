@@ -9,6 +9,7 @@ from .post import get_list
 from .utils.utils import ASSETS, API
 from .utils.network import Assets, Api
 from .exceptions import (
+    NoDataException,
     DiffNotExistError,
     SongNotExistError
 )
@@ -122,7 +123,7 @@ class Song:
         info = self.get_info()
         # 获取 publishedAt 数据
         if (published_at := info.get('publishedAt', None)) is None:
-            raise Exception('无法获取歌曲发布时间。')
+            raise NoDataException('歌曲发布时间')
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -130,7 +131,7 @@ class Song:
         elif published_at[3] is not None: return 'cn'
         elif published_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取歌曲服务器。')
+            raise NoDataException('歌曲服务器')
     
     # 获取歌曲名称
     @property
@@ -143,12 +144,12 @@ class Song:
         info = self.get_info()
         # 获取 musicTitle 数据
         if (music_title := info.get('musicTitle', None)) is None:
-            raise Exception('无法获取歌曲名称。')
+            raise NoDataException('歌曲名称')
         # 获取第一个非 None 歌曲名称
         try:
             return next(filter(lambda x: x is not None, music_title))
         except StopIteration:
-            raise Exception('无法获取歌曲名称。')
+            raise NoDataException('歌曲名称')
     
     # 获取歌曲谱面
     def get_chart(
@@ -186,7 +187,7 @@ class Song:
         
         info = self.get_info()
         if (jacket_image := info.get('jacketImage', None)) is None:
-            raise Exception('歌曲封面资源未找到。')
+            raise NoDataException('歌曲封面资源')
         jacket: list[Jacket] = []
         
         for image in jacket_image:

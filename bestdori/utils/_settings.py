@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Optional
 from httpx import Client
 from httpx._models import Cookies
 
+from ..exceptions import NoCookiesError
+
 if TYPE_CHECKING:
     from ..user import Me
 
@@ -41,6 +43,6 @@ class Settings:
         if self._username and self._password:
             if self._me:
                 return self._me.cookies
-        raise Exception('Cookies 未设置')
+        raise NoCookiesError()
 
 settings = Settings()

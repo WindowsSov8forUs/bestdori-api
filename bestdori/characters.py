@@ -8,6 +8,7 @@ from .utils import hex_to_rgb
 from .utils.utils import API, RES, ASSETS
 from .utils.network import Api, Res, Assets
 from .exceptions import (
+    NoDataException,
     CharacterNotExistError
 )
 
@@ -117,12 +118,12 @@ class Character:
         info = self.get_info()
         # 获取 characterName 数据
         if (character_name := info.get('characterName', None)) is None:
-            raise Exception('无法获取角色名称。')
+            raise NoDataException('角色名称')
         # 获取第一个非 None 角色名称
         try:
             return next(filter(lambda x: x is not None, character_name))
         except StopIteration:
-            raise Exception('无法获取角色名称。')
+            raise NoDataException('角色名称')
     
     # 获取角色图标
     @property
@@ -145,12 +146,12 @@ class Character:
         info = self.get_info()
         # 获取 colorCode 数据
         if (color_code := info.get('colorCode', None)) is None:
-            raise Exception('无法获取角色颜色。')
+            raise NoDataException('角色颜色')
         # 将 colorCode 转换为颜色元组
         try:
             return hex_to_rgb(color_code)
         except ValueError:
-            raise Exception('无法获取角色颜色。')
+            raise NoDataException('角色颜色')
     
     # 获取角色主视觉图
     def get_kv_image(self) -> bytes:

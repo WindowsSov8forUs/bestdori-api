@@ -7,9 +7,10 @@ from .post import get_list
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
-    ServerNotAvailableError,
+    NoDataException,
+    GachaNotExistError,
     AssetsNotExistError,
-    GachaNotExistError
+    ServerNotAvailableError
 )
 
 # 获取总招募信息
@@ -106,12 +107,12 @@ class Gacha:
         info = self.get_info()
         # 获取 eventName 数据
         if (gacha_name := info.get('gachaName', None)) is None:
-            raise Exception('无法获取招募标题。')
+            raise NoDataException('招募标题')
         # 获取第一个非 None 招募标题
         try:
             return next(filter(lambda x: x is not None, gacha_name))
         except StopIteration:
-            raise Exception('无法获取招募标题。')
+            raise NoDataException('招募标题')
     
     # 获取招募默认服务器
     @property
@@ -124,7 +125,7 @@ class Gacha:
         info = self.get_info()
         # 获取 publishedAt 数据
         if (published_at := info.get('publishedAt', None)) is None:
-            raise Exception('无法获取招募起始时间。')
+            raise NoDataException('招募起始时间')
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -132,7 +133,7 @@ class Gacha:
         elif published_at[3] is not None: return 'cn'
         elif published_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取招募所在服务器。')
+            raise NoDataException('招募所在服务器')
     
     # 获取招募缩略图图片
     def get_banner(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:

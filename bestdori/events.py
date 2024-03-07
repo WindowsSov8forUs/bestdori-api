@@ -8,10 +8,11 @@ from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .eventarchives import EventArchive
 from .exceptions import (
-    ServerNotAvailableError,
-    EventHasNoStampError,
+    NoDataException,
+    EventNotExistError,
     AssetsNotExistError,
-    EventNotExistError
+    EventHasNoStampError,
+    ServerNotAvailableError
 )
 
 # 获取总活动信息
@@ -111,12 +112,12 @@ class Event:
         info = self.get_info()
         # 获取 eventName 数据
         if (event_name := info.get('eventName', None)) is None:
-            raise Exception('无法获取活动标题。')
+            raise NoDataException('活动标题')
         # 获取第一个非 None 活动标题
         try:
             return next(filter(lambda x: x is not None, event_name))
         except StopIteration:
-            raise Exception('无法获取活动标题。')
+            raise NoDataException('活动标题')
     
     # 获取活动默认服务器
     @property
@@ -129,7 +130,7 @@ class Event:
         info = self.get_info()
         # 获取 startAt 数据
         if (start_at := info.get('startAt', None)) is None:
-            raise Exception('无法获取活动起始时间。')
+            raise NoDataException('活动起始时间')
         # 根据 startAt 数据判断服务器
         if start_at[0] is not None: return 'jp'
         elif start_at[1] is not None: return 'en'
@@ -137,7 +138,7 @@ class Event:
         elif start_at[3] is not None: return 'cn'
         elif start_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取活动所在服务器。')
+            raise NoDataException('活动所在服务器')
     
     # 获取活动缩略图图像
     def get_banner(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
@@ -238,12 +239,12 @@ class Event:
         info = self.get_info()
         # 获取活动点数奖励列表
         if (point_rewards := info.get('pointRewards', None)) is None:
-            raise Exception('获取活动奖励失败。')
+            raise NoDataException('活动奖励')
         # 获取第一个非 None 奖励列表
         try:
             point_reward = next(filter(lambda x: x is not None, point_rewards))
         except StopIteration:
-            raise Exception('获取活动奖励失败。')
+            raise NoDataException('活动奖励')
         # 获取 rewardType 为 stamp 的活动奖励
         try:
             reward = next(filter(lambda x: x['rewardType'] == 'stamp', point_reward))
@@ -290,5 +291,5 @@ class Event:
             elif self.server == 'tw': server = 2
             elif self.server == 'cn': server = 3
             elif self.server == 'kr': server = 4
-            else: raise Exception('无法获取活动服务器。')
+            else: raise NoDataException('活动服务器')
         return self.archive.get_top(server, mid, latest)

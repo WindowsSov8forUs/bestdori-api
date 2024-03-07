@@ -7,8 +7,9 @@ from .post import get_list
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
-    CostumeNotExistError,
-    AssetsNotExistError
+    NoDataException,
+    AssetsNotExistError,
+    CostumeNotExistError
 )
 
 # 获取总服装信息
@@ -101,7 +102,7 @@ class Costume:
         info = self.get_info()
         # 获取 characterId 数据
         if (character_id := info.get('characterId', None)) is None:
-            raise Exception('无法获取角色 ID。')
+            raise NoDataException('角色 ID')
         return character_id
     
     # 获取卡牌 ID
@@ -111,7 +112,7 @@ class Costume:
         info = self.get_info()
         # 获取 cards 数据
         if (cards := info.get('cards', None)) is None:
-            raise Exception('无法获取卡牌 ID。')
+            raise NoDataException('卡牌 ID')
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(self.server)
         return cards[index]
@@ -127,12 +128,12 @@ class Costume:
         info = self.get_info()
         # 获取 description 数据
         if (description := info.get('description', None)) is None:
-            raise Exception('无法获取服装标题。')
+            raise NoDataException('服装标题')
         # 获取第一个非 None 服装标题
         try:
             return next(filter(lambda x: x is not None, description))
         except StopIteration:
-            raise Exception('无法获取服装标题。')
+            raise NoDataException('服装标题')
     
     # 获取服装所在服务器
     @property
@@ -145,7 +146,7 @@ class Costume:
         info = self.get_info()
         # 获取 publishedAt 数据
         if (published_at := info.get('publishedAt', None)) is None:
-            raise Exception('无法获取服装发布时间。')
+            raise NoDataException('服装发布时间')
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -153,7 +154,7 @@ class Costume:
         elif published_at[3] is not None: return 'cn'
         elif published_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取服装所在服务器。')
+            raise NoDataException('服装所在服务器')
     
     # 获取服装模型数据
     @property

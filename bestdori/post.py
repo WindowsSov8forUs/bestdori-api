@@ -10,9 +10,11 @@ from .utils.content import Content
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
+    NoDataException,
+    RequestException,
+    PostHasNoSongError,
     AssetsNotExistError,
-    PostHasNoChartError,
-    PostHasNoSongError
+    PostHasNoChartError
 )
 
 if TYPE_CHECKING:
@@ -188,7 +190,7 @@ def search_tags(
     if (tags := response.json().get('tags', None)) is not None:
         return [Tag(tag) for tag in tags]
     else:
-        raise Exception('搜索标签时出现未知错误。')
+        raise RequestException('搜索标签时出现未知错误。')
 
 # 发表谱面
 @overload
@@ -382,7 +384,7 @@ class Post:
             if (post := response.json().get('post', None)) is not None:
                 self._post = dict(post)
             else:
-                raise Exception('无帖子信息获取。')
+                raise NoDataException('帖子信息')
         return self._post
     
     # 获取谱面对象
@@ -476,7 +478,7 @@ class Post:
             info = Api(API['songs']['info'].format(id=id_)).request('get').json()
             # 获取歌曲所在服务器
             if (published_at := info.get('publishedAt', None)) is None:
-                raise Exception('无法获取歌曲发布时间。')
+                raise NoDataException('歌曲发布时间')
             # 根据 publishedAt 数据判断服务器
             if published_at[0] is not None: server = 'jp'
             elif published_at[1] is not None: server = 'en'
@@ -484,7 +486,7 @@ class Post:
             elif published_at[3] is not None: server = 'cn'
             elif published_at[4] is not None: server = 'kr'
             else:
-                raise Exception('无法获取歌曲服务器。')
+                raise NoDataException('歌曲服务器')
             # 获取歌曲音频
             try:
                 result['audio'] = Assets(
@@ -504,7 +506,7 @@ class Post:
                     index = str((quotient + 1) * 10)
                 
                 if (jacket_image := info.get('jacketImage', None)) is None:
-                    raise Exception('歌曲封面资源未找到。')
+                    raise NoDataException('歌曲封面资源')
                 result['cover'] = Assets(
                     ASSETS['songs']['musicjacket'].format(
                         index=index, jacket_image=jacket_image[-1]

@@ -7,8 +7,9 @@ from .post import get_list
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .exceptions import (
-    ServerNotAvailableError,
-    ComicNotExistError
+    NoDataException,
+    ComicNotExistError,
+    ServerNotAvailableError
 )
 
 # 获取总漫画信息
@@ -99,12 +100,12 @@ class Comic:
         info = self.get_info()
         # 获取 title 数据
         if (title := info.get('title', None)) is None:
-            raise Exception('无法获取漫画标题。')
+            raise NoDataException('漫画标题')
         # 获取第一个非 None 漫画标题
         try:
             return next(filter(lambda x: x is not None, title))
         except StopIteration:
-            raise Exception('无法获取漫画标题。')
+            raise NoDataException('漫画标题')
     
     # 获取漫画副标题
     @property
@@ -117,12 +118,12 @@ class Comic:
         info = self.get_info()
         # 获取 subTitle 数据
         if (sub_title := info.get('subTitle', None)) is None:
-            raise Exception('无法获取漫画副标题。')
+            raise NoDataException('漫画副标题')
         # 获取第一个非 None 漫画副标题
         try:
             return next(filter(lambda x: x is not None, sub_title))
         except StopIteration:
-            raise Exception('无法获取漫画副标题。')
+            raise NoDataException('漫画副标题')
     
     # 获取漫画默认服务器
     @property
@@ -135,7 +136,7 @@ class Comic:
         info = self.get_info()
         # 获取 publicStartAt 数据
         if (public_start_at := info.get('publicStartAt', None)) is None:
-            raise Exception('无法获取漫画 ID 列表。')
+            raise NoDataException('漫画 ID 列表')
         # 根据 publicStartAt 数据判断服务器
         if public_start_at[0] is not None: return 'jp'
         elif public_start_at[1] is not None: return 'en'
@@ -143,7 +144,7 @@ class Comic:
         elif public_start_at[3] is not None: return 'cn'
         elif public_start_at[4] is not None: return 'kr'
         else:
-            raise Exception('无法获取漫画所在服务器。')
+            raise NoDataException('漫画所在服务器')
 
     # 获取漫画类型
     @property
