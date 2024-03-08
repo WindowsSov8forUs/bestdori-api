@@ -190,7 +190,7 @@ def search_tags(
     if (tags := response.json().get('tags', None)) is not None:
         return [Tag(tag) for tag in tags]
     else:
-        raise RequestException('搜索标签时出现未知错误。')
+        raise RequestException(API['post']['tag'], '搜索标签时出现未知错误')
 
 # 发表谱面
 @overload

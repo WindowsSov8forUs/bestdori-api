@@ -23,7 +23,7 @@ class BaseException(Exception):
 class RequestException(BaseException):
     '''请求发送错误'''
     # 初始化
-    def __init__(self, api: str, msg: str='无错误代码获取。', **kwargs: Any) -> None:
+    def __init__(self, api: str, msg: str='无错误代码获取', **kwargs: Any) -> None:
         if len(kwargs) > 0:
             msg += f': {kwargs}'
         else:
