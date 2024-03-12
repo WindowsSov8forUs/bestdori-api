@@ -2,7 +2,8 @@
 
 BanG Dream! 歌曲相关操作'''
 from typing import Any, Literal
-from requests.exceptions import HTTPError
+
+from httpx._exceptions import HTTPStatusError
 
 from .charts import Chart
 from .post import get_list
@@ -167,9 +168,12 @@ class Song:
         try:
             chart = Chart.get_chart(self.id, diff)
             return chart
-        except HTTPError:
-            # 难度不存在
-            raise DiffNotExistError(diff)
+        except HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # 难度不存在
+                raise DiffNotExistError(diff)
+            else:
+                raise e
     
     # 获取歌曲封面
     def get_jacket(self) -> list[Jacket]:
