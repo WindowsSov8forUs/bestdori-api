@@ -9,46 +9,50 @@ from ..charts import Chart
 from .utils import API, Api
 from .exceptions import SonolusException
 
+DIFF_STR = ['easy', 'normal', 'hard', 'expert', 'special']
+
 # 自定义谱面分析
-def chart_analysis(map_: Chart, diff: Literal['0', '1', '2', '3', '4']) -> dict[str, Any]:
+def chart_metrics_custom(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> dict[str, Any]:
     '''自定义谱面分析
 
     参数:
-        map_ (Chart): 谱面
-        diff (Literal[&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;]): 难度
+        chart (Chart): 谱面
+        diff (Literal[0, 1, 2, 3, 4]): 难度类型
 
     返回:
         dict[str, Any]: 分析结果
     '''
-    payload = {
-        'options': {
-            'diff': diff
-        },
-        'map': map_.to_list(),
-        'map_format_in': 'BestdoriV2'
-    }
-    return Api(API['map-info']).request('post', data=payload).json()
+    return Api(API['chart_metrics']['custom'].format(diff_str=DIFF_STR[diff])).request('post', json=chart.json()).json()
+
+# BanG Dream 谱面分析
+def chart_metrics_bandori(
+    id_: int,
+    diff: Literal[0, 1, 2, 3, 4]
+) -> dict[str, Any]:
+    '''BanG Dream 谱面分析
+
+    参数:
+        id_ (int): 歌曲 ID
+        diff (Literal[0, 1, 2, 3, 4]): 难度类型
+
+    返回:
+        dict[str, Any]: 分析结果
+    '''
+    return Api(API['chart_metrics']['bandori'].format(chart_id=id_, diff_str=DIFF_STR[diff])).request('get').json()
 
 # Bestdori 谱面分析
-def bestdori_chart_analysis(
-    id_: int,
-    diff: Literal['0', '1', '2', '3', '4']
+def chart_metrics_bestdori(
+    id_: int
 ) -> dict[str, Any]:
     '''Bestdori 谱面分析
 
     参数:
         id_ (int): 谱面 ID
-        diff (Literal[&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;]): 难度
 
     返回:
         dict[str, Any]: 分析结果
     '''
-    return Api(API['bestdori'].format(id=id_)).request(
-        'get',
-        params={
-            'diff': diff
-        }
-    ).json()
+    return Api(API['chart_metrics']['bestdori'].format(chart_id=id_)).request('get').json()
 
 # Sonolus 谱面测试上传
 def post_sonolus_levels(
@@ -112,27 +116,5 @@ def get_sonolus_levels(uid: int) -> Chart:
     '''
     response = Api(API['levels']['get'].format(uid=uid)).request('get')
     return Chart.normalize(response.json())
-
-# 难度分析
-def diff_analysis(
-    id_: int,
-    diff: Optional[Literal[0, 1, 2, 3, 4]]=None
-) -> dict[str, Any]:
-    '''难度分析
-
-    参数:
-        id_ (int): 谱面 ID
-        diff (Optional[Literal[0, 1, 2, 3, 4]], optional): 谱面难度
-
-    返回:
-        dict[str, Any]: 难度分析结果
-    '''
-    # 构建数据
-    params = {'id': id_}
-    if diff is not None:
-        params['diff'] = diff
-    
-    # 获取结果
-    return Api(API['DiffAnalysis']).request('get', params=params).json()
 
 from .utils._settings import settings as settings
