@@ -6,7 +6,7 @@ from mimetypes import guess_type
 from typing import Any, Union, Literal, Optional
 
 from ..charts import Chart
-from .utils import Api, API
+from .utils import API, Api
 from .exceptions import SonolusException
 
 # 自定义谱面分析
@@ -50,8 +50,8 @@ def bestdori_chart_analysis(
         }
     ).json()
 
-# Sonolus 谱面测试
-def sonolus_test(
+# Sonolus 谱面测试上传
+def post_sonolus_levels(
     title: str,
     bgm: Union[str, Path],
     difficulty: int,
@@ -95,8 +95,23 @@ def sonolus_test(
     response = Api(API['levels']).request('post', data=data, files=files)
     file.close()
     if (uid := response.json().get('uid', None)) is None:
-        raise SonolusException('上传测试服失败。')
+        description = response.json().get('description', None)
+        detail = response.json().get('detail', None)
+        raise SonolusException(f'{description} {detail}')
     return uid
+
+# Sonolus 测试服谱面获取
+def get_sonolus_levels(uid: int) -> Chart:
+    '''Sonolus 测试服谱面获取
+
+    参数:
+        uid (int): 测试服 ID
+
+    返回:
+        Chart: 谱面
+    '''
+    response = Api(API['levels']['get'].format(uid=uid)).request('get')
+    return Chart.normalize(response.json())
 
 # 难度分析
 def diff_analysis(
