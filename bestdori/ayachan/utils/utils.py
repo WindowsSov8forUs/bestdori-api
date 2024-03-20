@@ -4,8 +4,6 @@ ayachan 工具库模块'''
 
 
 API = {
-    'map-info': 'v2/map-info/',
-    'bestdori': 'v2/map-info/bestdori/{id}',
     'version': 'v2/version',
     'chart_metrics': {
         'bandori': 'v2/chart/metrics/bandoru/{chart_id}/{diff_str}',
