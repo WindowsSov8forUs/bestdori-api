@@ -7,6 +7,9 @@ API = {
     'map-info': 'v2/map-info/',
     'bestdori': 'v2/map-info/bestdori/{id}',
     'DiffAnalysis': 'DiffAnalysis',
-    'levels': 'https://sonolus.ayachan.fun/test/sonolus/levels'
+    'levels': {
+        'post': 'https://sonolus.ayachan.fun/test/sonolus/levels',
+        'get': 'https://sonolus.ayachan.fun/test/sonolus/levels/{uid}/bdv2.json'
+    }
 }
 '''ayachan API 集合'''
