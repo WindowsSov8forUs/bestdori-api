@@ -39,18 +39,17 @@ class Api:
         *,
         params: Optional[dict[str, Any]]=None,
         data: Optional[dict[str, Any]]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]]=None
+        files: Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]]=None,
+        json: Optional[Any]=None
     ) -> Response:
         '''请求发送
 
         参数:
             method (Literal[&#39;get&#39;, &#39;post&#39;]): API 调用方法
-            
             params (Optional[dict[str, Any]], optional): 调用参数
-            
             data (Optional[dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
-            
             files (Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
+            json (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
 
         返回:
             Response: 收到的响应
@@ -70,9 +69,10 @@ class Api:
                 else data
             ),
             files=files,
+            json=json,
             headers={
                 'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryxjpDgorEXUAUIbBN'
-            } if 'sonolus' in self.api else None
+            } if 'sonolus' in self.api and method == 'post' else None
         )
         # 构建代理服务器字典
         if self.proxy is not None:
