@@ -7,6 +7,7 @@ from httpx import Response, Request, Client
 from typing import Any, Literal, Optional, cast
 
 from ._settings import settings
+from ...exceptions import AssetsNotExistError
 
 # 向 ayachan 发送 API 请求类
 class Api:
@@ -88,3 +89,78 @@ class Api:
         # 处理接收到的响应
         response.raise_for_status()
         return response
+
+# 获取 ayachan 资源数据
+class Assets:
+    '''获取 Bestdori 资源数据
+
+    参数:
+        url (str): 请求的资源地址
+        proxy (Optional[str]): 代理服务器
+    '''
+    url: str
+    '''请求的资源地址'''
+    proxy: Optional[str]=None
+    '''代理服务器'''
+    # 初始化
+    def __init__(
+        self,
+        url: str,
+        proxy: Optional[str]=None
+    ) -> None:
+        '''获取 Bestdori 资源数据
+
+        参数:
+            url (str): 请求的资源地址
+            proxy (Optional[str]): 代理服务器
+        '''
+        self.url = url
+        self.proxy = proxy or settings.proxy
+        return
+    
+    # 获取资源连接
+    def get_url(self) -> str:
+        '''获取资源连接
+
+        返回:
+            str: 获取的资源连接 `str`
+        '''
+        # 处理接收到的 URL
+        if self.api.startswith('http://') or self.api.startswith('https://'):
+            self.api = self.api
+        else:
+            self.api = 'https://api.ayachan.fun/' + self.api
+        return self.url
+    
+    # 获取资源
+    def get(self) -> bytes:
+        '''获取资源
+
+        返回:
+            bytes: 获取的资源字节数据 `bytes`
+        '''
+        # 处理接收到的 URL
+        if self.api.startswith('http://') or self.api.startswith('https://'):
+            self.api = self.api
+        else:
+            self.api = 'https://api.ayachan.fun/' + self.api
+        # 构建一个请求体
+        request = Request('get', self.url)
+        # 构建代理服务器字典
+        if self.proxy is not None:
+            proxies = {'http://': self.proxy, 'https://': self.proxy}
+        else:
+            proxies = None
+        
+        # 发送请求并获取响应
+        client = settings.client or Client(proxies=cast(dict, proxies))
+        response = client.send(request)
+        if not settings.client:
+            client.close()
+        
+        response.raise_for_status()
+        # 检测响应资源是否存在
+        content_type = response.headers.get('content-type', None)
+        if content_type is None or content_type == 'text/html':
+            raise AssetsNotExistError(self.url)
+        return response.content
