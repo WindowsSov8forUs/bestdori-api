@@ -6,7 +6,7 @@ ayachan 工具库模块'''
 API = {
     'version': 'v2/version',
     'chart_metrics': {
-        'bandori': 'v2/chart/metrics/bandoru/{chart_id}/{diff_str}',
+        'bandori': 'v2/chart/metrics/bandori/{chart_id}/{diff_str}',
         'bestdori': 'v2/chart/metrics/bestdori/{chart_id}',
         'custom': 'v2/chart/metrics/custom/{diff_str}'
     },
