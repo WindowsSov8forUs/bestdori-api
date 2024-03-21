@@ -22,7 +22,7 @@ def chart_metrics_custom(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> dict[str
     返回:
         dict[str, Any]: 分析结果
     '''
-    return Api(API['chart_metrics']['custom'].format(diff_str=DIFF_STR[diff])).request('post', json=chart.json()).json()
+    return Api(API['chart_metrics']['custom'].format(diff_str=DIFF_STR[diff])).request('post', data=chart.to_list()).json()
 
 # BanG Dream 谱面分析
 def chart_metrics_bandori(
