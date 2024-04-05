@@ -24,7 +24,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总服装信息
     '''
-    return Api(API['costumes']['all'].format(index)).request('get').json()
+    return Api(API['costumes']['all'].format(index=index)).request('get').json()
 
 # 服装类
 class Costume:
@@ -60,7 +60,7 @@ class Costume:
         if len(self._info) <= 0:
             # 如果没有服装信息存储
             response = Api(
-                API['costumes']['info'].format(self.id)
+                API['costumes']['info'].format(id=self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -94,6 +94,23 @@ class Costume:
             limit=limit,
             offset=offset
         )
+    
+    # 获取 LIVE 服装图片
+    def get_sdchara(self) -> bytes:
+        '''获取 LIVE 服装图片
+
+        返回:
+            bytes: 服装 LIVE 图片字节数据 `bytes`
+        '''
+        # 获取服装 sdchara 数据包名称
+        info = self.get_info()
+        if (sd_resource_name := info.get('sdResourceName', None)) is None:
+            raise ValueError('无法获取服装数据包名称。')
+        return Assets(
+            ASSETS['characters']['livesd'].format(
+                sd_resource_name=sd_resource_name
+            ), self.server
+        ).get()
     
     # 获取角色 ID
     @property
@@ -192,7 +209,7 @@ class Costume:
         try:
             return Assets(
                 ASSETS['thumb']['costume'].format(
-                    id=str(int(self.id) // 50), asset_bundle_name=asset_bundle_name
+                    id=str(self.id // 50), asset_bundle_name=asset_bundle_name
                 ), self.server
             ).get()
         except AssetsNotExistError:
