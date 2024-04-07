@@ -12,6 +12,7 @@ API = {
     },
     'levels': {
         'post': 'https://sonolus.ayachan.fun/test/sonolus/levels',
+        'info': 'https://sonolus.ayachan.fun/test/sonolus/levels/{uid}',
         'get': 'https://sonolus.ayachan.fun/test/sonolus/levels/{uid}/bdv2.json'
     }
 }

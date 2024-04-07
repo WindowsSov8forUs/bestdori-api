@@ -117,4 +117,16 @@ def get_sonolus_levels(uid: int) -> Chart:
     response = Api(API['levels']['get'].format(uid=uid)).request('get')
     return Chart.normalize(response.json())
 
+# Sonolus 测试服谱面信息获取
+def sonolus_levels(uid: int) -> dict[str, Any]:
+    '''Sonolus 测试服谱面信息获取
+
+    参数:
+        uid (int): 测试服 ID
+
+    返回:
+        dict[str, Any]: 谱面信息
+    '''
+    return Api(API['levels']['info'].format(uid=uid)).request('get').json()
+
 from .utils._settings import settings as settings
