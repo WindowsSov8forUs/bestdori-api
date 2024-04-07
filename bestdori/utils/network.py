@@ -56,13 +56,9 @@ class Api:
 
         参数:
             method (Literal[&#39;get&#39;, &#39;post&#39;]): API 调用方法
-            
             cookies (Optional[Cookies], optional): Cookies
-            
             params (Optional[dict[str, Any]], optional): 调用参数
-            
             data (Optional[dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
-            
             files (Optional[dict[str, tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
@@ -84,8 +80,10 @@ class Api:
             headers=self.headers if not self.api.endswith('/upload') else None
         )
         # 构建代理服务器字典
-        if self.proxy is not None:
+        if isinstance(self.proxy, str):
             proxies = {'http://': self.proxy, 'https://': self.proxy}
+        elif isinstance(self.proxy, dict):
+            proxies = self.proxy
         else:
             proxies = None
         
@@ -205,8 +203,10 @@ class Assets:
         # 构建一个请求体
         request = Request('get', self.url)
         # 构建代理服务器字典
-        if self.proxy is not None:
+        if isinstance(self.proxy, str):
             proxies = {'http://': self.proxy, 'https://': self.proxy}
+        elif isinstance(self.proxy, dict):
+            proxies = self.proxy
         else:
             proxies = None
         
@@ -298,8 +298,10 @@ class Res:
             self.url
         )
         # 构建代理服务器字典
-        if self.proxy is not None:
+        if isinstance(self.proxy, str):
             proxies = {'http://': self.proxy, 'https://': self.proxy}
+        elif isinstance(self.proxy, dict):
+            proxies = self.proxy
         else:
             proxies = None
         

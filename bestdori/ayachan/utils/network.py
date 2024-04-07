@@ -77,8 +77,10 @@ class Api:
             )
         )
         # 构建代理服务器字典
-        if self.proxy is not None:
+        if isinstance(self.proxy, str):
             proxies = {'http://': self.proxy, 'https://': self.proxy}
+        elif isinstance(self.proxy, dict):
+            proxies = self.proxy
         else:
             proxies = None
         
@@ -147,8 +149,10 @@ class Assets:
         # 构建一个请求体
         request = Request('get', self.url)
         # 构建代理服务器字典
-        if self.proxy is not None:
+        if isinstance(self.proxy, str):
             proxies = {'http://': self.proxy, 'https://': self.proxy}
+        elif isinstance(self.proxy, dict):
+            proxies = self.proxy
         else:
             proxies = None
         

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Union, Optional
 
 from httpx._models import Cookies
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class Settings:
     '''`bestdori_api` 设置项类'''
     
-    proxy: Optional[str] = None
+    proxy: Optional[Union[dict[str, str], str]] = None
     '''代理服务器
 
     若想要使用代理，则必须设置该选项，
