@@ -28,7 +28,7 @@ def get_all(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总活动信息
     '''
-    return Api(API['events']['all'].format(index)).request('get').json()
+    return Api(API['events']['all'].format(index=index)).request('get').json()
 
 # 活动类
 class Event:

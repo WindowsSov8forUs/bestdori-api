@@ -23,7 +23,7 @@ def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总漫画信息
     '''
-    return Api(API['all']['comics'].format(index)).request('get').json()
+    return Api(API['all']['comics'].format(index=index)).request('get').json()
 
 # 漫画类
 class Comic:

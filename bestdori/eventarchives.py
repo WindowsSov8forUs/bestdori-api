@@ -21,7 +21,7 @@ def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总活动信息
     '''
-    return Api(API['all']['archives'].format(index)).request('get').json()
+    return Api(API['all']['archives'].format(index=index)).request('get').json()
 
 # 活动数据类
 class EventArchive():

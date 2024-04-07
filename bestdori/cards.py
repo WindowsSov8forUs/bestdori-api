@@ -23,7 +23,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总卡牌信息
     '''
-    return Api(API['cards']['all'].format(index)).request('get').json()
+    return Api(API['cards']['all'].format(index=index)).request('get').json()
 
 # 获取属性图标
 def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy']) -> bytes:

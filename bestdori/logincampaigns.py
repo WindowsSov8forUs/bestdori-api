@@ -24,7 +24,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总登录奖励信息
     '''
-    return Api(API['loginCampaigns']['all'].format(index)).request('get').json()
+    return Api(API['loginCampaigns']['all'].format(index=index)).request('get').json()
 
 # 登录奖励类
 class LoginCampaign:

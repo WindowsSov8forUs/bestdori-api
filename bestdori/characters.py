@@ -23,7 +23,7 @@ def get_all(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总角色信息
     '''
-    return Api(API['characters']['all'].format(index)).request('get').json()
+    return Api(API['characters']['all'].format(index=index)).request('get').json()
 
 # 获取主要角色信息
 def get_main(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
@@ -36,7 +36,7 @@ def get_main(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的主要角色信息
     '''
-    return Api(API['characters']['main'].format(index)).request('get').json()
+    return Api(API['characters']['main'].format(index=index)).request('get').json()
 
 # 角色类
 class Character:

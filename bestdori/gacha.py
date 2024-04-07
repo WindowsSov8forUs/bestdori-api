@@ -25,7 +25,7 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
     返回:
         dict[str, dict[str, Any]]: 获取到的总招募信息
     '''
-    return Api(API['gacha']['all'].format(index)).request('get').json()
+    return Api(API['gacha']['all'].format(index=index)).request('get').json()
 
 # 招募类
 class Gacha:
