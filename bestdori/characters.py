@@ -72,7 +72,7 @@ class Character:
         if len(self._info) <= 0:
             # 如果没有角色信息存储
             response = Api(
-                API['characters']['info'].format(self.id)
+                API['characters']['info'].format(id=self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info

@@ -478,15 +478,15 @@ class Post:
                 raise NoDataException('歌曲服务器')
             # 获取歌曲音频
             result['audio'] = Assets(
-                ASSETS['songs']['sound'].format(id=str(id_)), server
+                ASSETS['songs']['sound'].format(id=id_), server
             ).get()
             # 获取歌曲封面
             # 获取数据包序列号
             quotient, remainder = divmod(id_, 10)
             if remainder == 0:
-                index = str(id_)
+                index = id_
             else:
-                index = str((quotient + 1) * 10)
+                index = (quotient + 1) * 10
             
             if (jacket_image := info.get('jacketImage', None)) is None:
                 raise NoDataException('歌曲封面资源')

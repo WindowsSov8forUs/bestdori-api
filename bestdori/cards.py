@@ -65,7 +65,7 @@ def get_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌完整边框字节数据
     '''
-    return Res(RES['image']['png'].format(f'frame-{level}')).get()
+    return Res(RES['image']['png'].format(name=f'frame-{level}')).get()
 
 # 获取卡牌缩略图边框
 def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -77,7 +77,7 @@ def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌缩略图边框字节数据
     '''
-    return Res(RES['image']['png'].format(f'card-{level}')).get()
+    return Res(RES['image']['png'].format(name=f'card-{level}')).get()
 
 # 卡牌类
 class Card:
@@ -113,7 +113,7 @@ class Card:
         if len(self._info) <= 0:
             # 如果没有卡牌信息存储
             response = Api(
-                API['cards']['info'].format(self.id)
+                API['cards']['info'].format(id=self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info

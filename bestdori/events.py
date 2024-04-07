@@ -66,7 +66,7 @@ class Event:
         if len(self._info) <= 0:
             # 如果没有活动信息存储
             response = Api(
-                API['events']['info'].format(self.id)
+                API['events']['info'].format(id=self.id)
             ).request('get')
             self._info = dict(response.json())
         return self._info
@@ -253,7 +253,7 @@ class Event:
         stamp_id = reward['rewardId']
         # 获取全部贴纸资源
         stamps = Api(
-            API['all']['stamps'].format(index='2')
+            API['all']['stamps'].format(index=2)
         ).request('get').json()
         if (stamp := stamps.get(stamp_id, None)) is None:
             raise AssetsNotExistError(f'贴纸 {stamp_id}')
