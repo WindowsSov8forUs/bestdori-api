@@ -5,7 +5,6 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Any, Union, Literal, Optional, TypedDict
 
 from .charts import Chart
-from .utils._settings import settings
 from .utils.content import Content
 from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets

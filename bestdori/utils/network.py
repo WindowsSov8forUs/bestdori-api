@@ -3,7 +3,7 @@
 向 Bestdori 发送请求相关模块'''
 from json import dumps
 from io import BufferedReader
-from typing import Optional, Literal, cast, Any
+from typing import Any, Union, Literal, Optional, cast
 
 from httpx._models import Cookies
 from httpx import Response, Request, Client
@@ -22,11 +22,11 @@ class Api:
 
     参数:
         api (str): 请求的 API 地址
-        
-        proxy (Optional[str]): 代理服务器'''
+        proxy (Optional[Union[dict[str, str], str]]): 代理服务器
+    '''
     api: str
     '''请求的 API 地址'''
-    proxy: Optional[str]=None
+    proxy: Optional[Union[dict[str, str], str]]=None
     '''代理服务器'''
     headers: dict[str, str]
     '''请求头'''
@@ -34,7 +34,7 @@ class Api:
     def __init__(
         self,
         api: str,
-        proxy: Optional[str]=None
+        proxy: Optional[Union[dict[str, str], str]]=None
     ) -> None:
         '''初始化'''
         self.api = api
@@ -90,10 +90,8 @@ class Api:
             proxies = None
         
         # 发送请求并获取响应
-        client = settings.client or Client(proxies=cast(dict, proxies))
-        response = client.send(request)
-        if not settings.client:
-            client.close()
+        with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
+            response = client.send(request)
         
         # 处理接收到的响应
         response.raise_for_status()
@@ -128,31 +126,28 @@ class Assets:
 
     参数:
         url (str): 请求的资源地址
-        
         server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 资源所在服务器
-        
-        proxy (Optional[str]): 代理服务器'''
+        proxy (Optional[Union[dict[str, str], str]]): 代理服务器
+    '''
     url: str
     '''请求的资源地址'''
     server: Literal['jp', 'en', 'tw', 'cn', 'kr', 'llsif']
     '''资源所在服务器'''
-    proxy: Optional[str]=None
+    proxy: Optional[Union[dict[str, str], str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(
         self,
         url: str,
         server: Literal['jp', 'en', 'tw', 'cn', 'kr', 'llsif'],
-        proxy: Optional[str]=None
+        proxy: Optional[Union[dict[str, str], str]]=None
     ) -> None:
         '''获取 Bestdori 资源数据
 
         参数:
             url (str): 请求的资源地址
-            
             server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;, &#39;llsif&#39;]): 资源所在服务器
-            
-            proxy (Optional[str]): 代理服务器
+            proxy (Optional[Union[dict[str, str], str]]): 代理服务器
         '''
         self.url = url
         self.server = server
@@ -216,10 +211,8 @@ class Assets:
             proxies = None
         
         # 发送请求并获取响应
-        client = settings.client or Client(proxies=cast(dict, proxies))
-        response = client.send(request)
-        if not settings.client:
-            client.close()
+        with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
+            response = client.send(request)
         
         response.raise_for_status()
         # 检测响应资源是否存在
@@ -249,10 +242,8 @@ class Assets:
             proxies = None
         
         # 发送请求并获取响应
-        client = settings.client or Client(proxies=cast(dict, proxies))
-        response = client.send(request)
-        if not settings.client:
-            client.close()
+        with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
+            response = client.send(request)
         
         response.raise_for_status()
         # 检测响应资源是否存在
@@ -267,23 +258,22 @@ class Res:
 
     参数:
         url (str): 请求的 res 资源地址
-        
-        proxy (Optional[str]): 代理服务器'''
+        proxy (Optional[Union[dict[str, str], str]]): 代理服务器
+    '''
     url: str
     '''请求的资源地址'''
-    proxy: Optional[str]=None
+    proxy: Optional[Union[dict[str, str], str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(
         self,
         url: str,
-        proxy: Optional[str]=None
+        proxy: Optional[Union[dict[str, str], str]]=None
     ) -> None:
         '''获取 Bestdori 资源数据
 
         参数:
             url (str): 请求的资源地址
-            
             proxy (Optional[str]): 代理服务器
         '''
         self.url = url
@@ -314,10 +304,8 @@ class Res:
             proxies = None
         
         # 发送请求并获取响应
-        client = settings.client or Client(proxies=cast(dict, proxies))
-        response = client.send(request)
-        if not settings.client:
-            client.close()
+        with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
+            response = client.send(request)
         
         response.raise_for_status()
         # 检测响应资源是否存在

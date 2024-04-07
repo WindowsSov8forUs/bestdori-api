@@ -4,7 +4,7 @@
 from json import dumps
 from io import BufferedReader
 from httpx import Response, Request, Client
-from typing import Any, Literal, Optional, cast
+from typing import Any, Union, Literal, Optional, cast
 
 from ._settings import settings
 from ...exceptions import AssetsNotExistError
@@ -15,17 +15,17 @@ class Api:
 
     参数:
         api (str): 请求的 API 地址
-        
-        proxy (Optional[str]): 代理服务器'''
+        proxy (Optional[Union[dict[str, str], str]]): 代理服务器
+    '''
     api: str
     '''请求的 API 地址'''
-    proxy: Optional[str]=None
+    proxy: Optional[Union[dict[str, str], str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(
         self,
         api: str,
-        proxy: Optional[str]=None
+        proxy: Optional[Union[dict[str, str], str]]=None
     ) -> None:
         '''初始化'''
         self.api = api
@@ -83,10 +83,8 @@ class Api:
             proxies = None
         
         # 发送请求并获取响应
-        client = settings.client or Client(proxies=cast(dict, proxies))
-        response = client.send(request)
-        if not settings.client:
-            client.close()
+        with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
+            response = client.send(request)
         
         # 处理接收到的响应
         response.raise_for_status()
@@ -98,23 +96,23 @@ class Assets:
 
     参数:
         url (str): 请求的资源地址
-        proxy (Optional[str]): 代理服务器
+        proxy (Optional[Union[dict[str, str], str]]): 代理服务器
     '''
     url: str
     '''请求的资源地址'''
-    proxy: Optional[str]=None
+    proxy: Optional[Union[dict[str, str], str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(
         self,
         url: str,
-        proxy: Optional[str]=None
+        proxy: Optional[Union[dict[str, str], str]]=None
     ) -> None:
         '''获取 Bestdori 资源数据
 
         参数:
             url (str): 请求的资源地址
-            proxy (Optional[str]): 代理服务器
+            proxy (Optional[Union[dict[str, str], str]]): 代理服务器
         '''
         self.url = url
         self.proxy = proxy or settings.proxy
@@ -155,10 +153,8 @@ class Assets:
             proxies = None
         
         # 发送请求并获取响应
-        client = settings.client or Client(proxies=cast(dict, proxies))
-        response = client.send(request)
-        if not settings.client:
-            client.close()
+        with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
+            response = client.send(request)
         
         response.raise_for_status()
         # 检测响应资源是否存在

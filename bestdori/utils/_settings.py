@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Optional
 
-from httpx import Client
 from httpx._models import Cookies
 
 from ..exceptions import NoCookiesError
@@ -12,15 +11,19 @@ class Settings:
     '''`bestdori_api` 设置项类'''
     
     proxy: Optional[str] = None
-    '''代理服务器'''
+    '''代理服务器
+
+    若想要使用代理，则必须设置该选项，
+    因为 `bestdori` 将会在内部默认无视系统环境下的代理设置
+    '''
     cookies: Optional[Cookies] = None
     '''Cookies
 
     不建议直接设置，推荐通过 `Settings.set_user` 方法，
     传入传入用户名与密码设置
     '''
-    client: Optional[Client] = None
-    '''HTTP 客户端'''
+    timeout: int = 10
+    '''超时时间'''
     _username: Optional[str] = None
     '''用户名'''
     _password: Optional[str] = None
