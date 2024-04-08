@@ -3,8 +3,9 @@
 向 ayachan 发送请求相关模块'''
 from json import dumps
 from io import BufferedReader
-from httpx import Response, Request, Client
 from typing import Any, Union, Literal, Optional, cast
+
+from httpx import Client, Request, Response, HTTPStatusError
 
 from ._settings import settings
 from ...exceptions import AssetsNotExistError
@@ -160,7 +161,13 @@ class Assets:
         with Client(proxies=cast(dict, proxies), timeout=settings.timeout, trust_env=False) as client:
             response = client.send(request)
         
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except HTTPStatusError as exception:
+            if exception.response.status_code == 404:
+                raise AssetsNotExistError(self.url)
+            else:
+                raise exception
         # 检测响应资源是否存在
         content_type = response.headers.get('content-type', None)
         if content_type is None or content_type == 'text/html':
