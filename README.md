@@ -1,11 +1,20 @@
-![bestdori_api logo](https://github.com/WindowsSov8forUs/bestdori_api/blob/main/logo.png)
+![bestdori-api logo](https://github.com/WindowsSov8forUs/bestdori-api/blob/main/logo.png)
 <div align="center">
 
-# Bestdori_api
+# Bestdori-api
 
 **:warning: 该项目仍然急需更新与 Debug ，使用时若遇到 Bug 或其他需要的接口请及时提出**
 
 </div>
+
+> bestdori_api 已更名为 bestdori-api
+> 若安装过之前的 `bestdori_api` 包，请使用指令
+> ```bash
+> pip uninstall bestdori_api
+> ```
+> 
+> 卸载原 `bestdori_api` 包后，重新安装 `bestdori-api` 包
+> 否则可能导致未知的冲突问题
 
 # 简介
 
@@ -41,7 +50,7 @@
 
 首先，使用以下指令安装本模块：
 ```bash
-$ pip3 install bestdori_api
+$ pip3 install bestdori-api
 ```
 接下来在一个 Python 脚本文件中，使用如下代码获取指定帖子的全部信息（这里我们已知该帖子的 ID 为 `111533`）：
 ```python

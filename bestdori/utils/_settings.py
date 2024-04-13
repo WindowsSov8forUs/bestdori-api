@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from ..user import Me
 
 class Settings:
-    '''`bestdori_api` 设置项类'''
+    '''`bestdori-api` 设置项类'''
     
     proxy: Optional[Union[dict[str, str], str]] = None
     '''代理服务器
