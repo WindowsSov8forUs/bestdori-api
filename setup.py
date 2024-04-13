@@ -4,14 +4,14 @@ with open('README.md', 'r') as readme:
     long_description = readme.read()
 
 setup(
-    name='bestdori_api',
-    version='0.1.17',
+    name='bestdori-api',
+    version='0.0.17',
     author='WindowsSov8',
     author_email='qwertyuiop2333@hotmail.com',
     description='Bestdori 的各种 API 调用整合，另外附带部分功能',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/WindowsSov8forUs/bestdori_api',
+    url='https://github.com/WindowsSov8forUs/bestdori-api',
     include_package_data=False,
     packages=find_packages(),
     classifiers=[

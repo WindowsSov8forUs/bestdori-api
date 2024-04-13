@@ -74,17 +74,6 @@ from . import (
 
 from .utils._settings import settings
 
-import warnings
-
-warnings.warn(
-    "The 'bestdori_api' package has been renamed to 'bestdori-api'. "
-    "Please uninstall the 'bestdori_api' package and install the 'bestdori-api' package instead. "
-    "You can do this with the following commands: "
-    "`pip uninstall bestdori_api` and `pip install bestdori-api`. "
-    "Note that the import name remains the same, you can still use `import bestdori` in your code.",
-    DeprecationWarning
-)
-
 __all__ = [
     'User',
     'Me',
