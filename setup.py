@@ -5,7 +5,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='bestdori-api',
-    version='0.0.18',
+    version='0.0.19',
     author='WindowsSov8',
     author_email='qwertyuiop2333@hotmail.com',
     description='Bestdori 的各种 API 调用整合，另外附带部分功能',
@@ -14,6 +14,7 @@ setup(
     url='https://github.com/WindowsSov8forUs/bestdori-api',
     include_package_data=False,
     packages=find_packages(),
+    license='MIT',
     classifiers=[
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
