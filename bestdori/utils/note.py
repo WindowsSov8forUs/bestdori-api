@@ -7,7 +7,7 @@ from typing_extensions import override
 # 谱面音符类
 class NoteType:
     '''谱面音符类'''
-    type_: str
+    type: str
     '''音符类型'''
     beat: float
     '''节拍数'''
@@ -19,6 +19,10 @@ class NoteType:
                 continue
             setattr(self, key, value)
         return
+    
+    def __getitem__(self, key: str) -> Any:
+        '''获取属性'''
+        return getattr(self, key)
     
     # 节拍数增减
     def beat_move(self, beat: float) -> None:
@@ -207,6 +211,7 @@ class Slide(NoteType):
 
 __all__ = [
     'NoteType',
+    'Connection',
     'BPM',
     'Single',
     'Directional',
