@@ -31,23 +31,23 @@ class LoginCampaign:
     '''登录奖励类
 
     参数:
-        id_ (int): 登录奖励 ID
+        id (int): 登录奖励 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''登录奖励类
 
         参数:
-            id_ (int): 登录奖励 ID
+            id (int): 登录奖励 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''登录奖励 ID'''
         self._info: dict[str, Any] = {}
         '''登录奖励信息'''
         # 检测 ID 是否存在
         all_id = get_all(0)
-        if not str(id_) in all_id.keys():
-            raise LoginCampaignNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise LoginCampaignNotExistError(id)
         return
     
     # 获取登录奖励信息

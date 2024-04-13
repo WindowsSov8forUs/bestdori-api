@@ -43,23 +43,23 @@ class Character:
     '''角色类
 
     参数:
-        id_ (int): 角色 ID
+        id (int): 角色 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''角色类
 
         参数:
-            id_ (int): 角色 ID
+            id (int): 角色 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''角色 ID'''
         self._info: dict[str, Any] = {}
         '''角色信息'''
         # 检测 ID 是否存在
         all_id = get_all(2)
-        if not str(id_) in all_id.keys():
-            raise CharacterNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise CharacterNotExistError(id)
         return
     
     # 获取角色信息

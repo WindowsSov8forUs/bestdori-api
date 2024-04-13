@@ -10,19 +10,19 @@ from ..exceptions import (
 )
 
 # 将十六进制颜色代码转换为 RGB 元组
-def hex_to_rgb(hex_: str) -> tuple[int, int, int]:
+def hex_to_rgb(hex: str) -> tuple[int, int, int]:
     '''将十六进制颜色代码转换为 RGB 元组
 
     参数:
-        hex_ (str): 十六进制颜色代码
+        hex (str): 十六进制颜色代码
 
     返回:
         tuple[int, int, int]: RGB 元组
     '''
     if hex_[0] == '#':
-        hex_ = hex_[1:]
+        hex = hex_[1:]
     if len(hex_) == 3:
-        hex_ = hex_[0] * 2 + hex_[1] * 2 + hex_[2] * 2
+        hex = hex_[0] * 2 + hex_[1] * 2 + hex_[2] * 2
     rgb = tuple(int(hex_[i:i+2], 16) for i in (0, 2, 4))
     if len(rgb) != 3:
         raise ValueError('十六进制颜色代码')
@@ -95,16 +95,16 @@ def get_bands_main(index: Literal[1]=1, proxy: Optional[str]=None) -> dict[str, 
 
 # 获取乐队 logo
 def get_band_logo(
-    id_: int,
-    type_: Literal['logoS', 'logoL', 'logoL_Mask'],
+    id: int,
+    type: Literal['logoS', 'logoL', 'logoL_Mask'],
     server: Literal['jp', 'en', 'tw', 'cn', 'kr']
 ) -> bytes:
     '''获取乐队 logo
 
     参数:
-        id_ (int): 乐队 ID
+        id (int): 乐队 ID
         
-        type_ (Literal[&#39;logoS&#39;, &#39;logoL&#39;, &#39;logoL_Mask&#39;]): logo 类型
+        type (Literal[&#39;logoS&#39;, &#39;logoL&#39;, &#39;logoL_Mask&#39;]): logo 类型
             `logoS`: 小 logo
             `logoL`: 大 logo
             `logoL_Mask`: 大 logo 遮罩
@@ -114,19 +114,19 @@ def get_band_logo(
     返回:
         bytes: 乐队 logo 字节数据 `bytes`
     '''
-    return Assets(ASSETS['band']['logo'].format(id=id_, type=type_), server).get()
+    return Assets(ASSETS['band']['logo'].format(id=id, type=type_), server).get()
 
 # 获取乐队图标
-def get_band_icon(id_: str) -> bytes:
+def get_band_icon(id: str) -> bytes:
     '''获取乐队图标
 
     参数:
-        id_ (str): 乐队 ID
+        id (str): 乐队 ID
 
     返回:
         bytes: 乐队图标字节数据
     '''
-    return Res(RES['icon']['svg'].format(name=f'band_{id_}')).get()
+    return Res(RES['icon']['svg'].format(name=f'band_{id}')).get()
 
 # 获取服务器图标
 def get_server_icon(server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:

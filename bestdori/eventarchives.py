@@ -28,23 +28,23 @@ class EventArchive():
     '''活动数据类
 
     参数:
-        id_ (int): 活动 ID
+        id (int): 活动 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''活动数据类
 
         参数:
-            id_ (int): 活动 ID
+            id (int): 活动 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''活动 ID'''
         self._info: dict[str, Any] = {}
         '''活动信息'''
         # 检测 ID 是否存在
         all_id = get_all(5)
-        if not str(id_) in all_id.keys():
-            raise EventNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise EventNotExistError(id)
         return
     
     # 获取排名分数线

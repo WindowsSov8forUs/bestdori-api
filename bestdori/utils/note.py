@@ -81,7 +81,7 @@ class BPM(NoteType):
         bpm (float): BPM 值
         
         beat (float): 节拍数'''
-    type_: str = 'BPM'
+    type: str = 'BPM'
     '''音符类型'''
     bpm: float
     '''BPM 值'''
@@ -107,7 +107,7 @@ class Single(NoteType):
         flick (bool, optional): 是否为滑键
         
         skill (bool, optional): 是否为技能键'''
-    type_: str = 'Single'
+    type: str = 'Single'
     '''音符类型'''
     lane: int
     '''轨道数'''
@@ -142,7 +142,7 @@ class Directional(NoteType):
         width (int): 滑键宽度
         
         direction (Literal[&#39;Left&#39;, &#39;Right&#39;]): 滑键方向'''
-    type_: str = 'Directional'
+    type: str = 'Directional'
     '''音符类型'''
     lane: int
     '''轨道数'''
@@ -169,7 +169,7 @@ class Slide(NoteType):
 
     参数:
         connections (list[Connection]): 滑键节点'''
-    type_: str = 'Slide'
+    type: str = 'Slide'
     '''音符类型'''
     connections: list[Connection]
     '''滑键节点'''

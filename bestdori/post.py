@@ -164,7 +164,7 @@ def get_list(**kwargs: Any) -> dict[str, Any]:
 
 # 搜索标签
 def search_tags(
-    type_: str,
+    type: str,
     data: str='',
     fuzzy: bool=True
 ) -> list[Tag]:
@@ -314,12 +314,12 @@ def post(
         cookies=me.cookies,
         data=kwargs
     )
-    if (id_ := response.json().get('id', None)) is None:
+    if (id := response.json().get('id', None)) is None:
         raise ValueError('发表帖子时出现未知错误。')
-    return id_
+    return id
 
 # 查询帖子顺序
-def find_post(category_name: str, category_id: str, id_: int) -> int:
+def find_post(category_name: str, category_id: str, id: int) -> int:
     '''查询帖子顺序
 
     参数:
@@ -333,7 +333,7 @@ def find_post(category_name: str, category_id: str, id_: int) -> int:
     params = {
         'categoryName': category_name,
         'categoryId': category_id,
-        'id': id_
+        'id': id
     }
     response = Api(API['post']['find']).request('get', params=params)
     if (position := response.json().get('position', None)) is None:
@@ -345,16 +345,16 @@ class Post:
     '''社区帖子类
 
     参数:
-        id_ (str): 社区帖子 ID
+        id (str): 社区帖子 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''社区帖子类
 
         参数:
-            id_ (int): 社区帖子 ID
+            id (int): 社区帖子 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''社区帖子 ID'''
         self._post: dict[str, Any] = {}
         '''社区帖子内容'''
@@ -440,11 +440,11 @@ class Post:
         if (song := post.get('song', None)) is None:
             raise PostHasNoSongError(post)
         
-        if (type_ := song.get('type', None)) is None:
+        if (type := song.get('type', None)) is None:
             raise TypeError('该帖子没有歌曲类型。')
         
         result: dict[str, Union[bytes, None]] = {}
-        if type_ == 'custom': # 自定义歌曲
+        if type == 'custom': # 自定义歌曲
             # 获取歌曲音频
             if (audio := song.get('audio', None)) is None:
                 result['audio'] = None
@@ -459,12 +459,12 @@ class Post:
                 response = Api(cover).request('get')
                 response.raise_for_status()
                 result['cover'] = response.content
-        elif type_ == 'bandori': # BanG Dream! 歌曲
+        elif type == 'bandori': # BanG Dream! 歌曲
             # 获取歌曲 ID
-            if (id_ := song.get('id', None)) is None:
+            if (id := song.get('id', None)) is None:
                 raise ValueError('未能获取歌曲 ID。')
             # 获取歌曲信息
-            info = Api(API['songs']['info'].format(id=id_)).request('get').json()
+            info = Api(API['songs']['info'].format(id=id)).request('get').json()
             # 获取歌曲所在服务器
             if (published_at := info.get('publishedAt', None)) is None:
                 raise NoDataException('歌曲发布时间')
@@ -478,13 +478,13 @@ class Post:
                 raise NoDataException('歌曲服务器')
             # 获取歌曲音频
             result['audio'] = Assets(
-                ASSETS['songs']['sound'].format(id=id_), server
+                ASSETS['songs']['sound'].format(id=id), server
             ).get()
             # 获取歌曲封面
             # 获取数据包序列号
-            quotient, remainder = divmod(id_, 10)
+            quotient, remainder = divmod(id, 10)
             if remainder == 0:
-                index = id_
+                index = id
             else:
                 index = (quotient + 1) * 10
             
@@ -495,12 +495,12 @@ class Post:
                     index=index, jacket_image=jacket_image[-1]
                 ), server
             ).get()
-        elif type_ == 'llsif': # LoveLive! 歌曲
+        elif type == 'llsif': # LoveLive! 歌曲
             # 获取歌曲 ID
-            if (id_ := song.get('id', None)) is None:
+            if (id := song.get('id', None)) is None:
                 raise ValueError('未能获取歌曲 ID。')
             # 获取歌曲信息
-            info = Api(API['misc']['llsif'].format(index=10)).request('get').json()[str(id_)]
+            info = Api(API['misc']['llsif'].format(index=10)).request('get').json()[str(id)]
             # 获取歌曲资源库
             live_icon_asset = info.get('live_icon_asset', None)
             sound_asset = info.get('sound_asset', None)

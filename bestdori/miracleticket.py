@@ -31,24 +31,24 @@ class MiracleTicketExchange:
     '''自选券类
 
     参数:
-        id_ (int): 自选券 ID
+        id (int): 自选券 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''自选券类
 
         参数:
-            id_ (int): 自选券 ID
+            id (int): 自选券 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''自选券 ID'''
         self._info: dict[str, Any] = {}
         '''自选券信息'''
         # 检测 ID 是否存在
         all_ = get_all(5)
-        if not str(id_) in all_.keys():
-            raise MiracleTicketExchangeNotExistError(id_)
-        self._info = all_[str(id_)]
+        if not str(id) in all_.keys():
+            raise MiracleTicketExchangeNotExistError(id)
+        self._info = all_[str(id)]
         return
     
     # 获取自选券信息

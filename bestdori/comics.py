@@ -30,24 +30,24 @@ class Comic:
     '''漫画类
 
     参数:
-        id_ (int): 漫画 ID
+        id (int): 漫画 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''漫画类
 
         参数:
-            id_ (int): 漫画 ID
+            id (int): 漫画 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''漫画 ID'''
         self._info: dict[str, Any] = {}
         '''漫画信息'''
         # 检测 ID 是否存在
         all_ = get_all(5)
-        if not str(id_) in all_.keys():
-            raise ComicNotExistError(id_)
-        self._info = all_[str(id_)]
+        if not str(id) in all_.keys():
+            raise ComicNotExistError(id)
+        self._info = all_[str(id)]
         return
     
     # 获取漫画信息

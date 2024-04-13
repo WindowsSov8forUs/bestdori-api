@@ -32,23 +32,23 @@ class Gacha:
     '''招募类
 
     参数:
-        id_ (int): 招募 ID
+        id (int): 招募 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''招募类
 
         参数:
-            id_ (int): 招募 ID
+            id (int): 招募 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''招募 ID'''
         self._info: dict[str, Any] = {}
         '''招募信息'''
         # 检测 ID 是否存在
         all_id = get_all(0)
-        if not id_ in all_id.keys():
-            raise GachaNotExistError(id_)
+        if not id in all_id.keys():
+            raise GachaNotExistError(id)
         return
     
     # 获取招募信息

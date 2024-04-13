@@ -30,23 +30,23 @@ class Mission:
     '''任务类
 
     参数:
-        id_ (int): 任务 ID
+        id (int): 任务 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''任务类
 
         参数:
-            id_ (int): 任务 ID
+            id (int): 任务 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''任务 ID'''
         self._info: dict[str, Any] = {}
         '''任务信息'''
         # 检测 ID 是否存在
         all_id = get_all(0)
-        if not str(id_) in all_id.keys():
-            raise MissionNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise MissionNotExistError(id)
         return
     
     # 获取任务信息

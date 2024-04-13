@@ -26,33 +26,33 @@ def chart_metrics_custom(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> dict[str
 
 # BanG Dream 谱面分析
 def chart_metrics_bandori(
-    id_: int,
+    id: int,
     diff: Literal[0, 1, 2, 3, 4]
 ) -> dict[str, Any]:
     '''BanG Dream 谱面分析
 
     参数:
-        id_ (int): 歌曲 ID
+        id (int): 歌曲 ID
         diff (Literal[0, 1, 2, 3, 4]): 难度类型
 
     返回:
         dict[str, Any]: 分析结果
     '''
-    return Api(API['chart_metrics']['bandori'].format(chart_id=id_, diff_str=DIFF_STR[diff])).request('get').json()
+    return Api(API['chart_metrics']['bandori'].format(chart_id=id, diff_str=DIFF_STR[diff])).request('get').json()
 
 # Bestdori 谱面分析
 def chart_metrics_bestdori(
-    id_: int
+    id: int
 ) -> dict[str, Any]:
     '''Bestdori 谱面分析
 
     参数:
-        id_ (int): 谱面 ID
+        id (int): 谱面 ID
 
     返回:
         dict[str, Any]: 分析结果
     '''
-    return Api(API['chart_metrics']['bestdori'].format(chart_id=id_)).request('get').json()
+    return Api(API['chart_metrics']['bestdori'].format(chart_id=id)).request('get').json()
 
 # Sonolus 谱面测试上传
 def post_sonolus_levels(

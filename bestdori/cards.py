@@ -84,23 +84,23 @@ class Card:
     '''卡牌类
 
     参数:
-        id_ (int): 卡牌 ID
+        id (int): 卡牌 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''卡牌类
 
         参数:
-            id_ (int): 卡牌 ID
+            id (int): 卡牌 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''卡牌 ID'''
         self._info: dict[str, Any] = {}
         '''卡牌信息'''
         # 检测 ID 是否存在
         all_id = get_all(0)
-        if not str(id_) in all_id.keys():
-            raise CardNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise CardNotExistError(id)
         return
     
     # 获取卡牌信息
@@ -188,11 +188,11 @@ class Card:
             raise NoDataException('卡牌所在服务器')
     
     # 获取卡牌完整图片
-    def get_card(self, type_: Literal['normal', 'after_training']) -> bytes:
+    def get_card(self, type: Literal['normal', 'after_training']) -> bytes:
         '''获取卡牌完整图片
 
         参数:
-            type_ (Literal[&#39;normal&#39;, &#39;after_training&#39;]): 指定特训前或特训后
+            type (Literal[&#39;normal&#39;, &#39;after_training&#39;]): 指定特训前或特训后
 
         返回:
             bytes: 卡牌完整图片字节数据 `bytes`
@@ -208,11 +208,11 @@ class Card:
         ).get()
     
     # 获取卡牌无背景图片
-    def get_trim(self, type_: Literal['normal', 'after_training']) -> bytes:
+    def get_trim(self, type: Literal['normal', 'after_training']) -> bytes:
         '''获取卡牌无背景图片
 
         参数:
-            type_ (Literal[&#39;normal&#39;, &#39;after_training&#39;]): 指定特训前或特训后
+            type (Literal[&#39;normal&#39;, &#39;after_training&#39;]): 指定特训前或特训后
 
         返回:
             bytes: 卡牌无背景图片字节数据 `bytes`
@@ -228,7 +228,7 @@ class Card:
         ).get()
     
     # 获取卡牌缩略图图片
-    def get_thumb(self, type_: Literal['normal', 'after_training']) -> bytes:
+    def get_thumb(self, type: Literal['normal', 'after_training']) -> bytes:
         '''获取卡牌缩略图图片
 
         参数:

@@ -272,17 +272,17 @@ class Chart(list[NoteType]):
     @classmethod
     def get_chart(
         cls,
-        id_: int,
+        id: int,
         diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert'
     ) -> 'Chart':
         '''获取官方谱面
 
         参数:
-            id_ (int): 谱面 ID
+            id (int): 谱面 ID
             diff (Literal[&#39;easy&#39;, &#39;normal&#39;, &#39;hard&#39;, &#39;expert&#39;, &#39;special&#39;], optional): 难度名称
 
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = Api(API['charts']['info'].format(id=id_, diff=diff)).request('get')
+        response = Api(API['charts']['info'].format(id=id, diff=diff)).request('get')
         return cls.normalize(response.json())

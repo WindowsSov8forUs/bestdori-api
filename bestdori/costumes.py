@@ -31,23 +31,23 @@ class Costume:
     '''服装类
 
     参数:
-        id_ (int): 服装 ID
+        id (int): 服装 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''服装类
 
         参数:
-            id_ (int): 服装 ID
+            id (int): 服装 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''服装 ID'''
         self._info: dict[str, Any] = {}
         '''服装信息'''
         # 检测 ID 是否存在
         all_ = get_all(0)
-        if not str(id_) in all_.keys():
-            raise CostumeNotExistError(id_)
+        if not str(id) in all_.keys():
+            raise CostumeNotExistError(id)
         return
     
     # 获取服装信息

@@ -98,8 +98,8 @@ class NotExistException(BaseException):
 class SongNotExistError(NotExistException):
     '''歌曲不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        super().__init__(f'歌曲 ID {id_}')
+    def __init__(self, id: int) -> None:
+        super().__init__(f'歌曲 ID {id}')
         return
 
 # 歌曲难度不存在
@@ -177,8 +177,8 @@ class AssetsNotExistError(AssetsException):
 class CharacterNotExistError(NotExistException):
     '''角色不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'角色 ID {id_}'
+    def __init__(self, id: int) -> None:
+        msg = f'角色 ID {id}'
         super().__init__(msg)
         return
 
@@ -186,8 +186,8 @@ class CharacterNotExistError(NotExistException):
 class CardNotExistError(NotExistException):
     '''卡牌不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'卡牌 ID {id_}'
+    def __init__(self, id: int) -> None:
+        msg = f'卡牌 ID {id}'
         super().__init__(msg)
         return
 
@@ -195,8 +195,8 @@ class CardNotExistError(NotExistException):
 class CostumeNotExistError(NotExistException):
     '''服装不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'服装 ID {id_}'
+    def __init__(self, id: int) -> None:
+        msg = f'服装 ID {id}'
         super().__init__(msg)
         return
 
@@ -204,8 +204,8 @@ class CostumeNotExistError(NotExistException):
 class EventNotExistError(NotExistException):
     '''活动不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'活动 ID {id_}'
+    def __init__(self, id: int) -> None:
+        msg = f'活动 ID {id}'
         super().__init__(msg)
         return
 
@@ -213,8 +213,8 @@ class EventNotExistError(NotExistException):
 class GachaNotExistError(NotExistException):
     '''招募不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'招募 ID {id_}NotExistException'
+    def __init__(self, id: int) -> None:
+        msg = f'招募 ID {id}NotExistException'
         super().__init__(msg)
         return
 
@@ -222,8 +222,8 @@ class GachaNotExistError(NotExistException):
 class LoginCampaignNotExistError(NotExistException):
     '''登录奖励不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'登录奖励 ID {id_} 不存在。'
+    def __init__(self, id: int) -> None:
+        msg = f'登录奖励 ID {id} 不存在。'
         super().__init__(msg)
         return
 
@@ -231,8 +231,8 @@ class LoginCampaignNotExistError(NotExistException):
 class MiracleTicketExchangeNotExistError(NotExistException):
     '''自选券不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'自选券 ID {id_} 不存在。'
+    def __init__(self, id: int) -> None:
+        msg = f'自选券 ID {id} 不存在。'
         super().__init__(msg)
         return
 
@@ -240,8 +240,8 @@ class MiracleTicketExchangeNotExistError(NotExistException):
 class ComicNotExistError(NotExistException):
     '''漫画不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'漫画 ID {id_} 不存在。'
+    def __init__(self, id: int) -> None:
+        msg = f'漫画 ID {id} 不存在。'
         super().__init__(msg)
         return
 
@@ -249,8 +249,8 @@ class ComicNotExistError(NotExistException):
 class MissionNotExistError(NotExistException):
     '''任务不存在'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'任务 ID {id_} 不存在。'
+    def __init__(self, id: int) -> None:
+        msg = f'任务 ID {id} 不存在。'
         super().__init__(msg)
         return
 
@@ -269,8 +269,8 @@ class ServerNotAvailableError(BaseException):
 class EventHasNoStampError(BaseException):
     '''活动没有奖励贴纸错误'''
     # 初始化
-    def __init__(self, id_: int) -> None:
-        msg = f'活动 ID {id_} 没有奖励贴纸。'
+    def __init__(self, id: int) -> None:
+        msg = f'活动 ID {id} 没有奖励贴纸。'
         super().__init__(msg)
         self.message = msg
         '''错误信息'''

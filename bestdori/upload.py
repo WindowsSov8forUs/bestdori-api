@@ -16,11 +16,11 @@ if TYPE_CHECKING:
     from .user import Me
 
 # 从 Bestdori 获取指定哈希文件字节
-def download(hash_: str) -> bytes:
+def download(hash: str) -> bytes:
     '''从 Bestdori 获取指定哈希文件字节
 
     参数:
-        hash_ (str): 文件哈希值
+        hash (str): 文件哈希值
 
     返回:
         bytes: 文件字节 `bytes`
@@ -28,11 +28,11 @@ def download(hash_: str) -> bytes:
     return Api(API['upload']['file'].format(hash=hash_)).request('get').content
 
 # 通过哈希值构建 Bestdori 文件 URL
-def hash_to_url(hash_: str) -> str:
+def hash_to_url(hash: str) -> str:
     '''通过哈希值构建 Bestdori 文件 URL
 
     参数:
-        hash_ (str): 文件哈希值
+        hash (str): 文件哈希值
 
     返回:
         str: 文件 URL
@@ -51,7 +51,7 @@ class Upload:
     # 初始化
     def __init__(self, file_bytes: bytes, name: str, reader: BufferedReader) -> None:
         # 处理文件字节
-        hash_ = sha1(file_bytes).hexdigest() # 计算 SHA-1 哈希
+        hash = sha1(file_bytes).hexdigest() # 计算 SHA-1 哈希
         size = len(file_bytes) # 计算文件大小
         # 赋值对象属性
         self._ver: int = 3

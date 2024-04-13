@@ -79,23 +79,23 @@ class Song:
     '''歌曲类
 
     参数:
-        id_ (int): 歌曲 ID
+        id (int): 歌曲 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''歌曲类
 
         参数:
-            id_ (int): 歌曲 ID
+            id (int): 歌曲 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''歌曲 ID'''
         self._info: dict[str, Any] = {}
         '''歌曲信息'''
         # 检测 ID 是否存在
         all_id = get_all(0)
-        if not str(id_) in all_id.keys():
-            raise SongNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise SongNotExistError(id)
         return
     
     # 获取歌曲信息

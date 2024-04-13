@@ -35,16 +35,16 @@ class Event:
     '''活动类
 
     参数:
-        id_ (int): 活动 ID
+        id (int): 活动 ID
     '''
     # 初始化
-    def __init__(self, id_: int) -> None:
+    def __init__(self, id: int) -> None:
         '''活动类
 
         参数:
-            id_ (int): 活动 ID
+            id (int): 活动 ID
         '''
-        self.id: int = id_
+        self.id: int = id
         '''活动 ID'''
         self.archive: EventArchive = EventArchive(self.id)
         '''活动数据'''
@@ -52,8 +52,8 @@ class Event:
         '''活动信息'''
         # 检测 ID 是否存在
         all_id = get_all(0)
-        if not str(id_) in all_id.keys():
-            raise EventNotExistError(id_)
+        if not str(id) in all_id.keys():
+            raise EventNotExistError(id)
         return
     
     # 获取活动信息
@@ -198,14 +198,14 @@ class Event:
     def get_topscreen(
         self,
         server: Literal['jp', 'en', 'tw', 'cn', 'kr'],
-        type_: Literal['bg', 'trim']
+        type: Literal['bg', 'trim']
     ) -> bytes:
         '''获取活动主界面图像
 
         参数:
             server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
             
-            type_ (Literal[&#39;bg&#39;, &#39;trim&#39;]): 图像类型
+            type (Literal[&#39;bg&#39;, &#39;trim&#39;]): 图像类型
                 `bg`: 背景图像
                 `trim`: 角色图像
 
