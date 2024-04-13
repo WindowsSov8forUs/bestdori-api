@@ -92,7 +92,7 @@ class BPM(NoteType):
         return {
             'bpm': self.bpm,
             'beat': self.beat,
-            'type': self.type_
+            'type': self.type
         }
 
 # 单键
@@ -122,7 +122,7 @@ class Single(NoteType):
         note = {
             'beat': self.beat,
             'lane': self.lane,
-            'type': self.type_
+            'type': self.type
         }
         if self.flick:
             note['flick'] = self.flick
@@ -157,7 +157,7 @@ class Directional(NoteType):
         note = {
             'beat': self.beat,
             'lane': self.lane,
-            'type': self.type_,
+            'type': self.type,
             'width': self.width,
             'direction': self.direction
         }
@@ -195,7 +195,7 @@ class Slide(NoteType):
     def __dict__(self) -> dict:
         '''字典化'''
         note: dict[str, Any] = {
-            'type': self.type_
+            'type': self.type
         }
         if self.connections:
             note['connections'] = [connection.__dict__ for connection in self.connections]

@@ -25,7 +25,7 @@ def download(hash: str) -> bytes:
     返回:
         bytes: 文件字节 `bytes`
     '''
-    return Api(API['upload']['file'].format(hash=hash_)).request('get').content
+    return Api(API['upload']['file'].format(hash=hash)).request('get').content
 
 # 通过哈希值构建 Bestdori 文件 URL
 def hash_to_url(hash: str) -> str:
@@ -37,7 +37,7 @@ def hash_to_url(hash: str) -> str:
     返回:
         str: 文件 URL
     '''
-    return f'https://bestdori.com/api/upload/file/{hash_}'
+    return f'https://bestdori.com/api/upload/file/{hash}'
 
 # 上传文件类
 class Upload:
@@ -56,7 +56,7 @@ class Upload:
         # 赋值对象属性
         self._ver: int = 3
         '''文件版本'''
-        self._hash: str = hash_
+        self._hash: str = hash
         '''文件哈希'''
         self._size: int = size
         '''文件大小'''

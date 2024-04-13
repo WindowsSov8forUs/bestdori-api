@@ -181,7 +181,7 @@ def search_tags(
     response = Api(API['post']['tag']).request(
         'get',
         params={
-            'type': type_,
+            'type': type,
             'data': data,
             'fuzzy': fuzzy
         }
@@ -509,7 +509,7 @@ class Post:
             # 获取歌曲封面
             result['cover'] = Assets(live_icon_asset, 'llsif').get()
         else:
-            raise AssetsNotExistError(f'{type_} 歌曲')
+            raise AssetsNotExistError(f'{type} 歌曲')
         
         return SongRes(**result)
     

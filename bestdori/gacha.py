@@ -167,7 +167,7 @@ class Gacha:
         '''获取招募 pickup 图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): _description_
+            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 服务器
 
         返回:
             list[bytes]: pickup 图像字节数据 `bytes` 列表
@@ -196,7 +196,7 @@ class Gacha:
         '''获取招募 logo 图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): _description_
+            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 服务器
 
         返回:
             bytes: logo 图像字节数据 `bytes`

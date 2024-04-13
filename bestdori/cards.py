@@ -203,7 +203,7 @@ class Card:
             raise ValueError('无法获取卡牌数据包名称。')
         return Assets(
             ASSETS['characters']['resourceset'].format(
-                resource_set_name=resource_set_name, name='card', type=type_
+                resource_set_name=resource_set_name, name='card', type=type
             ), self.server
         ).get()
     
@@ -223,7 +223,7 @@ class Card:
             raise ValueError('无法获取卡牌数据包名称。')
         return Assets(
             ASSETS['characters']['resourceset'].format(
-                resource_set_name=resource_set_name, name='trim', type=type_
+                resource_set_name=resource_set_name, name='trim', type=type
             ), self.server
         ).get()
     
@@ -243,7 +243,7 @@ class Card:
             raise ValueError('无法获取卡牌数据包名称。')
         return Assets(
             ASSETS['thumb']['chara'].format(
-                id=str(int(self.id) // 50), resource_set_name=resource_set_name, type=type_
+                id=str(int(self.id) // 50), resource_set_name=resource_set_name, type=type
             ), self.server
         ).get()
     

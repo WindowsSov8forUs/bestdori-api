@@ -10,7 +10,7 @@ from ..exceptions import (
 )
 
 # 将十六进制颜色代码转换为 RGB 元组
-def hex_to_rgb(hex: str) -> tuple[int, int, int]:
+def hexto_rgb(hex: str) -> tuple[int, int, int]:
     '''将十六进制颜色代码转换为 RGB 元组
 
     参数:
@@ -19,11 +19,11 @@ def hex_to_rgb(hex: str) -> tuple[int, int, int]:
     返回:
         tuple[int, int, int]: RGB 元组
     '''
-    if hex_[0] == '#':
-        hex = hex_[1:]
-    if len(hex_) == 3:
-        hex = hex_[0] * 2 + hex_[1] * 2 + hex_[2] * 2
-    rgb = tuple(int(hex_[i:i+2], 16) for i in (0, 2, 4))
+    if hex[0] == '#':
+        hex = hex[1:]
+    if len(hex) == 3:
+        hex = hex[0] * 2 + hex[1] * 2 + hex[2] * 2
+    rgb = tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
     if len(rgb) != 3:
         raise ValueError('十六进制颜色代码')
     return rgb
@@ -114,7 +114,7 @@ def get_band_logo(
     返回:
         bytes: 乐队 logo 字节数据 `bytes`
     '''
-    return Assets(ASSETS['band']['logo'].format(id=id, type=type_), server).get()
+    return Assets(ASSETS['band']['logo'].format(id=id, type=type), server).get()
 
 # 获取乐队图标
 def get_band_icon(id: str) -> bytes:

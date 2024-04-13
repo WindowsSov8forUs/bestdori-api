@@ -225,7 +225,7 @@ class Event:
             raise ServerNotAvailableError(f'活动 {self.name}', server)
         return Assets(
             ASSETS['event']['topscreen'].format(
-                asset_bundle_name=asset_bundle_name, type=type_
+                asset_bundle_name=asset_bundle_name, type=type
             ), server
         ).get()
     

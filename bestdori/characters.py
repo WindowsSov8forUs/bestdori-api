@@ -4,7 +4,7 @@ BanG Dream! 角色相关操作'''
 from typing import Any, Literal
 
 from .post import get_list
-from .utils import hex_to_rgb
+from .utils import hexto_rgb
 from .utils.utils import API, RES, ASSETS
 from .utils.network import Api, Res, Assets
 from .exceptions import (
@@ -149,7 +149,7 @@ class Character:
             raise NoDataException('角色颜色')
         # 将 colorCode 转换为颜色元组
         try:
-            return hex_to_rgb(color_code)
+            return hexto_rgb(color_code)
         except ValueError:
             raise NoDataException('角色颜色')
     
