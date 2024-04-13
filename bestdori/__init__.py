@@ -68,7 +68,8 @@ from . import (
     logincampaigns,
     miracleticket,
     comics,
-    missions
+    missions,
+    models
 )
 
 from .utils._settings import settings
@@ -131,5 +132,6 @@ __all__ = [
     'miracleticket',
     'comics',
     'missions',
+    'models',
     'settings'
 ]
