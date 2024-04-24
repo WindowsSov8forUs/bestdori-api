@@ -4,9 +4,31 @@
 
 # Bestdori-api
 
+_✨ [Bestdori](https://bestdori.com/) 的各种 API 调用整合，另外附带部分功能 ✨_
+
 **:warning: 该项目仍然急需更新与 Debug ，使用时若遇到 Bug 或其他需要的接口请及时提出**
 
 </div>
+
+<p align="center">
+
+<a href="https://bestdori.com/">
+  <img src="https://img.shields.io/badge/bestdori-api-1976D3" alt="license">
+</a>
+
+<a href="https://github.com/WindowsSov8forUs/bestdori-api">
+  <img src="https://img.shields.io/github/v/release/WindowsSov8forUs/bestdori-api" alt="Latest Release Version">
+</a>
+
+<a href="https://github.com/WindowsSov8forUs/bestdori-api/blob/main/LICENSE">
+  <img src="https://img.shields.io/github/license/WindowsSov8forUs/bestdori-api" alt="License">
+</a>
+
+<a href="https://www.python.org/downloads/">
+  <img src="https://img.shields.io/pypi/pyversions/bestdori-api" alt="Python Version">
+</a>
+
+</p>
 
 > bestdori_api 已更名为 bestdori-api
 > 若安装过之前的 `bestdori_api` 包，请使用指令
@@ -17,12 +39,12 @@
 > 卸载原 `bestdori_api` 包后，重新安装 `bestdori-api` 包
 > 否则可能导致未知的冲突问题
 
-# 简介
+## 简介
 
 这是一个用 Python 编写的调用 [Bestdori](https://bestdori.com/) 各种 API 与资源下载的库，大致包括了社区帖子的处理以及各种 [BanG Dream！少女乐团派对](https://zh.moegirl.org.cn/BanG_Dream!_%E5%B0%91%E5%A5%B3%E4%B9%90%E5%9B%A2%E6%B4%BE%E5%AF%B9%EF%BC%81) 游戏内资源的获取。
 **警告：此模块目前仍然亟待完善与测试，请不要将其当做一个稳定的库使用。**
 
-## 目前已有的 API 与功能
+### 目前已有的 API 与功能
 
 |API 类别|是否完善|支持的内容|
 |:-------|:-----:|:------|
@@ -45,7 +67,7 @@
 |ayachan|🤔|谱面分析、测试服上传、难度分析|
 |其他资源|👎👎|仅小部分资源有单独获取|
 
-# 快速使用
+## 快速使用
 
 以下将以获取社区自制谱面 [[FULL] 光の中へ](https://bestdori.com/community/charts/111533/WindowsSov8-FULL) 的信息为例。
 
