@@ -254,6 +254,15 @@ class MissionNotExistError(NotExistException):
         super().__init__(msg)
         return
 
+# 玩家不存在
+class PlayerNotExistError(NotExistException):
+    '''玩家不存在'''
+    # 初始化
+    def __init__(self, server: str, id: int) -> None:
+        msg = f'服务器 {server} 上的玩家 ID {id} 不存在。'
+        super().__init__(msg)
+        return
+
 # 服务器指定错误
 class ServerNotAvailableError(BaseException):
     '''服务器指定错误'''

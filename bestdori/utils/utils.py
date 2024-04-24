@@ -62,6 +62,9 @@ API = {
     'misc': {
         'llsif': 'misc/llsif.{index}.json'
     },
+    'player': {
+        'get': 'player/{server}/{id}'
+    },
     'all': {
         'skills': 'skills/all.{index}.json',
         'stamps': 'stamps/all.{index}.json',
