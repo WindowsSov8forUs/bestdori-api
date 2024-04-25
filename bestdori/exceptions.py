@@ -319,8 +319,8 @@ class NoCookiesError(SettingsException):
 class NoContentTypeError(RequestError):
     '''没有获取到 ContentType'''
     # 初始化
-    def __init__(self, response: Response) -> None:
-        msg = f'没有获取到 {response.url} 的 ContentType'
+    def __init__(self, url: str) -> None:
+        msg = f'没有获取到 {url} 的 ContentType'
         super().__init__(msg)
         return
 

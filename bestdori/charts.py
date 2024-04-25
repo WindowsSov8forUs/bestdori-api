@@ -4,7 +4,9 @@
 from json import dumps, loads
 from typing import Any, Literal
 
-from .utils.note import *
+from httpx import Response
+
+from .models.note import *
 from .utils.utils import API
 from .utils.network import Api
 
@@ -284,5 +286,27 @@ class Chart(list[NoteType]):
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = Api(API['charts']['info'].format(id=id, diff=diff)).request('get')
+        response = Api(API['charts']['info'].format(id=id, diff=diff)).get()
         return cls.normalize(response.json())
+    
+    # 异步获取官方谱面
+    @classmethod
+    async def get_chart_async(
+        cls,
+        id: int,
+        diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert'
+    ) -> 'Chart':
+        '''获取官方谱面
+
+        参数:
+            id (int): 谱面 ID
+            diff (Literal[&#39;easy&#39;, &#39;normal&#39;, &#39;hard&#39;, &#39;expert&#39;, &#39;special&#39;], optional): 难度名称
+
+        返回:
+            Chart: 获取到的谱面对象 `bestdori.chart.Chart`
+        '''
+        response = await Api(API['charts']['info'].format(id=id, diff=diff)).aget()
+        if isinstance(response, Response):
+            return cls.normalize(response.json())
+        else:
+            return cls.normalize(await response.json())
