@@ -84,7 +84,7 @@ class Api:
         request = Request(
             method,
             self._url,
-            cookies=dict(cookies), # type: ignore
+            cookies=dict(cookies) if cookies is not None else None, # type: ignore
             params=params,
             data=cast(dict, dumps(data)) if data is not None else data,
             files=files,
@@ -148,7 +148,7 @@ class Api:
             request = Request(
                 method,
                 self._url,
-                cookies=dict(cookies), # type: ignore
+                cookies=dict(cookies) if cookies is not None else None, # type: ignore
                 params=params,
                 data=cast(dict, dumps(data)) if data is not None else data,
                 files=files,
