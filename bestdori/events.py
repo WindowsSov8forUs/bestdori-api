@@ -10,6 +10,14 @@ from .utils.utils import API, ASSETS
 from .utils.network import Api, Assets
 from .eventarchives import EventArchive
 from .post import get_list, get_list_async
+from .festival import (
+    Stage,
+    RotationMusic,
+    get_stages,
+    get_stages_async,
+    get_rotation_musics,
+    get_rotation_musics_async
+)
 from .exceptions import (
     NoDataException,
     EventNotExistError,
@@ -556,3 +564,51 @@ class Event:
             elif self.server == 'kr': server = 4
             else: raise NoDataException('活动服务器')
         return await self.archive.get_top_async(server, mid, latest)
+
+    # 获取团队 LIVE 佳节活动歌曲循环数据
+    def get_rotation_musics(self) -> list[RotationMusic]:
+        '''获取团队 LIVE 佳节活动歌曲循环数据
+
+        返回:
+            list[dict[str, Any]]: 团队 LIVE 佳节活动歌曲循环数据
+        '''
+        info = self.__get_info_cache()
+        if (_event_type := info.get('eventTyppe', '')) != 'festival':
+            raise ValueError(f'Rotation musics are only available for festival events, not {_event_type}.')
+        return get_rotation_musics(self.id)
+    
+    # 异步获取团队 LIVE 佳节活动歌曲循环数据
+    async def get_rotation_musics_async(self) -> list[RotationMusic]:
+        '''获取团队 LIVE 佳节活动歌曲循环数据
+
+        返回:
+            list[dict[str, Any]]: 团队 LIVE 佳节活动歌曲循环数据
+        '''
+        info = await self.__get_info_cache_async()
+        if (_event_type := info.get('eventTyppe', '')) != 'festival':
+            raise ValueError(f'Rotation musics are only available for festival events, not {_event_type}.')
+        return await get_rotation_musics_async(self.id)
+    
+    # 获取团队 LIVE 佳节活动舞台数据
+    def get_stages(self) -> list[Stage]:
+        '''获取团队 LIVE 佳节活动舞台数据
+
+        返回:
+            list[dict[str, Any]]: 团队 LIVE 佳节活动舞台数据
+        '''
+        info = self.__get_info_cache()
+        if (_event_type := info.get('eventTyppe', '')) != 'festival':
+            raise ValueError(f'Stages are only available for festival events, not {_event_type}.')
+        return get_stages(self.id)
+    
+    # 异步获取团队 LIVE 佳节活动舞台数据
+    async def get_stages_async(self) -> list[Stage]:
+        '''获取团队 LIVE 佳节活动舞台数据
+
+        返回:
+            list[dict[str, Any]]: 团队 LIVE 佳节活动舞台数据
+        '''
+        info = await self.__get_info_cache_async()
+        if (_event_type := info.get('eventTyppe', '')) != 'festival':
+            raise ValueError(f'Stages are only available for festival events, not {_event_type}.')
+        return await get_stages_async(self.id)

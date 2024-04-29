@@ -37,6 +37,10 @@ API = {
         'all': 'events/all.{index}.json',
         'top': 'eventtop/data'
     },
+    'festival':{
+        'stages': 'festival/stages/{id}.json',
+        'rotation_musics': 'festival/rotationMusics/{id}.json',
+    },
     'gacha': {
         'info': 'gacha/{id}.json',
         'all': 'gacha/all.{index}.json'
