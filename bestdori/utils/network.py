@@ -168,7 +168,8 @@ class Api:
                     cookies=cookies,
                     params=params,
                     data=cast(dict, dumps(data)) if data is not None else data,
-                    headers=self.headers if not self.api.endswith('/upload') else None
+                    headers=self.headers if not self.api.endswith('/upload') else None,
+                    proxy=self._proxies
                 )
                 response.raise_for_status()
         
