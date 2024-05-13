@@ -28,6 +28,10 @@ _✨ [Bestdori](https://bestdori.com/) 的各种 API 调用整合，另外附带
   <img src="https://img.shields.io/pypi/pyversions/bestdori-api" alt="Python Version">
 </a>
 
+<a href="https://pypi.org/project/bestdori-api/">
+  <img src="https://img.shields.io/pypi/v/bestdori-api" alt="PyPI Version">
+</a>
+
 </p>
 
 > bestdori-api 现已全面支持同步与异步
