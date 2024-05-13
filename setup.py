@@ -5,7 +5,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='bestdori-api',
-    version='1.1.0',
+    version='1.1.1',
     author='WindowsSov8',
     author_email='qwertyuiop2333@hotmail.com',
     description='Bestdori 的各种 API 调用整合，另外附带部分功能',
@@ -21,4 +21,9 @@ setup(
         'Operating System :: OS Independent'
     ],
     python_requires='>=3.8',
+    install_requires=[
+        'httpx>=0.18.2',
+        'aiohttp>=3.7.4',
+        'httpcore>=0.13.3'
+    ]
 )
