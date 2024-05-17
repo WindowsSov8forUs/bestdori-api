@@ -1,7 +1,7 @@
 '''`bestdori.cards`
 
 BanG Dream! 卡牌相关操作'''
-from typing import Any, Literal
+from typing import Any, Dict, Literal
 
 from aiohttp import ClientResponseError
 from httpx import Response, HTTPStatusError
@@ -15,7 +15,7 @@ from .exceptions import (
 )
 
 # 获取总卡牌信息
-def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
     '''获取总卡牌信息
 
     参数:
@@ -24,12 +24,12 @@ def get_all(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
             `5`: 获取所有已有卡牌的简洁信息 `all.5.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总卡牌信息
+        Dict[str, Dict[str, Any]]: 获取到的总卡牌信息
     '''
     return Api(API['cards']['all'].format(index=index)).get().json()
 
 # 异步获取总卡牌信息
-async def get_all_async(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
+async def get_all_async(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
     '''获取总卡牌信息
 
     参数:
@@ -38,7 +38,7 @@ async def get_all_async(index: Literal[0, 5]=5) -> dict[str, dict[str, Any]]:
             `5`: 获取所有已有卡牌的简洁信息 `all.5.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总卡牌信息
+        Dict[str, Dict[str, Any]]: 获取到的总卡牌信息
     '''
     response = await Api(API['cards']['all'].format(index=index)).aget()
     
@@ -171,7 +171,7 @@ class Card:
         '''
         self.id: int = id
         '''卡牌 ID'''
-        self.__info: dict[str, Any] = {}
+        self.__info: Dict[str, Any] = {}
         '''卡牌信息存储'''
         return
     
@@ -207,11 +207,11 @@ class Card:
             raise NoDataException('卡牌所在服务器')
     
     # 获取卡牌信息
-    def get_info(self) -> dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         '''获取卡牌信息
 
         返回:
-            dict[str, Any]: 卡牌详细信息
+            Dict[str, Any]: 卡牌详细信息
         '''
         try:
             response = Api(
@@ -227,11 +227,11 @@ class Card:
         return self.__info
     
     # 异步获取卡牌信息
-    async def get_info_async(self) -> dict[str, Any]:
+    async def get_info_async(self) -> Dict[str, Any]:
         '''获取卡牌信息
 
         返回:
-            dict[str, Any]: 卡牌详细信息
+            Dict[str, Any]: 卡牌详细信息
         '''
         try:
             response = await Api(
@@ -255,22 +255,22 @@ class Card:
         return self.__info
     
     # 获取缓存信息
-    def __get_info_cache(self) -> dict[str, Any]:
+    def __get_info_cache(self) -> Dict[str, Any]:
         '''获取缓存信息
 
         返回:
-            dict[str, Any]: 缓存信息
+            Dict[str, Any]: 缓存信息
         '''
         if not self.__info:
             return self.get_info()
         return self.__info
     
     # 异步获取缓存信息
-    async def __get_info_cache_async(self) -> dict[str, Any]:
+    async def __get_info_cache_async(self) -> Dict[str, Any]:
         '''获取缓存信息
 
         返回:
-            dict[str, Any]: 缓存信息
+            Dict[str, Any]: 缓存信息
         '''
         if not self.__info:
             return await self.get_info_async()
@@ -282,7 +282,7 @@ class Card:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取卡牌评论
 
         参数:
@@ -291,12 +291,12 @@ class Card:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -314,7 +314,7 @@ class Card:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取卡牌评论
 
         参数:
@@ -323,12 +323,12 @@ class Card:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''

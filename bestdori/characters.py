@@ -1,7 +1,7 @@
 '''`bestdori.characters`
 
 BanG Dream! 角色相关操作'''
-from typing import Any, Literal
+from typing import Any, Dict, Tuple, Literal
 
 from aiohttp import ClientResponseError
 from httpx import Response, HTTPStatusError
@@ -16,7 +16,7 @@ from .exceptions import (
 )
 
 # 获取总角色信息
-def get_all(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[2]=2) -> Dict[str, Dict[str, Any]]:
     '''获取总角色信息
 
     参数:
@@ -24,12 +24,12 @@ def get_all(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
             `2`: 获取所有已有角色信息 `all.2.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总角色信息
+        Dict[str, Dict[str, Any]]: 获取到的总角色信息
     '''
     return Api(API['characters']['all'].format(index=index)).get().json()
 
 # 异步获取总角色信息
-async def get_all_async(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
+async def get_all_async(index: Literal[2]=2) -> Dict[str, Dict[str, Any]]:
     '''获取总角色信息
 
     参数:
@@ -37,7 +37,7 @@ async def get_all_async(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
             `2`: 获取所有已有角色信息 `all.2.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总角色信息
+        Dict[str, Dict[str, Any]]: 获取到的总角色信息
     '''
     response = await Api(API['characters']['all'].format(index=index)).aget()
     if isinstance(response, Response):
@@ -47,7 +47,7 @@ async def get_all_async(index: Literal[2]=2) -> dict[str, dict[str, Any]]:
     
 
 # 获取主要角色信息
-def get_main(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
+def get_main(index: Literal[3]=3) -> Dict[str, Dict[str, Any]]:
     '''获取主要角色信息
 
     参数:
@@ -55,12 +55,12 @@ def get_main(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
             `3`: 获取所有已有主要角色信息 `all.3.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的主要角色信息
+        Dict[str, Dict[str, Any]]: 获取到的主要角色信息
     '''
     return Api(API['characters']['main'].format(index=index)).get().json()
 
 # 异步获取主要角色信息
-async def get_main_async(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
+async def get_main_async(index: Literal[3]=3) -> Dict[str, Dict[str, Any]]:
     '''获取主要角色信息
 
     参数:
@@ -68,7 +68,7 @@ async def get_main_async(index: Literal[3]=3) -> dict[str, dict[str, Any]]:
             `3`: 获取所有已有主要角色信息 `all.3.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的主要角色信息
+        Dict[str, Dict[str, Any]]: 获取到的主要角色信息
     '''
     response = await Api(API['characters']['main'].format(index=index)).aget()
     if isinstance(response, Response):
@@ -92,7 +92,7 @@ class Character:
         '''
         self.id: int = id
         '''角色 ID'''
-        self.__info: dict[str, Any] = {}
+        self.__info: Dict[str, Any] = {}
         '''角色信息'''
         return
     
@@ -112,7 +112,7 @@ class Character:
     
     # 角色代表色
     @property
-    def color(self) -> tuple[int, int, int]:
+    def color(self) -> Tuple[int, int, int]:
         '''角色代表色'''
         info = self.__info
         # 获取 colorCode 数据
@@ -125,11 +125,11 @@ class Character:
             raise NoDataException('角色颜色')
     
     # 获取角色信息
-    def get_info(self) -> dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         '''获取角色信息
 
         返回:
-            dict[str, Any]: 角色详细信息
+            Dict[str, Any]: 角色详细信息
         '''
         try:
             response = Api(
@@ -145,11 +145,11 @@ class Character:
         return self.__info
     
     # 异步获取角色信息
-    async def get_info_async(self) -> dict[str, Any]:
+    async def get_info_async(self) -> Dict[str, Any]:
         '''获取角色信息
 
         返回:
-            dict[str, Any]: 角色详细信息
+            Dict[str, Any]: 角色详细信息
         '''
         try:
             response = await Api(
@@ -178,7 +178,7 @@ class Character:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取角色评论
 
         参数:
@@ -187,12 +187,12 @@ class Character:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -210,7 +210,7 @@ class Character:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取角色评论
 
         参数:
@@ -219,12 +219,12 @@ class Character:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''

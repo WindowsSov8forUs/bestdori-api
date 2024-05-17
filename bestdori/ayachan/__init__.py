@@ -3,7 +3,7 @@
 ayachan 的各种 API 调用整合'''
 from pathlib import Path
 from mimetypes import guess_type
-from typing import Any, Union, Literal
+from typing import Any, Dict, Union, Literal
 
 from httpx import Response
 
@@ -14,7 +14,7 @@ from .exceptions import SonolusException
 DIFF_STR = ['easy', 'normal', 'hard', 'expert', 'special']
 
 # 自定义谱面分析
-def chart_metrics_custom(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> dict[str, Any]:
+def chart_metrics_custom(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> Dict[str, Any]:
     '''自定义谱面分析
 
     参数:
@@ -22,12 +22,12 @@ def chart_metrics_custom(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> dict[str
         diff (Literal[0, 1, 2, 3, 4]): 难度类型
 
     返回:
-        dict[str, Any]: 分析结果
+        Dict[str, Any]: 分析结果
     '''
     return Api(API['chart_metrics']['custom'].format(diff_str=DIFF_STR[diff])).post(data=chart.to_list()).json()
 
 # 异步自定义谱面分析
-async def chart_metrics_custom_async(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> dict[str, Any]:
+async def chart_metrics_custom_async(chart: Chart, diff: Literal[0, 1, 2, 3, 4]) -> Dict[str, Any]:
     '''自定义谱面分析
 
     参数:
@@ -35,7 +35,7 @@ async def chart_metrics_custom_async(chart: Chart, diff: Literal[0, 1, 2, 3, 4])
         diff (Literal[0, 1, 2, 3, 4]): 难度类型
 
     返回:
-        dict[str, Any]: 分析结果
+        Dict[str, Any]: 分析结果
     '''
     response = await Api(API['chart_metrics']['custom'].format(diff_str=DIFF_STR[diff])).apost(data=chart.to_list())
     if isinstance(response, Response): return response.json()
@@ -45,7 +45,7 @@ async def chart_metrics_custom_async(chart: Chart, diff: Literal[0, 1, 2, 3, 4])
 def chart_metrics_bandori(
     id: int,
     diff: Literal[0, 1, 2, 3, 4]
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''BanG Dream 谱面分析
 
     参数:
@@ -53,7 +53,7 @@ def chart_metrics_bandori(
         diff (Literal[0, 1, 2, 3, 4]): 难度类型
 
     返回:
-        dict[str, Any]: 分析结果
+        Dict[str, Any]: 分析结果
     '''
     return Api(API['chart_metrics']['bandori'].format(chart_id=id, diff_str=DIFF_STR[diff])).get().json()
 
@@ -61,7 +61,7 @@ def chart_metrics_bandori(
 async def chart_metrics_bandori_async(
     id: int,
     diff: Literal[0, 1, 2, 3, 4]
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''BanG Dream 谱面分析
 
     参数:
@@ -69,33 +69,33 @@ async def chart_metrics_bandori_async(
         diff (Literal[0, 1, 2, 3, 4]): 难度类型
 
     返回:
-        dict[str, Any]: 分析结果
+        Dict[str, Any]: 分析结果
     '''
     response = await Api(API['chart_metrics']['bandori'].format(chart_id=id, diff_str=DIFF_STR[diff])).aget()
     if isinstance(response, Response): return response.json()
     return await response.json()
 
 # Bestdori 谱面分析
-def chart_metrics_bestdori(id: int) -> dict[str, Any]:
+def chart_metrics_bestdori(id: int) -> Dict[str, Any]:
     '''Bestdori 谱面分析
 
     参数:
         id (int): 谱面 ID
 
     返回:
-        dict[str, Any]: 分析结果
+        Dict[str, Any]: 分析结果
     '''
     return Api(API['chart_metrics']['bestdori'].format(chart_id=id)).get().json()
 
 # 异步 Bestdori 谱面分析
-async def chart_metrics_bestdori_async(id: int) -> dict[str, Any]:
+async def chart_metrics_bestdori_async(id: int) -> Dict[str, Any]:
     '''Bestdori 谱面分析
 
     参数:
         id (int): 谱面 ID
 
     返回:
-        dict[str, Any]: 分析结果
+        Dict[str, Any]: 分析结果
     '''
     response = await Api(API['chart_metrics']['bestdori'].format(chart_id=id)).aget()
     if isinstance(response, Response): return response.json()
@@ -129,7 +129,7 @@ def post_sonolus_levels(
     bgm_name = bgm.name
     
     # 构建数据
-    data: dict[str, Any] = {
+    data: Dict[str, Any] = {
         'title': title,
         'difficulty': str(difficulty),
         'lifetime': str(lifetime),
@@ -179,7 +179,7 @@ async def post_sonolus_levels_async(
     bgm_name = bgm.name
     
     # 构建数据
-    data: dict[str, Any] = {
+    data: Dict[str, Any] = {
         'title': title,
         'difficulty': str(difficulty),
         'lifetime': str(lifetime),
@@ -233,26 +233,26 @@ async def get_sonolus_levels_async(uid: int) -> Chart:
     return Chart.normalize(await response.json())
 
 # Sonolus 测试服谱面信息获取
-def sonolus_levels(uid: int) -> dict[str, Any]:
+def sonolus_levels(uid: int) -> Dict[str, Any]:
     '''Sonolus 测试服谱面信息获取
 
     参数:
         uid (int): 测试服 ID
 
     返回:
-        dict[str, Any]: 谱面信息
+        Dict[str, Any]: 谱面信息
     '''
     return Api(API['levels']['info'].format(uid=uid)).get().json()
 
 # 异步 Sonolus 测试服谱面信息获取
-async def sonolus_levels_async(uid: int) -> dict[str, Any]:
+async def sonolus_levels_async(uid: int) -> Dict[str, Any]:
     '''Sonolus 测试服谱面信息获取
 
     参数:
         uid (int): 测试服 ID
 
     返回:
-        dict[str, Any]: 谱面信息
+        Dict[str, Any]: 谱面信息
     '''
     response = await Api(API['levels']['info'].format(uid=uid)).aget()
     if isinstance(response, Response): return response.json()

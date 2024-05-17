@@ -2,7 +2,16 @@
 
 社区帖子相关操作'''
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Any, Union, Literal, Optional, TypedDict
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    Union,
+    Literal,
+    Optional,
+    TypedDict
+)
 
 from httpx import Response
 
@@ -62,11 +71,11 @@ def get_list(
     search: str='',
     category_name: Literal['SELF_POST']='SELF_POST',
     category_id: Literal['chart']='chart',
-    tags: list[Tag]=[],
+    tags: List[Tag]=[],
     order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC',
     limit: int=20,
     offset: int=0
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''搜索社区谱面
         ```python
         # 以 'Arghena' 为关键词，搜索社区谱面
@@ -77,17 +86,17 @@ def get_list(
         search (str, optional): 搜索关键词，默认为空
         category_name (Literal[&#39;SELF_POST&#39;], optional): 搜索的帖子类型 `SELF_POST`
         category_id (Literal[&#39;chart&#39;, &#39;text&#39;], optional): 搜索的画廊种类 `chart`
-        tags (list[Tag], optional): 搜索的标签，默认为空
+        tags (List[Tag], optional): 搜索的标签，默认为空
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
 
     返回:
-        dict[str, Any]: 搜索结果
+        Dict[str, Any]: 搜索结果
             ```python
             result: bool # 是否有响应
             count: int # 搜索到的谱面总数
-            posts: list[dict[str, Any]] # 列举出的谱面
+            posts: List[Dict[str, Any]] # 列举出的谱面
             ```
     '''
     ...
@@ -100,7 +109,7 @@ def get_list(
     limit: int=20,
     offset: int=0,
     order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''搜索用户帖子
 
     参数:        
@@ -110,11 +119,11 @@ def get_list(
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
     返回:
-        dict[str, Any]: 搜索结果
+        Dict[str, Any]: 搜索结果
             ```python
             result: bool # 是否有响应
             count: int # 搜索到的帖子总数
-            posts: list[dict[str, Any]] # 列举出的帖子
+            posts: List[Dict[str, Any]] # 列举出的帖子
             ```
     '''
     ...
@@ -127,12 +136,12 @@ def get_list(
     following: Optional[bool]=None,
     category_name: Optional[str]=None,
     category_id: Optional[str]=None,
-    tags: Optional[list[Tag]]=None,
+    tags: Optional[List[Tag]]=None,
     username: Optional[str]=None,
     order: Literal['TIME_DESC', 'TIME_ASC'],
     limit: int=20,
     offset: int=0
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''搜索帖子
 
     参数:        
@@ -147,12 +156,12 @@ def get_list(
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
 
     返回:
-        dict[str, Any]: 搜索结果
+        Dict[str, Any]: 搜索结果
     '''
     ...
 
 # 搜索帖子
-def get_list(**kwargs: Any) -> dict[str, Any]:
+def get_list(**kwargs: Any) -> Dict[str, Any]:
     # 去除 None 值字段
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     # 将下划线字段名转换为小驼峰字段名
@@ -171,11 +180,11 @@ async def get_list_async(
     search: str='',
     category_name: Literal['SELF_POST']='SELF_POST',
     category_id: Literal['chart']='chart',
-    tags: list[Tag]=[],
+    tags: List[Tag]=[],
     order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC',
     limit: int=20,
     offset: int=0
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''搜索社区谱面
         ```python
         # 以 'Arghena' 为关键词，搜索社区谱面
@@ -186,17 +195,17 @@ async def get_list_async(
         search (str, optional): 搜索关键词，默认为空
         category_name (Literal[&#39;SELF_POST&#39;], optional): 搜索的帖子类型 `SELF_POST`
         category_id (Literal[&#39;chart&#39;, &#39;text&#39;], optional): 搜索的画廊种类 `chart`
-        tags (list[Tag], optional): 搜索的标签，默认为空
+        tags (List[Tag], optional): 搜索的标签，默认为空
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
 
     返回:
-        dict[str, Any]: 搜索结果
+        Dict[str, Any]: 搜索结果
             ```python
             result: bool # 是否有响应
             count: int # 搜索到的谱面总数
-            posts: list[dict[str, Any]] # 列举出的谱面
+            posts: List[Dict[str, Any]] # 列举出的谱面
             ```
     '''
     ...
@@ -209,7 +218,7 @@ async def get_list_async(
     limit: int=20,
     offset: int=0,
     order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''搜索用户帖子
 
     参数:        
@@ -219,11 +228,11 @@ async def get_list_async(
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
     返回:
-        dict[str, Any]: 搜索结果
+        Dict[str, Any]: 搜索结果
             ```python
             result: bool # 是否有响应
             count: int # 搜索到的帖子总数
-            posts: list[dict[str, Any]] # 列举出的帖子
+            posts: List[Dict[str, Any]] # 列举出的帖子
             ```
     '''
     ...
@@ -236,12 +245,12 @@ async def get_list_async(
     following: Optional[bool]=None,
     category_name: Optional[str]=None,
     category_id: Optional[str]=None,
-    tags: Optional[list[Tag]]=None,
+    tags: Optional[List[Tag]]=None,
     username: Optional[str]=None,
     order: Literal['TIME_DESC', 'TIME_ASC'],
     limit: int=20,
     offset: int=0
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     '''搜索帖子
 
     参数:        
@@ -256,12 +265,12 @@ async def get_list_async(
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
 
     返回:
-        dict[str, Any]: 搜索结果
+        Dict[str, Any]: 搜索结果
     '''
     ...
 
 # 异步搜索帖子
-async def get_list_async(**kwargs: Any) -> dict[str, Any]:
+async def get_list_async(**kwargs: Any) -> Dict[str, Any]:
     # 去除 None 值字段
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     # 将下划线字段名转换为小驼峰字段名
@@ -281,7 +290,7 @@ def search_tags(
     type: str,
     data: str='',
     fuzzy: bool=True
-) -> list[Tag]:
+) -> List[Tag]:
     '''搜索已有标签
 
     参数:
@@ -290,7 +299,7 @@ def search_tags(
         fuzzy (bool, optional): 是否使用模糊搜索
 
     返回:
-        list[Tag]: 标签类 `Tag` 列表
+        List[Tag]: 标签类 `Tag` 列表
     '''
     response = Api(API['post']['tag']).get(
         params={
@@ -309,7 +318,7 @@ async def search_tags_async(
     type: str,
     data: str='',
     fuzzy: bool=True
-) -> list[Tag]:
+) -> List[Tag]:
     '''搜索已有标签
 
     参数:
@@ -318,7 +327,7 @@ async def search_tags_async(
         fuzzy (bool, optional): 是否使用模糊搜索
 
     返回:
-        list[Tag]: 标签类 `Tag` 列表
+        List[Tag]: 标签类 `Tag` 列表
     '''
     response = await Api(API['post']['tag']).aget(
         params={
@@ -347,11 +356,11 @@ def post(
     category_id: Literal['chart']='chart',
     category_name: Literal['SELF_POST']='SELF_POST',
     chart: Chart,
-    content: list[Content],
+    content: List[Content],
     diff: Literal[0, 1, 2, 3, 4],
     level: int,
     song: Union[CustomSong, ProvidedSong],
-    tags: list[Tag]=[],
+    tags: List[Tag]=[],
     title: str
 ) -> int:
     '''发表谱面
@@ -362,11 +371,11 @@ def post(
         category_id (Literal[&#39;chart&#39;], optional): 谱面画廊 ID `chart`
         category_name (Literal[&#39;SELF_POST&#39;], optional): 谱面画廊名称 `SELF_POST`
         chart (Chart): 谱面
-        content (list[Content]): 帖子内容
+        content (List[Content]): 帖子内容
         diff (Literal[0, 1, 2, 3, 4]): 难度
         level (int): 等级
         song (Union[CustomSong, ProvidedSong]): 歌曲
-        tags (list[Tag], optional): 谱面标签
+        tags (List[Tag], optional): 谱面标签
         title (str): 谱面标题
 
     返回:
@@ -381,8 +390,8 @@ def post(
     *,
     category_id: Literal['text']='text',
     category_name: Literal['SELF_POST']='SELF_POST',
-    content: list[Content],
-    tags: list[Tag]=[],
+    content: List[Content],
+    tags: List[Tag]=[],
     title: str
 ) -> int:
     '''发表文本帖子
@@ -391,8 +400,8 @@ def post(
         me (Me): 自身用户对象
         category_id (Literal[&#39;text&#39;], optional): 帖子画廊 ID `text`
         category_name (Literal[&#39;SELF_POST&#39;], optional): 帖子画廊名称 `SELF_POST`
-        content (list[Content]): 帖子内容
-        tags (list[Tag], optional): 帖子标签
+        content (List[Content]): 帖子内容
+        tags (List[Tag], optional): 帖子标签
         title (str): 帖子标题
 
     返回:
@@ -409,11 +418,11 @@ def post(
     category_id: str,
     category_name: str,
     chart: Optional[Chart]=None,
-    content: list[Content],
+    content: List[Content],
     diff: Optional[Literal[0, 1, 2, 3, 4]]=None,
     level: Optional[int]=None,
     song: Optional[Union[CustomSong, ProvidedSong]]=None,
-    tags: Optional[list[Tag]]=None,
+    tags: Optional[List[Tag]]=None,
     title: Optional[str]=None
 ) -> int:
     '''发表帖子
@@ -424,11 +433,11 @@ def post(
         category_id (str): 帖子画廊 ID
         category_name (str): 帖子画廊名称
         chart (Optional[Chart], optional): 谱面
-        content (list[Content]): 帖子内容
+        content (List[Content]): 帖子内容
         diff (Optional[Literal[0, 1, 2, 3, 4]], optional): 难度
         level (Optional[int], optional): 等级
         song (Optional[Union[CustomSong, ProvidedSong]], optional): 歌曲
-        tags (Optional[list[Tag]], optional): 帖子标签
+        tags (Optional[List[Tag]], optional): 帖子标签
         title (Optional[str], optional): 帖子标题
 
     返回:
@@ -473,11 +482,11 @@ async def apost(
     category_id: Literal['chart']='chart',
     category_name: Literal['SELF_POST']='SELF_POST',
     chart: Chart,
-    content: list[Content],
+    content: List[Content],
     diff: Literal[0, 1, 2, 3, 4],
     level: int,
     song: Union[CustomSong, ProvidedSong],
-    tags: list[Tag]=[],
+    tags: List[Tag]=[],
     title: str
 ) -> int:
     '''发表谱面
@@ -488,11 +497,11 @@ async def apost(
         category_id (Literal[&#39;chart&#39;], optional): 谱面画廊 ID `chart`
         category_name (Literal[&#39;SELF_POST&#39;], optional): 谱面画廊名称 `SELF_POST`
         chart (Chart): 谱面
-        content (list[Content]): 帖子内容
+        content (List[Content]): 帖子内容
         diff (Literal[0, 1, 2, 3, 4]): 难度
         level (int): 等级
         song (Union[CustomSong, ProvidedSong]): 歌曲
-        tags (list[Tag], optional): 谱面标签
+        tags (List[Tag], optional): 谱面标签
         title (str): 谱面标题
 
     返回:
@@ -507,8 +516,8 @@ async def apost(
     *,
     category_id: Literal['text']='text',
     category_name: Literal['SELF_POST']='SELF_POST',
-    content: list[Content],
-    tags: list[Tag]=[],
+    content: List[Content],
+    tags: List[Tag]=[],
     title: str
 ) -> int:
     '''发表文本帖子
@@ -517,8 +526,8 @@ async def apost(
         me (Me): 自身用户对象
         category_id (Literal[&#39;text&#39;], optional): 帖子画廊 ID `text`
         category_name (Literal[&#39;SELF_POST&#39;], optional): 帖子画廊名称 `SELF_POST`
-        content (list[Content]): 帖子内容
-        tags (list[Tag], optional): 帖子标签
+        content (List[Content]): 帖子内容
+        tags (List[Tag], optional): 帖子标签
         title (str): 帖子标题
 
     返回:
@@ -535,11 +544,11 @@ async def apost(
     category_id: str,
     category_name: str,
     chart: Optional[Chart]=None,
-    content: list[Content],
+    content: List[Content],
     diff: Optional[Literal[0, 1, 2, 3, 4]]=None,
     level: Optional[int]=None,
     song: Optional[Union[CustomSong, ProvidedSong]]=None,
-    tags: Optional[list[Tag]]=None,
+    tags: Optional[List[Tag]]=None,
     title: Optional[str]=None
 ) -> int:
     '''发表帖子
@@ -550,11 +559,11 @@ async def apost(
         category_id (str): 帖子画廊 ID
         category_name (str): 帖子画廊名称
         chart (Optional[Chart], optional): 谱面
-        content (list[Content]): 帖子内容
+        content (List[Content]): 帖子内容
         diff (Optional[Literal[0, 1, 2, 3, 4]], optional): 难度
         level (Optional[int], optional): 等级
         song (Optional[Union[CustomSong, ProvidedSong]], optional): 歌曲
-        tags (Optional[list[Tag]], optional): 帖子标签
+        tags (Optional[List[Tag]], optional): 帖子标签
         title (Optional[str], optional): 帖子标题
 
     返回:
@@ -662,7 +671,7 @@ class Post:
         '''
         self.id: int = id
         '''社区帖子 ID'''
-        self.__post: dict[str, Any] = {}
+        self.__post: Dict[str, Any] = {}
         '''社区帖子详细内容'''
         return
     
@@ -678,7 +687,7 @@ class Post:
     
     # 帖子标签
     @property
-    def tags(self) -> list[Tag]:
+    def tags(self) -> List[Tag]:
         '''帖子标签'''
         if (tags := self.__post.get('tags', None)) is not None:
             return [Tag(tag) for tag in tags]
@@ -701,21 +710,21 @@ class Post:
         return result
     
     # 获取帖子基础信息
-    def get_basic(self) -> dict[str, Any]:
+    def get_basic(self) -> Dict[str, Any]:
         '''获取帖子基础信息
 
         返回:
-            dict[str, Any]: 基础信息
+            Dict[str, Any]: 基础信息
         '''
         response = Api(API['post']['basic']).get(params={'id': self.id,})
         return response.json()
     
     # 异步获取帖子基础信息
-    async def get_basic_async(self) -> dict[str, Any]:
+    async def get_basic_async(self) -> Dict[str, Any]:
         '''获取帖子基础信息
 
         返回:
-            dict[str, Any]: 基础信息
+            Dict[str, Any]: 基础信息
         '''
         response = await Api(API['post']['basic']).aget(params={'id': self.id,})
         if isinstance(response, Response):
@@ -724,11 +733,11 @@ class Post:
             return await response.json()
     
     # 获取帖子信息
-    def get_details(self) -> dict[str, Any]:
+    def get_details(self) -> Dict[str, Any]:
         '''获取帖子信息
 
         返回:
-            dict[str, Any]: 帖子详细信息
+            Dict[str, Any]: 帖子详细信息
         '''
         response = Api(API['post']['details']).get(params={'id': self.id,})
         if (post := response.json().get('post', None)) is not None:
@@ -738,11 +747,11 @@ class Post:
         return self.__post
     
     # 异步获取帖子信息
-    async def get_details_async(self) -> dict[str, Any]:
+    async def get_details_async(self) -> Dict[str, Any]:
         '''获取帖子信息
 
         返回:
-            dict[str, Any]: 帖子详细信息
+            Dict[str, Any]: 帖子详细信息
         '''
         response = await Api(API['post']['details']).aget(params={'id': self.id,})
         if isinstance(response, Response):
@@ -757,22 +766,22 @@ class Post:
         return self.__post
     
     # 获取缓存信息
-    def __get_post_cache(self) -> dict[str, Any]:
+    def __get_post_cache(self) -> Dict[str, Any]:
         '''获取缓存信息
 
         返回:
-            dict[str, Any]: 缓存信息
+            Dict[str, Any]: 缓存信息
         '''
         if not self.__post:
             self.get_details()
         return self.__post
     
     # 异步获取缓存信息
-    async def __get_post_cache_async(self) -> dict[str, Any]:
+    async def __get_post_cache_async(self) -> Dict[str, Any]:
         '''获取缓存信息
 
         返回:
-            dict[str, Any]: 缓存信息
+            Dict[str, Any]: 缓存信息
         '''
         if not self.__post:
             await self.get_details_async()
@@ -792,7 +801,7 @@ class Post:
         if (type := song.get('type', None)) is None:
             raise TypeError('该帖子没有歌曲类型。')
         
-        result: dict[str, Union[bytes, None]] = {}
+        result: Dict[str, Union[bytes, None]] = {}
         if type == 'custom': # 自定义歌曲
             # 获取歌曲音频
             if (audio := song.get('audio', None)) is None:
@@ -874,7 +883,7 @@ class Post:
         if (type := song.get('type', None)) is None:
             raise TypeError('该帖子没有歌曲类型。')
         
-        result: dict[str, Union[bytes, None]] = {}
+        result: Dict[str, Union[bytes, None]] = {}
         if type == 'custom': # 自定义歌曲
             # 获取歌曲音频
             if (audio := song.get('audio', None)) is None:
@@ -963,7 +972,7 @@ class Post:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取帖子评论
 
         参数:
@@ -972,12 +981,12 @@ class Post:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -995,7 +1004,7 @@ class Post:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取帖子评论
 
         参数:
@@ -1004,12 +1013,12 @@ class Post:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -1022,12 +1031,12 @@ class Post:
         )
     
     # 评论帖子
-    def comment(self, me: 'Me', content: list[Content]) -> int:
+    def comment(self, me: 'Me', content: List[Content]) -> int:
         '''评论帖子
 
         参数:
             me (Me): 自身用户对象
-            content (list[Content]): 评论内容
+            content (List[Content]): 评论内容
 
         返回:
             int: 评论 ID
@@ -1040,12 +1049,12 @@ class Post:
         )
     
     # 异步评论帖子
-    async def acomment(self, me: 'Me', content: list[Content]) -> int:
+    async def acomment(self, me: 'Me', content: List[Content]) -> int:
         '''评论帖子
 
         参数:
             me (Me): 自身用户对象
-            content (list[Content]): 评论内容
+            content (List[Content]): 评论内容
 
         返回:
             int: 评论 ID

@@ -2,13 +2,13 @@
 
 from .content import Br as Br
 from .content import Link as Link
-from .content import List as List
 from .content import Text as Text
 from .content import Emoji as Emoji
 from .content import Image as Image
 from .content import Content as Content
 from .content import Heading as Heading
 from .content import Mention as Mention
+from .content import ContentList as ContentList
 
 from .note import BPM as BPM
 from .note import Slide as Slide

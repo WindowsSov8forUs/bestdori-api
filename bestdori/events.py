@@ -1,7 +1,7 @@
 '''`bestdori.events`
 
 BanG Dream! 活动相关操作'''
-from typing import Any, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from aiohttp import ClientResponseError
 from httpx import Response, HTTPStatusError
@@ -27,7 +27,7 @@ from .exceptions import (
 )
 
 # 获取总活动信息
-def get_all(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[0, 5, 6]=5) -> Dict[str, Dict[str, Any]]:
     '''获取总活动信息
 
     参数:
@@ -37,12 +37,12 @@ def get_all(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
             `6`: 获取所有已有活动的简洁信息 `all.6.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总活动信息
+        Dict[str, Dict[str, Any]]: 获取到的总活动信息
     '''
     return Api(API['events']['all'].format(index=index)).get().json()
 
 # 异步获取总活动信息
-async def get_all_async(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
+async def get_all_async(index: Literal[0, 5, 6]=5) -> Dict[str, Dict[str, Any]]:
     '''获取总活动信息
 
     参数:
@@ -52,7 +52,7 @@ async def get_all_async(index: Literal[0, 5, 6]=5) -> dict[str, dict[str, Any]]:
             `6`: 获取所有已有活动的简洁信息 `all.6.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总活动信息
+        Dict[str, Dict[str, Any]]: 获取到的总活动信息
     '''
     response = await Api(API['events']['all'].format(index=index)).aget()
     if isinstance(response, Response):
@@ -78,7 +78,7 @@ class Event:
         '''活动 ID'''
         self.archive: EventArchive = EventArchive(self.id)
         '''活动数据'''
-        self.__info: dict[str, Any] = {}
+        self.__info: Dict[str, Any] = {}
         '''活动信息'''
         return
     
@@ -118,11 +118,11 @@ class Event:
             raise NoDataException('活动所在服务器')
     
     # 获取活动信息
-    def get_info(self) -> dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         '''获取活动信息
 
         返回:
-            dict[str, Any]: 活动详细信息
+            Dict[str, Any]: 活动详细信息
         '''
         try:
             response = Api(
@@ -138,11 +138,11 @@ class Event:
         return self._info
     
     # 异步获取活动信息
-    async def get_info_async(self) -> dict[str, Any]:
+    async def get_info_async(self) -> Dict[str, Any]:
         '''获取活动信息
 
         返回:
-            dict[str, Any]: 活动详细信息
+            Dict[str, Any]: 活动详细信息
         '''
         try:
             response = await Api(
@@ -166,22 +166,22 @@ class Event:
         return self._info
     
     # 获取缓存信息
-    def __get_info_cache(self) -> dict[str, Any]:
+    def __get_info_cache(self) -> Dict[str, Any]:
         '''获取缓存信息
 
         返回:
-            dict[str, Any]: 活动详细信息
+            Dict[str, Any]: 活动详细信息
         '''
         if not self._info:
             return self.get_info()
         return self._info
     
     # 异步获取缓存信息
-    async def __get_info_cache_async(self) -> dict[str, Any]:
+    async def __get_info_cache_async(self) -> Dict[str, Any]:
         '''获取缓存信息
 
         返回:
-            dict[str, Any]: 活动详细信息
+            Dict[str, Any]: 活动详细信息
         '''
         if not self._info:
             return await self.get_info_async()
@@ -193,7 +193,7 @@ class Event:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取活动评论
 
         参数:
@@ -202,12 +202,12 @@ class Event:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -225,7 +225,7 @@ class Event:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取活动评论
 
         参数:
@@ -234,12 +234,12 @@ class Event:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -507,7 +507,7 @@ class Event:
         server: Optional[Literal[0, 1, 2, 3, 4]]=None,
         mid: Literal['0']='0',
         latest: Literal['1']='1'
-    ) -> dict[str, list[dict[str, Any]]]:
+    ) -> Dict[str, List[Dict[str, Any]]]:
         '''获取排名分数线
 
         参数:
@@ -521,7 +521,7 @@ class Event:
             latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
 
         返回:
-            dict[str, list[dict[str, Any]]]: 排名分数线数据
+            Dict[str, List[Dict[str, Any]]]: 排名分数线数据
         '''
         if server is None:
             self.__get_info_cache()
@@ -539,7 +539,7 @@ class Event:
         server: Optional[Literal[0, 1, 2, 3, 4]]=None,
         mid: Literal['0']='0',
         latest: Literal['1']='1'
-    ) -> dict[str, list[dict[str, Any]]]:
+    ) -> Dict[str, List[Dict[str, Any]]]:
         '''获取排名分数线
 
         参数:
@@ -553,7 +553,7 @@ class Event:
             latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
 
         返回:
-            dict[str, list[dict[str, Any]]]: 排名分数线数据
+            Dict[str, List[Dict[str, Any]]]: 排名分数线数据
         '''
         if server is None:
             await self.__get_info_cache_async()
@@ -566,11 +566,11 @@ class Event:
         return await self.archive.get_top_async(server, mid, latest)
 
     # 获取团队 LIVE 佳节活动歌曲循环数据
-    def get_rotation_musics(self) -> list[RotationMusic]:
+    def get_rotation_musics(self) -> List[RotationMusic]:
         '''获取团队 LIVE 佳节活动歌曲循环数据
 
         返回:
-            list[dict[str, Any]]: 团队 LIVE 佳节活动歌曲循环数据
+            List[Dict[str, Any]]: 团队 LIVE 佳节活动歌曲循环数据
         '''
         info = self.__get_info_cache()
         if (_event_type := info.get('eventTyppe', '')) != 'festival':
@@ -578,11 +578,11 @@ class Event:
         return get_rotation_musics(self.id)
     
     # 异步获取团队 LIVE 佳节活动歌曲循环数据
-    async def get_rotation_musics_async(self) -> list[RotationMusic]:
+    async def get_rotation_musics_async(self) -> List[RotationMusic]:
         '''获取团队 LIVE 佳节活动歌曲循环数据
 
         返回:
-            list[dict[str, Any]]: 团队 LIVE 佳节活动歌曲循环数据
+            List[Dict[str, Any]]: 团队 LIVE 佳节活动歌曲循环数据
         '''
         info = await self.__get_info_cache_async()
         if (_event_type := info.get('eventTyppe', '')) != 'festival':
@@ -590,11 +590,11 @@ class Event:
         return await get_rotation_musics_async(self.id)
     
     # 获取团队 LIVE 佳节活动舞台数据
-    def get_stages(self) -> list[Stage]:
+    def get_stages(self) -> List[Stage]:
         '''获取团队 LIVE 佳节活动舞台数据
 
         返回:
-            list[dict[str, Any]]: 团队 LIVE 佳节活动舞台数据
+            List[Dict[str, Any]]: 团队 LIVE 佳节活动舞台数据
         '''
         info = self.__get_info_cache()
         if (_event_type := info.get('eventTyppe', '')) != 'festival':
@@ -602,11 +602,11 @@ class Event:
         return get_stages(self.id)
     
     # 异步获取团队 LIVE 佳节活动舞台数据
-    async def get_stages_async(self) -> list[Stage]:
+    async def get_stages_async(self) -> List[Stage]:
         '''获取团队 LIVE 佳节活动舞台数据
 
         返回:
-            list[dict[str, Any]]: 团队 LIVE 佳节活动舞台数据
+            List[Dict[str, Any]]: 团队 LIVE 佳节活动舞台数据
         '''
         info = await self.__get_info_cache_async()
         if (_event_type := info.get('eventTyppe', '')) != 'festival':

@@ -1,7 +1,7 @@
 '''`bestdori.utils.content`
 
 Bestdori 帖子内容模块'''
-from typing import Literal, Any
+from typing import Literal, Any, Dict, List
 
 # 内容类
 class Content:
@@ -9,7 +9,7 @@ class Content:
     type: str
     '''内容类型'''
     # 初始化
-    def __init__(self, values: dict[str, Any]) -> None:
+    def __init__(self, values: Dict[str, Any]) -> None:
         '''初始化'''
         for key, value in values.items():
             setattr(self, key, value)
@@ -81,11 +81,11 @@ class Content:
     
     # 图片
     @staticmethod
-    def image(objects: list[str], display: Literal[0, 1, 2]=0) -> 'Image':
+    def image(objects: List[str], display: Literal[0, 1, 2]=0) -> 'Image':
         '''图片
 
         参数:
-            objects (list[str]): 图片对象网址列表
+            objects (List[str]): 图片对象网址列表
             
             display (Literal[&#39;0&#39;, &#39;1&#39;, &#39;2&#39;], optional): 显示类型 `0`: 大图 `1`: 缩略图 `2`: 图标
 
@@ -142,8 +142,8 @@ class Content:
             'mission-info'
         ],
         display: Literal[0, 1, 2],
-        objects: list[str]
-    ) -> 'List':
+        objects: List[str]
+    ) -> 'ContentList':
         '''列表
 
         参数:
@@ -156,7 +156,7 @@ class Content:
         返回:
             List: 列表对象 `bestdori.utils.List`
         '''
-        return List({'type': 'list', 'target': target, 'display': display, 'objects': objects})
+        return ContentList({'type': 'list', 'target': target, 'display': display, 'objects': objects})
 
 # 文本类
 class Text(Content):
@@ -204,7 +204,7 @@ class Image(Content):
     '''内容类型'''
     display: Literal[0, 1, 2]
     '''显示类型 `0`: 大图 `1`: 缩略图 `2`: 图标'''
-    objects: list[str]
+    objects: List[str]
     '''图片对象网址列表'''
 
 # 链接类
@@ -218,7 +218,7 @@ class Link(Content):
     '''链接信息'''
 
 # 列表类
-class List(Content):
+class ContentList(Content):
     '''列表类'''
     type: str = 'list'
     '''内容类型'''
@@ -226,5 +226,5 @@ class List(Content):
     '''列表对象'''
     display: Literal[0, 1, 2]
     '''显示类型'''
-    objects: list[str]
+    objects: List[str]
     '''列表对象 ID 列表'''

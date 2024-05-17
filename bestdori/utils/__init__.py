@@ -1,7 +1,7 @@
 '''`bestdori.utils`
 
 杂项模块'''
-from typing import Literal, Any
+from typing import Literal, Any, Dict, Tuple
 
 from httpx import Response
 
@@ -12,14 +12,14 @@ from bestdori.exceptions import (
 )
 
 # 将十六进制颜色代码转换为 RGB 元组
-def hexto_rgb(hex: str) -> tuple[int, int, int]:
+def hexto_rgb(hex: str) -> Tuple[int, int, int]:
     '''将十六进制颜色代码转换为 RGB 元组
 
     参数:
         hex (str): 十六进制颜色代码
 
     返回:
-        tuple[int, int, int]: RGB 元组
+        Tuple[int, int, int]: RGB 元组
     '''
     if hex[0] == '#':
         hex = hex[1:]
@@ -81,7 +81,7 @@ async def get_degree_async(
         raise AssetsNotExistError(f'称号 {degree_name}-{server}')
 
 # 获取总技能信息
-def get_skill_all(index: Literal[10]=10) -> dict[str, dict[str, Any]]:
+def get_skill_all(index: Literal[10]=10) -> Dict[str, Dict[str, Any]]:
     '''获取总技能信息
 
     参数:
@@ -89,12 +89,12 @@ def get_skill_all(index: Literal[10]=10) -> dict[str, dict[str, Any]]:
             `10`: 获取所有已有技能的信息 `all.5.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总技能信息
+        Dict[str, Dict[str, Any]]: 获取到的总技能信息
     '''
     return Api(API['all']['skills'].format(index=index)).get().json()
 
 # 异步获取总技能信息
-async def get_skill_all_async(index: Literal[10]=10) -> dict[str, dict[str, Any]]:
+async def get_skill_all_async(index: Literal[10]=10) -> Dict[str, Dict[str, Any]]:
     '''获取总技能信息
 
     参数:
@@ -102,14 +102,14 @@ async def get_skill_all_async(index: Literal[10]=10) -> dict[str, dict[str, Any]
             `10`: 获取所有已有技能的信息 `all.5.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总技能信息
+        Dict[str, Dict[str, Any]]: 获取到的总技能信息
     '''
     response = await Api(API['all']['skills'].format(index=index)).aget()
     if isinstance(response, Response): return response.json()
     return await response.json()
 
 # 获取总乐队信息
-def get_bands_all(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
+def get_bands_all(index: Literal[1]=1) -> Dict[str, Dict[str, Any]]:
     '''获取总乐队信息
 
     参数:
@@ -117,12 +117,12 @@ def get_bands_all(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
             `1`: 获取所有已有乐队的名称信息 `all.1.json`，默认为该项
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总乐队信息
+        Dict[str, Dict[str, Any]]: 获取到的总乐队信息
     '''
     return Api(API['bands']['all'].format(index=index)).get().json()
 
 # 异步获取总乐队信息
-async def get_bands_all_async(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
+async def get_bands_all_async(index: Literal[1]=1) -> Dict[str, Dict[str, Any]]:
     '''获取总乐队信息
 
     参数:
@@ -130,14 +130,14 @@ async def get_bands_all_async(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
             `1`: 获取所有已有乐队的名称信息 `all.1.json`，默认为该项
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总乐队信息
+        Dict[str, Dict[str, Any]]: 获取到的总乐队信息
     '''
     response = await Api(API['bands']['all'].format(index=index)).aget()
     if isinstance(response, Response): return response.json()
     return await response.json()
 
 # 获取主要乐队信息
-def get_bands_main(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
+def get_bands_main(index: Literal[1]=1) -> Dict[str, Dict[str, Any]]:
     '''获取主要乐队信息
 
     参数:
@@ -145,12 +145,12 @@ def get_bands_main(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
             `1`: 获取所有主要乐队的名称信息 `main.1.json`，默认为该项
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的主要乐队信息
+        Dict[str, Dict[str, Any]]: 获取到的主要乐队信息
     '''
     return Api(API['bands']['main'].format(index=index)).get().json()
 
 # 异步获取主要乐队信息
-async def get_bands_main_async(index: Literal[1]=1) -> dict[str, dict[str, Any]]:
+async def get_bands_main_async(index: Literal[1]=1) -> Dict[str, Dict[str, Any]]:
     '''获取主要乐队信息
 
     参数:
@@ -158,7 +158,7 @@ async def get_bands_main_async(index: Literal[1]=1) -> dict[str, dict[str, Any]]
             `1`: 获取所有主要乐队的名称信息 `main.1.json`，默认为该项
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的主要乐队信息
+        Dict[str, Dict[str, Any]]: 获取到的主要乐队信息
     '''
     response = await Api(API['bands']['main'].format(index=index)).aget()
     if isinstance(response, Response): return response.json()

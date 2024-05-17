@@ -1,13 +1,12 @@
 '''`bestdori.exceptions`
 
 API 错误信息相关操作'''
-from typing import Any
+from typing import Any, Dict
 
-from httpx._models import Response
 from httpx._exceptions import RequestError
 
 # 错误基类
-class BaseException(Exception):
+class BestdoriException(Exception):
     '''错误基类'''
     # 初始化
     def __init__(self, msg: str) -> None:
@@ -20,7 +19,7 @@ class BaseException(Exception):
         return self.message
 
 # 请求发送错误
-class RequestException(BaseException):
+class RequestException(BestdoriException):
     '''请求发送错误'''
     # 初始化
     def __init__(self, api: str, msg: str='无错误代码获取', **kwargs: Any) -> None:
@@ -38,7 +37,7 @@ class RequestException(BaseException):
         return f'向 Bestdori {self.api} 发送请求时出错。{self.message}'
 
 # 资源错误
-class AssetsException(BaseException):
+class AssetsException(BestdoriException):
     '''资源错误'''
     # 初始化
     def __init__(self, msg: str, **kwargs: Any) -> None:
@@ -54,7 +53,7 @@ class AssetsException(BaseException):
         return f'获取资源时出错。{self.message}'
 
 # 帖子错误
-class PostException(BaseException):
+class PostException(BestdoriException):
     '''帖子错误'''
     # 初始化
     def __init__(self, msg: str) -> None:
@@ -67,7 +66,7 @@ class PostException(BaseException):
 class PostHasNoChartError(PostException):
     '''帖子不是社区谱面'''
     # 初始化
-    def __init__(self, post: dict[str, Any]) -> None:
+    def __init__(self, post: Dict[str, Any]) -> None:
         name = post.get('categoryName', 'DEFAULT_POST')
         msg = f'该帖子类型 {name} 不是社区谱面。'
         super().__init__(msg)
@@ -77,14 +76,14 @@ class PostHasNoChartError(PostException):
 class PostHasNoSongError(PostException):
     '''帖子没有音乐字段'''
     # 初始化
-    def __init__(self, post: dict[str, Any]) -> None:
+    def __init__(self, post: Dict[str, Any]) -> None:
         name = post.get('categoryName', 'DEFAULT_POST')
         msg = f'该帖子类型 {name} 不存在歌曲资源。'
         super().__init__(msg)
         return
 
 # 某 id 指定的资源不存在
-class NotExistException(BaseException):
+class NotExistException(BestdoriException):
     '''资源不存在'''
     # 初始化
     def __init__(self, src: str) -> None:
@@ -264,7 +263,7 @@ class PlayerNotExistError(NotExistException):
         return
 
 # 服务器指定错误
-class ServerNotAvailableError(BaseException):
+class ServerNotAvailableError(BestdoriException):
     '''服务器指定错误'''
     # 初始化
     def __init__(self, name: str, server: str) -> None:
@@ -275,7 +274,7 @@ class ServerNotAvailableError(BaseException):
         return
 
 # 活动没有奖励贴纸错误
-class EventHasNoStampError(BaseException):
+class EventHasNoStampError(BestdoriException):
     '''活动没有奖励贴纸错误'''
     # 初始化
     def __init__(self, id: int) -> None:
@@ -286,7 +285,7 @@ class EventHasNoStampError(BaseException):
         return
 
 # 无法获取到信息错误
-class NoDataException(BaseException):
+class NoDataException(BestdoriException):
     '''无法获取到信息错误'''
     # 初始化
     def __init__(self, src: str) -> None:
@@ -297,7 +296,7 @@ class NoDataException(BaseException):
         return
 
 # 设置出错
-class SettingsException(BaseException):
+class SettingsException(BestdoriException):
     '''设置出错'''
     # 初始化
     def __init__(self, msg: str) -> None:
@@ -325,7 +324,7 @@ class NoContentTypeError(RequestError):
         return
 
 # 请求错误集合
-REQUEST_EXCEPTION: dict[str, type[RequestException]] = {
+REQUEST_EXCEPTION: Dict[str, type[RequestException]] = {
     'REQUEST_INVALID': RequestInvalidError,
     'LOGIN_REQUIRED': LoginRequiredError,
     'CREDENTIALS_INVALID': CredentialsInvalidError,

@@ -4,7 +4,7 @@
 from json import dumps
 from io import BufferedReader
 from http.cookies import SimpleCookie
-from typing import Any, Union, Literal, Optional, cast
+from typing import Any, Dict, Tuple, Union, Literal, Optional, cast
 
 from httpx import HTTPStatusError
 from aiohttp import ClientResponseError
@@ -28,9 +28,9 @@ class Api:
     '''
     api: str
     '''请求的 API 地址'''
-    headers: dict[str, str]
+    headers: Dict[str, str]
     '''请求头'''
-    _proxies: Optional[dict[str, str]] = None
+    _proxies: Optional[Dict[str, str]] = None
     '''代理服务器'''
     # 初始化
     def __init__(
@@ -64,18 +64,18 @@ class Api:
         method: Literal['get', 'post'],
         *,
         cookies: Optional[SimpleCookie]=None,
-        params: Optional[dict[str, Any]]=None,
-        data: Optional[dict[str, Any]]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader]]]=None
+        params: Optional[Dict[str, Any]]=None,
+        data: Optional[Dict[str, Any]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None
     ) -> Response:
         '''请求发送
 
         参数:
             method (Literal[&#39;get&#39;, &#39;post&#39;]): API 调用方法
             cookies (Optional[Cookies], optional): Cookies
-            params (Optional[dict[str, Any]], optional): 调用参数
-            data (Optional[dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader]]], optional): 发送文件参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
+            data (Optional[Dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
+            files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
             Response: 收到的响应
@@ -127,18 +127,18 @@ class Api:
         method: Literal['get', 'post'],
         *,
         cookies: Optional[SimpleCookie]=None,
-        params: Optional[dict[str, Any]]=None,
-        data: Optional[dict[str, Any]]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader]]]=None
+        params: Optional[Dict[str, Any]]=None,
+        data: Optional[Dict[str, Any]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None
     ) -> Union[Response, ClientResponse]:
         '''请求发送
 
         参数:
             method (Literal[&#39;get&#39;, &#39;post&#39;]): API 调用方法
             cookies (Optional[Cookies], optional): Cookies
-            params (Optional[dict[str, Any]], optional): 调用参数
-            data (Optional[dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader]]], optional): 发送文件参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
+            data (Optional[Dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
+            files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
             Union[Response, ClientResponse]: 收到的响应
@@ -202,13 +202,13 @@ class Api:
         self,
         *,
         cookies: Optional[SimpleCookie]=None,
-        params: Optional[dict[str, Any]]=None
+        params: Optional[Dict[str, Any]]=None
     ) -> Response:
         '''发送 GET 请求
 
         参数:
             cookies (Optional[Cookies], optional): Cookies
-            params (Optional[dict[str, Any]], optional): 调用参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
 
         返回:
             Response: 收到的响应
@@ -219,15 +219,15 @@ class Api:
         self,
         *,
         cookies: Optional[SimpleCookie]=None,
-        data: Optional[dict[str, Any]]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader]]]=None
+        data: Optional[Dict[str, Any]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None
     ) -> Response:
         '''发送 POST 请求
 
         参数:
             cookies (Optional[Cookies], optional): Cookies
-            data (Optional[dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader]]], optional): 发送文件参数
+            data (Optional[Dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
+            files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
             Response: 收到的响应
@@ -238,13 +238,13 @@ class Api:
         self,
         *,
         cookies: Optional[SimpleCookie]=None,
-        params: Optional[dict[str, Any]]=None
+        params: Optional[Dict[str, Any]]=None
     ) -> Union[Response, ClientResponse]:
         '''发送 GET 请求
 
         参数:
             cookies (Optional[Cookies], optional): Cookies
-            params (Optional[dict[str, Any]], optional): 调用参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
 
         返回:
             Union[Response, ClientResponse]: 收到的响应
@@ -255,15 +255,15 @@ class Api:
         self,
         *,
         cookies: Optional[SimpleCookie]=None,
-        data: Optional[dict[str, Any]]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader]]]=None
+        data: Optional[Dict[str, Any]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None
     ) -> Union[Response, ClientResponse]:
         '''发送 POST 请求
 
         参数:
             cookies (Optional[Cookies], optional): Cookies
-            data (Optional[dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader]]], optional): 发送文件参数
+            data (Optional[Dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
+            files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
             Union[Response, ClientResponse]: 收到的响应
@@ -282,7 +282,7 @@ class Assets:
     '''请求的资源地址'''
     server: Literal['jp', 'en', 'tw', 'cn', 'kr', 'llsif']
     '''资源所在服务器'''
-    _proxies: Optional[dict[str, str]] = None
+    _proxies: Optional[Dict[str, str]] = None
     '''代理服务器'''
     # 初始化
     def __init__(
@@ -500,7 +500,7 @@ class Res:
     '''
     url: str
     '''请求的资源地址'''
-    _proxies: Optional[dict[str, str]]=None
+    _proxies: Optional[Dict[str, str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(

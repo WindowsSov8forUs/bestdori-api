@@ -1,7 +1,7 @@
 '''`bestdori.settings` 设置项'''
 
-from enum import StrEnum
-from typing import TYPE_CHECKING, Union, Optional
+from enum import Enum
+from typing import TYPE_CHECKING, Dict, Union, Optional
 
 from http.cookies import SimpleCookie
 
@@ -10,12 +10,12 @@ from .exceptions import NoCookiesError
 if TYPE_CHECKING:
     from .user import Me
 
-class AsyncClient(StrEnum):
+class AsyncClient(str, Enum):
     '''异步客户端'''
     HTTPX = 'httpx'
     AIO_HTTP = 'aiohttp'
 
-proxy: Optional[Union[dict[str, str], str]] = None
+proxy: Optional[Union[Dict[str, str], str]] = None
 '''代理服务器
 
 若想要使用代理，则必须设置该选项，

@@ -1,7 +1,7 @@
 '''`bestdori.utils.note`
 
 谱面音符相关模块'''
-from typing import Literal, Any
+from typing import Literal, Any, Dict, List
 from typing_extensions import override
 
 # 谱面音符类
@@ -62,7 +62,7 @@ class Connection:
     
     # 字典化
     @property
-    def __dict__(self) -> dict[str, Any]:
+    def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
         note = {'beat': self.beat, 'lane': self.lane}
         if self.hidden:
@@ -87,7 +87,7 @@ class BPM(NoteType):
     '''BPM 值'''
     # 字典化
     @property
-    def __dict__(self) -> dict:
+    def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
         return {
             'bpm': self.bpm,
@@ -117,7 +117,7 @@ class Single(NoteType):
     '''是否为技能键'''
     # 字典化
     @property
-    def __dict__(self) -> dict:
+    def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
         note = {
             'beat': self.beat,
@@ -152,7 +152,7 @@ class Directional(NoteType):
     '''滑键方向'''
     # 字典化
     @property
-    def __dict__(self) -> dict:
+    def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
         note = {
             'beat': self.beat,
@@ -168,10 +168,10 @@ class Slide(NoteType):
     '''滑条
 
     参数:
-        connections (list[Connection]): 滑键节点'''
+        connections (List[Connection]): 滑键节点'''
     type: str = 'Slide'
     '''音符类型'''
-    connections: list[Connection]
+    connections: List[Connection]
     '''滑键节点'''
     # 初始化
     def __init__(self, **values) -> None:
@@ -180,7 +180,7 @@ class Slide(NoteType):
             if key == 'type':
                 continue
             if key == 'connections':
-                connections: list[Connection] = []
+                connections: List[Connection] = []
                 # 提取起始节拍数
                 self.beat = value[0]['beat']
                 
@@ -192,9 +192,9 @@ class Slide(NoteType):
     
     # 字典化
     @property
-    def __dict__(self) -> dict:
+    def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
-        note: dict[str, Any] = {
+        note: Dict[str, Any] = {
             'type': self.type
         }
         if self.connections:

@@ -2,7 +2,7 @@
 
 BanG Dream! 玩家信息相关操作'''
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from httpx import Response
 
@@ -20,13 +20,13 @@ class Player:
     def __init__(self, id: int, server: str) -> None:
         self.id: int = id
         self.server: str = server
-        self.__info: Optional[dict[str, Any]] = None
+        self.__info: Optional[Dict[str, Any]] = None
     
-    def get_info(self) -> dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         '''获取玩家信息
 
         返回:
-            dict[str, Any]: 玩家信息
+            Dict[str, Any]: 玩家信息
         '''
         params = {
             'mode': 2
@@ -36,19 +36,19 @@ class Player:
         ).get(params=params).json()
         if not _info.get('result', False):
             raise ValueError(f'Invalid Server: {self.server}')
-        _data: dict[str, Any] = _info.get('data', {})
-        _profile: Optional[dict[str, Any]] = _data.get('profile', None)
+        _data: Dict[str, Any] = _info.get('data', {})
+        _profile: Optional[Dict[str, Any]] = _data.get('profile', None)
         if _profile is None:
             raise PlayerNotExistError(self.server, self.id)
         self.__info = _profile
         
         return self.__info
     
-    async def get_info_async(self) -> dict[str, Any]:
+    async def get_info_async(self) -> Dict[str, Any]:
         '''获取玩家信息
 
         返回:
-            dict[str, Any]: 玩家信息
+            Dict[str, Any]: 玩家信息
         '''
         params = {
             'mode': 2
@@ -64,8 +64,8 @@ class Player:
         
         if not _info.get('result', False):
             raise ValueError(f'Invalid Server: {self.server}')
-        _data: dict[str, Any] = _info.get('data', {})
-        _profile: Optional[dict[str, Any]] = _data.get('profile', None)
+        _data: Dict[str, Any] = _info.get('data', {})
+        _profile: Optional[Dict[str, Any]] = _data.get('profile', None)
         if _profile is None:
             raise PlayerNotExistError(self.server, self.id)
         self.__info = _profile

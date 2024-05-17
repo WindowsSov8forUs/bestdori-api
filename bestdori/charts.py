@@ -2,7 +2,7 @@
 
 谱面相关操作'''
 from json import dumps, loads
-from typing import Any, Literal
+from typing import Any, Dict, List, Literal
 
 from httpx import Response
 
@@ -17,41 +17,41 @@ class Statistics:
     参数:
         time (float): 谱面时长
         notes (int): 谱面音符总数
-        bpm (list[float]): 谱面 BPM 范围
+        bpm (List[float]): 谱面 BPM 范围
         main_bpm (float): 谱面主 BPM
     '''
     # 初始化
-    def __init__(self, time: float, notes: int, bpm: list[float], main_bpm: float) -> None:
+    def __init__(self, time: float, notes: int, bpm: List[float], main_bpm: float) -> None:
         '''谱面数据类
 
         参数:
             time (float): 谱面时长
             notes (int): 谱面音符总数
-            bpm (list[float]): 谱面 BPM 范围
+            bpm (List[float]): 谱面 BPM 范围
             main_bpm (float): 谱面主 BPM
         '''
         self.time: float = time
         '''谱面时长'''
         self.notes: int = notes
         '''谱面音符总数'''
-        self.bpm: list[float] = bpm
+        self.bpm: List[float] = bpm
         '''谱面 BPM 范围'''
         self.main_bpm: float = main_bpm
         '''谱面主 BPM'''
         return
 
 # 谱面类
-class Chart(list[NoteType]):
+class Chart(List[NoteType]):
     '''谱面类，统合针对谱面的一层操作
 
     参数:
-        chart (list[dict[str, Any]]): 原始谱面代码'''
+        chart (List[Dict[str, Any]]): 原始谱面代码'''
     # 初始化
-    def __init__(self, chart: list[dict[str, Any]]) -> None:
+    def __init__(self, chart: List[Dict[str, Any]]) -> None:
         '''谱面类，统合针对谱面的一层操作
 
         参数:
-            chart (list[dict[str, Any]]): 原始谱面代码'''
+            chart (List[Dict[str, Any]]): 原始谱面代码'''
         super().__init__()
         for note in chart:
             # 遍历分类添加
@@ -83,11 +83,11 @@ class Chart(list[NoteType]):
     
     # 谱面规范化处理
     @classmethod
-    def normalize(cls, chart: list[dict[str, Any]]) -> 'Chart':
+    def normalize(cls, chart: List[Dict[str, Any]]) -> 'Chart':
         '''谱面规范化处理
 
         参数:
-            chart (list[dict[str, Any]]): 待处理谱面
+            chart (List[Dict[str, Any]]): 待处理谱面
 
         返回:
             Chart: 处理后谱面
@@ -154,7 +154,7 @@ class Chart(list[NoteType]):
         prev_bpm = 120.0 # 上一个 BPM 线的 BPM 值
         prev_bpm_beat = 0.0 # 上一个 BPM 线的 beat 值
         total_notes = 0 # 总物量
-        bpm_list: list[dict[str, float]] = [] # BPM 统计列表，统计所有出现的 BPM 及其有效时间
+        bpm_list: List[Dict[str, float]] = [] # BPM 统计列表，统计所有出现的 BPM 及其有效时间
         
         # 遍历谱面数据
         for note in self:
@@ -245,9 +245,9 @@ class Chart(list[NoteType]):
         )
 
     # 转换为字典列表对象
-    def to_list(self) -> list[dict[str, Any]]:
-        '''将 `Chart` 谱面转换为 `list[dict[str, Any]]` 对象'''
-        chart_data: list[dict[str, Any]] = []
+    def to_list(self) -> List[Dict[str, Any]]:
+        '''将 `Chart` 谱面转换为 `List[Dict[str, Any]]` 对象'''
+        chart_data: List[Dict[str, Any]] = []
         for note in self:
             chart_data.append(note.__dict__)
         return chart_data

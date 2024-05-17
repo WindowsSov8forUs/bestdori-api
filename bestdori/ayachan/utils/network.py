@@ -3,7 +3,7 @@
 向 ayachan 发送请求相关模块'''
 from json import dumps
 from io import BufferedReader
-from typing import Any, Union, Literal, Optional, cast
+from typing import Any, Dict, Tuple, Union, Literal, Optional, cast
 
 from httpx import HTTPStatusError
 from aiohttp import ClientResponseError
@@ -23,7 +23,7 @@ class Api:
     '''
     api: str
     '''请求的 API 地址'''
-    _proxies: Optional[Union[dict[str, str], str]]=None
+    _proxies: Optional[Union[Dict[str, str], str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(
@@ -54,18 +54,18 @@ class Api:
         self,
         method: Literal['get', 'post'],
         *,
-        params: Optional[dict[str, Any]]=None,
+        params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]]=None,
         json: Optional[Any]=None
     ) -> Response:
         '''请求发送
 
         参数:
             method (Literal[&#39;get&#39;, &#39;post&#39;]): API 调用方法
-            params (Optional[dict[str, Any]], optional): 调用参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
             data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
+            files (Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
             json (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
 
         返回:
@@ -102,18 +102,18 @@ class Api:
         self,
         method: Literal['get', 'post'],
         *,
-        params: Optional[dict[str, Any]]=None,
+        params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]]=None,
         json: Optional[Any]=None
     ) -> Union[Response, ClientResponse]:
         '''请求发送
 
         参数:
             method (Literal[&#39;get&#39;, &#39;post&#39;]): API 调用方法
-            params (Optional[dict[str, Any]], optional): 调用参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
             data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
+            files (Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
             json (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
 
         返回:
@@ -168,12 +168,12 @@ class Api:
 
     def get(
         self,
-        params: Optional[dict[str, Any]]=None
+        params: Optional[Dict[str, Any]]=None
     ) -> Response:
         '''发送 GET 请求
 
         参数:
-            params (Optional[dict[str, Any]], optional): 调用参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
 
         返回:
             Response: 收到的响应
@@ -182,12 +182,12 @@ class Api:
     
     async def aget(
         self,
-        params: Optional[dict[str, Any]]=None
+        params: Optional[Dict[str, Any]]=None
     ) -> Union[Response, ClientResponse]:
         '''发送 GET 请求
 
         参数:
-            params (Optional[dict[str, Any]], optional): 调用参数
+            params (Optional[Dict[str, Any]], optional): 调用参数
 
         返回:
             Response: 收到的响应
@@ -197,14 +197,14 @@ class Api:
     def post(
         self,
         data: Optional[Any]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]]=None,
         json: Optional[Any]=None
     ) -> Response:
         '''发送 POST 请求
 
         参数:
             data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
+            files (Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
             json (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
 
         返回:
@@ -215,14 +215,14 @@ class Api:
     async def apost(
         self,
         data: Optional[Any]=None,
-        files: Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]]=None,
+        files: Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]]=None,
         json: Optional[Any]=None
     ) -> Union[Response, ClientResponse]:
         '''发送 POST 请求
 
         参数:
             data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
-            files (Optional[dict[str, tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
+            files (Optional[Dict[str, Tuple[str, BufferedReader, Optional[str]]]], optional): 发送文件参数
             json (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
 
         返回:
@@ -236,11 +236,11 @@ class Assets:
 
     参数:
         url (str): 请求的资源地址
-        proxy (Optional[Union[dict[str, str], str]]): 代理服务器
+        proxy (Optional[Union[Dict[str, str], str]]): 代理服务器
     '''
     url: str
     '''请求的资源地址'''
-    _proxies: Optional[Union[dict[str, str], str]]=None
+    _proxies: Optional[Union[Dict[str, str], str]]=None
     '''代理服务器'''
     # 初始化
     def __init__(
@@ -251,7 +251,7 @@ class Assets:
 
         参数:
             url (str): 请求的资源地址
-            proxy (Optional[Union[dict[str, str], str]]): 代理服务器
+            proxy (Optional[Union[Dict[str, str], str]]): 代理服务器
         '''
         self.url = url
         if isinstance(settings.proxy, str):

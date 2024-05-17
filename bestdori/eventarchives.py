@@ -1,7 +1,7 @@
 '''`bestdori.eventarchives`
 
 BanG Dream! 活动数据相关操作'''
-from typing import Any, Literal
+from typing import Any, Dict, List, Literal
 
 from httpx import Response
 
@@ -13,7 +13,7 @@ from .exceptions import (
 )
 
 # 获取总活动数据信息
-def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
+def get_all(index: Literal[5]=5) -> Dict[str, Dict[str, Any]]:
     '''获取总活动信息
 
     参数:
@@ -21,12 +21,12 @@ def get_all(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
             `5`: 获取所有已有活动数据的简洁信息 `all.5.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总活动信息
+        Dict[str, Dict[str, Any]]: 获取到的总活动信息
     '''
     return Api(API['all']['archives'].format(index=index)).get().json()
 
 # 异步获取总活动数据信息
-async def get_all_async(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
+async def get_all_async(index: Literal[5]=5) -> Dict[str, Dict[str, Any]]:
     '''获取总活动信息
 
     参数:
@@ -34,7 +34,7 @@ async def get_all_async(index: Literal[5]=5) -> dict[str, dict[str, Any]]:
             `5`: 获取所有已有活动数据的简洁信息 `all.5.json`
 
     返回:
-        dict[str, dict[str, Any]]: 获取到的总活动信息
+        Dict[str, Dict[str, Any]]: 获取到的总活动信息
     '''
     response = await Api(API['all']['archives'].format(index=index)).aget()
     if isinstance(response, Response):
@@ -58,16 +58,16 @@ class EventArchive:
         '''
         self.id: int = id
         '''活动 ID'''
-        self.__info: dict[str, Any] = {}
+        self.__info: Dict[str, Any] = {}
         '''活动信息'''
         return
     
     # 获取活动数据信息
-    def get_info(self) -> dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         '''获取活动数据信息
 
         返回:
-            dict[str, Any]: 活动数据信息
+            Dict[str, Any]: 活动数据信息
         '''
         _all = get_all()
         if str(self.id) not in _all:
@@ -77,11 +77,11 @@ class EventArchive:
         return self.__info
     
     # 异步获取活动数据信息
-    async def get_info_async(self) -> dict[str, Any]:
+    async def get_info_async(self) -> Dict[str, Any]:
         '''获取活动数据信息
 
         返回:
-            dict[str, Any]: 活动数据信息
+            Dict[str, Any]: 活动数据信息
         '''
         _all = await get_all_async()
         if str(self.id) not in _all:
@@ -96,7 +96,7 @@ class EventArchive:
         server: Literal[0, 1, 2, 3, 4],
         mid: Literal['0']='0',
         latest: Literal['1']='1'
-    ) -> dict[str, list[dict[str, Any]]]:
+    ) -> Dict[str, List[Dict[str, Any]]]:
         '''获取排名分数线
 
         参数:
@@ -110,7 +110,7 @@ class EventArchive:
             latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
 
         返回:
-            dict[str, list[dict[str, Any]]]: 排名分数线数据
+            Dict[str, List[Dict[str, Any]]]: 排名分数线数据
         '''
         return Api(API['events']['top']).get(
             params={
@@ -127,7 +127,7 @@ class EventArchive:
         server: Literal[0, 1, 2, 3, 4],
         mid: Literal['0']='0',
         latest: Literal['1']='1'
-    ) -> dict[str, list[dict[str, Any]]]:
+    ) -> Dict[str, List[Dict[str, Any]]]:
         '''获取排名分数线
 
         参数:
@@ -141,7 +141,7 @@ class EventArchive:
             latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
 
         返回:
-            dict[str, list[dict[str, Any]]]: 排名分数线数据
+            Dict[str, List[Dict[str, Any]]]: 排名分数线数据
         '''
         response = await Api(API['events']['top']).aget(
             params={
@@ -162,7 +162,7 @@ class EventArchive:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取动数据评论
 
         参数:
@@ -171,12 +171,12 @@ class EventArchive:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''
@@ -194,7 +194,7 @@ class EventArchive:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取动数据评论
 
         参数:
@@ -203,12 +203,12 @@ class EventArchive:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            dict[str, Any]: 搜索结果
+            Dict[str, Any]: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # list[dict[str, Any]] 列举出的评论
+                    "posts": ... # List[Dict[str, Any]] 列举出的评论
                 }
                 ```
         '''

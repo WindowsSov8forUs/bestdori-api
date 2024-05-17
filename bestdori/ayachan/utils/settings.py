@@ -1,10 +1,10 @@
 '''`bestdori.ayachan.settings` 设置项模块'''
 
-from typing import Union, Optional
+from typing import Dict, Union, Optional
 
 from bestdori.settings import AsyncClient
 
-proxy: Optional[Union[dict[str, str], str]] = None
+proxy: Optional[Union[Dict[str, str], str]] = None
 '''代理服务器'''
 async_client: AsyncClient = AsyncClient.HTTPX
 '''异步客户端

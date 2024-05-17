@@ -2,7 +2,7 @@
 
 BanG Dream! 歌曲相关操作'''
 from http.cookies import SimpleCookie
-from typing import Any, Literal, Optional
+from typing import Any, Dict, Literal, Optional
 
 from httpx import Response
 
@@ -27,16 +27,16 @@ class User:
         '''        
         self.username: str = username
         '''用户名'''
-        self.__info: dict[str, Any] = {}
+        self.__info: Dict[str, Any] = {}
         '''用户信息'''
         return
     
     # 获取用户详细信息
-    def get_info(self) -> dict[str, Any]:
+    def get_info(self) -> Dict[str, Any]:
         '''获取用户详细信息
 
         返回:
-            dict[str, Any]: 用户详细信息
+            Dict[str, Any]: 用户详细信息
         '''
         response = Api(
             API['user']['info']
@@ -45,11 +45,11 @@ class User:
         return self.__info
     
     # 异步获取用户详细信息
-    async def get_info_async(self) -> dict[str, Any]:
+    async def get_info_async(self) -> Dict[str, Any]:
         '''获取用户详细信息
 
         返回:
-            dict[str, Any]: 用户详细信息
+            Dict[str, Any]: 用户详细信息
         '''
         response = await Api(
             API['user']['info']
@@ -66,7 +66,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户帖子
 
         参数:
@@ -75,12 +75,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # list[dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
                 }
                 ```
         '''
@@ -94,7 +94,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户帖子
 
         参数:
@@ -103,12 +103,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # list[dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
                 }
                 ```
         '''
@@ -122,7 +122,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户谱面
 
         参数:
@@ -131,12 +131,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 谱面排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的谱面总数
-                    "posts": ... # list[dict[str, Any]] 列举出的谱面
+                    "posts": ... # List[Dict[str, Any]] 列举出的谱面
                 }
                 ```
         '''
@@ -155,7 +155,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户谱面
 
         参数:
@@ -164,12 +164,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 谱面排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的谱面总数
-                    "posts": ... # list[dict[str, Any]] 列举出的谱面
+                    "posts": ... # List[Dict[str, Any]] 列举出的谱面
                 }
                 ```
         '''
@@ -188,7 +188,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户文本帖子
 
         参数:
@@ -197,12 +197,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # list[dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
                 }
                 ```
         '''
@@ -221,7 +221,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户文本帖子
 
         参数:
@@ -230,12 +230,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # list[dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
                 }
                 ```
         '''
@@ -254,7 +254,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户故事
 
         参数:
@@ -263,12 +263,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 故事排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的故事总数
-                    "posts": ... # list[dict[str, Any]] 列举出的故事
+                    "posts": ... # List[Dict[str, Any]] 列举出的故事
                 }
                 ```
         '''
@@ -287,7 +287,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> dict[str, Any]:
+    ) -> Dict[str, Any]:
         '''获取用户故事
 
         参数:
@@ -296,12 +296,12 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 故事排序，默认时间倒序
 
         返回:
-            dict[str, Any]: 获取结果
+            Dict[str, Any]: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的故事总数
-                    "posts": ... # list[dict[str, Any]] 列举出的故事
+                    "posts": ... # List[Dict[str, Any]] 列举出的故事
                 }
                 ```
         '''
@@ -335,7 +335,7 @@ class Me(User):
         '''密码'''
         self.__cookies: Optional[SimpleCookie] = None
         '''用户 Cookies'''
-        self.__me: dict[str, Any] = {}
+        self.__me: Dict[str, Any] = {}
         '''用户自我信息'''
         return
     
@@ -393,11 +393,11 @@ class Me(User):
         return self.__cookies
     
     # 获取用户自我信息
-    def me(self) -> dict[str, Any]:
+    def me(self) -> Dict[str, Any]:
         '''获取用户自我信息
 
         返回:
-            dict[str, Any]: 自我信息
+            Dict[str, Any]: 自我信息
         '''
         if len(self.__me) == 0:
             response = Api(API['user']['me']).get(cookies=self.cookies)
@@ -405,11 +405,11 @@ class Me(User):
         return self.__me
     
     # 异步获取用户自我信息
-    async def ame(self) -> dict[str, Any]:
+    async def ame(self) -> Dict[str, Any]:
         '''获取用户自我信息
 
         返回:
-            dict[str, Any]: 自我信息
+            Dict[str, Any]: 自我信息
         '''
         if len(self.__me) == 0:
             response = await Api(API['user']['me']).aget(cookies=self.cookies)
