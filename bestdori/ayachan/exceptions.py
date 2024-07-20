@@ -8,3 +8,16 @@ class SonolusException(Exception):
     # 初始化
     def __init__(self, msg: str) -> None:
         super().__init__(msg)
+
+# Ayachan 相关错误
+class AyachanException(Exception):
+    '''Ayachan 相关错误'''
+    # 初始化
+    def __init__(self, msg: str) -> None:
+        super().__init__(msg)
+
+class AyachanResponseError(AyachanException):
+    '''Ayachan API 响应错误'''
+    # 初始化
+    def __init__(self, error: str) -> None:
+        super().__init__(error)

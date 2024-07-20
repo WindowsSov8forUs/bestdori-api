@@ -13,6 +13,7 @@ from httpx import Client, Request, Response, AsyncClient
 from . import settings
 from bestdori.exceptions import AssetsNotExistError
 from bestdori.settings import AsyncClient as ClientSetting
+from bestdori.ayachan.exceptions import AyachanResponseError
 
 # 向 ayachan 发送 API 请求类
 class Api:
@@ -94,7 +95,14 @@ class Api:
             response = client.send(request)
         
         # 处理接收到的响应
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except HTTPStatusError as exception:
+            if exception.response.status_code == 500:
+                error_response: Dict[str, Any] = exception.response.json()
+                raise AyachanResponseError(error_response['error'])
+            else:
+                raise exception
         return response
     
     # 异步请求发送
@@ -143,7 +151,14 @@ class Api:
                 response = await client.send(request)
             
                 # 处理接收到的响应
-                response.raise_for_status()
+                try:
+                    response.raise_for_status()
+                except HTTPStatusError as exception:
+                    if exception.response.status_code == 500:
+                        error_response: Dict[str, Any] = exception.response.json()
+                        raise AyachanResponseError(error_response['error'])
+                    else:
+                        raise exception
         else:
             async with ClientSession() as session:
                 async with session.request(
@@ -162,7 +177,14 @@ class Api:
                         } if 'sonolus' in self.api and method == 'post' else None
                     )
                 ) as response:
-                    response.raise_for_status()
+                    try:
+                        response.raise_for_status()
+                    except ClientResponseError as exception:
+                        if exception.status == 500:
+                            error_response: Dict[str, Any] = await response.json()
+                            raise AyachanResponseError(error_response['error'])
+                        else:
+                            raise exception
         
         return response
 
