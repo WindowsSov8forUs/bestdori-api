@@ -160,7 +160,7 @@ class Api:
                     else:
                         raise exception
         else:
-            async with ClientSession() as session:
+            async with ClientSession(timeout=settings.timeout) as session:
                 async with session.request(
                     method,
                     self._url,

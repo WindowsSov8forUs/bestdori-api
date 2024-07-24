@@ -161,7 +161,7 @@ class Api:
                 # 处理接收到的响应
                 response.raise_for_status()
         else:
-            async with ClientSession() as session:
+            async with ClientSession(timeout=settings.timeout) as session:
                 response = await session.request(
                     method,
                     self._url,
