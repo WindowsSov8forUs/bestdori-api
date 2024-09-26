@@ -2,7 +2,7 @@
 
 BanG Dream! 玩家信息相关操作'''
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Literal, Optional
 
 from httpx import Response
 
@@ -22,14 +22,14 @@ class Player:
         self.server: str = server
         self.__info: Optional[Dict[str, Any]] = None
     
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self, mode: Literal[0, 1, 2, 3] = 2) -> Dict[str, Any]:
         '''获取玩家信息
 
         返回:
             Dict[str, Any]: 玩家信息
         '''
         params = {
-            'mode': 2
+            'mode': mode
         }
         _info = Api(
             API['player']['info'].format(server=self.server, id=self.id)
@@ -44,14 +44,14 @@ class Player:
         
         return self.__info
     
-    async def get_info_async(self) -> Dict[str, Any]:
+    async def get_info_async(self, mode: Literal[0, 1, 2, 3] = 2) -> Dict[str, Any]:
         '''获取玩家信息
 
         返回:
             Dict[str, Any]: 玩家信息
         '''
         params = {
-            'mode': 2
+            'mode': mode
         }
         response = await Api(
             API['player']['info'].format(server=self.server, id=self.id)
