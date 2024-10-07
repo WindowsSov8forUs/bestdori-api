@@ -1,7 +1,7 @@
 '''`bestdori.exceptions`
 
 API 错误信息相关操作'''
-from typing import Any, Dict
+from typing import Any, Dict, Type
 
 from httpx._exceptions import RequestError
 
@@ -324,7 +324,7 @@ class NoContentTypeError(RequestError):
         return
 
 # 请求错误集合
-REQUEST_EXCEPTION: Dict[str, type[RequestException]] = {
+REQUEST_EXCEPTION: Dict[str, Type[RequestException]] = {
     'REQUEST_INVALID': RequestInvalidError,
     'LOGIN_REQUIRED': LoginRequiredError,
     'CREDENTIALS_INVALID': CredentialsInvalidError,
