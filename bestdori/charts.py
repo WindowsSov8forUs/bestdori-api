@@ -92,7 +92,7 @@ class Chart(List[NoteType]):
         返回:
             Chart: 处理后谱面
         '''
-        normalized_chart: cls = cls(chart)
+        normalized_chart = cls(chart)
         # 对谱面进行排序
         normalized_chart.sort(key=lambda x: x.beat)
         # 处理可能出现的 BPM 错位
