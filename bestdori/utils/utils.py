@@ -69,6 +69,10 @@ API = {
     'player': {
         'get': 'player/{server}/{id}'
     },
+    'tracker': {
+        'eventtop': 'eventtop/data',
+        'eventtracker': 'tracker/data'
+    },
     'all': {
         'skills': 'skills/all.{index}.json',
         'stamps': 'stamps/all.{index}.json',
