@@ -163,7 +163,7 @@ class EventArchive:
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
     ) -> Dict[str, Any]:
-        '''获取动数据评论
+        '''获取活动数据评论
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
@@ -195,7 +195,7 @@ class EventArchive:
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
     ) -> Dict[str, Any]:
-        '''获取动数据评论
+        '''获取活动数据评论
 
         参数:
             limit (int, optional): 展示出的评论数，默认为 20
