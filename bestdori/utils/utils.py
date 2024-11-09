@@ -67,7 +67,7 @@ API = {
         'llsif': 'misc/llsif.{index}.json'
     },
     'player': {
-        'get': 'player/{server}/{id}'
+        'info': 'player/{server}/{id}'
     },
     'tracker': {
         'eventtop': 'eventtop/data',
