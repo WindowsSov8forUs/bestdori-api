@@ -436,7 +436,7 @@ class Card:
             raise ValueError('无法获取卡牌数据包名称。')
         return Assets(
             ASSETS['thumb']['chara'].format(
-                id=str(int(self.id) // 50), resource_set_name=resource_set_name, type=type
+                id=self.id // 50, resource_set_name=resource_set_name, type=type
             ), self.server
         ).get()
     
@@ -456,7 +456,7 @@ class Card:
             raise ValueError('无法获取卡牌数据包名称。')
         return await Assets(
             ASSETS['thumb']['chara'].format(
-                id=str(int(self.id) // 50), resource_set_name=resource_set_name, type=type
+                id=self.id // 50, resource_set_name=resource_set_name, type=type
             ), self.server
         ).aget()
     
