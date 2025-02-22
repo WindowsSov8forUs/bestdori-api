@@ -1,9 +1,12 @@
 '''`bestdori.exceptions`
 
 API 错误信息相关操作'''
-from typing import Any, Dict, Type
+from typing import TYPE_CHECKING, Any, Dict, Type
 
 from httpx._exceptions import RequestError
+
+if TYPE_CHECKING:
+    from bestdori.network.client import Response
 
 # 错误基类
 class BestdoriException(Exception):
@@ -109,6 +112,24 @@ class DiffNotExistError(NotExistException):
         msg = f'歌曲难度 {diff}'
         super().__init__(msg)
         return
+
+class HTTPStatusError(BestdoriException):
+    '''HTTP 状态码错误'''
+    
+    response: 'Response'
+    
+    def __init__(self, response: 'Response') -> None:
+        self.response = response
+        super().__init__(
+            f"HTTP status code error: {response.status_code}"
+            + f"while requesting {response.url.path},"
+            + "please check your network environment or contact the developer."
+        )
+    
+    @property
+    def status_code(self) -> int:
+        '''状态码'''
+        return self.response.status_code
 
 # 请求无效
 class RequestInvalidError(RequestException):
@@ -333,3 +354,23 @@ REQUEST_EXCEPTION: Dict[str, Type[RequestException]] = {
     'POST_INVALID': PostInvalidError
 }
 '''请求错误集合'''
+
+# Sonolus 相关错误
+class SonolusException(Exception):
+    '''Sonolus 相关错误'''
+    # 初始化
+    def __init__(self, msg: str) -> None:
+        super().__init__(msg)
+
+# Ayachan 相关错误
+class AyachanException(Exception):
+    '''Ayachan 相关错误'''
+    # 初始化
+    def __init__(self, msg: str) -> None:
+        super().__init__(msg)
+
+class AyachanResponseError(AyachanException):
+    '''Ayachan API 响应错误'''
+    # 初始化
+    def __init__(self, error: str) -> None:
+        super().__init__(error)
