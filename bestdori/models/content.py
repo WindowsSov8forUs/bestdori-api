@@ -1,8 +1,8 @@
 '''`bestdori.utils.content`
 
 Bestdori 帖子内容模块'''
-from dataclasses import dataclass
-from typing import Literal, Any, Dict, List, TypeAlias
+from dataclasses import asdict, dataclass
+from typing import Any, Dict, List, Literal, TypeAlias
 
 LinkTarget: TypeAlias = Literal[
     'url',
@@ -34,6 +34,11 @@ class Content:
     '''内容类'''
     type: str
     '''内容类型'''
+    
+    @property
+    def dict(self) -> Dict[str, Any]:
+        '''字典化'''
+        return asdict(self)
     
     @staticmethod
     def text(data: str) -> 'Text':
