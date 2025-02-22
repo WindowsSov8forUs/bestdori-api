@@ -1,230 +1,216 @@
 '''`bestdori.utils.content`
 
 Bestdori 帖子内容模块'''
-from typing import Literal, Any, Dict, List
+from dataclasses import dataclass
+from typing import Literal, Any, Dict, List, TypeAlias
 
-# 内容类
+LinkTarget: TypeAlias = Literal[
+    'url',
+    'character-single',
+    'card-single',
+    'costume-single',
+    'event-single',
+    'gacha-single',
+    'song-single',
+    'logincampaign-single',
+    'comic-single',
+    'mission-single',
+]
+ListTarget: TypeAlias = Literal[
+    'character-info',
+    'card-info',
+    'card-icon',
+    'costume-info',
+    'event-info',
+    'gacha-info',
+    'song-info',
+    'logincampaign-info',
+    'comic-info',
+    'mission-info',
+]
+
+@dataclass
 class Content:
     '''内容类'''
     type: str
     '''内容类型'''
-    # 初始化
-    def __init__(self, values: Dict[str, Any]) -> None:
-        '''初始化'''
-        for key, value in values.items():
-            setattr(self, key, value)
-        return
     
-    # 纯文本
     @staticmethod
     def text(data: str) -> 'Text':
-        '''纯文本
+        '''文本
 
         参数:
             data (str): 文本内容
 
         返回:
-            Text: 文本对象 `bestdori.utils.Text`
+            Text: 文本对象
         '''
-        return Text({'type': 'text', 'data': data})
+        return Text('text', data)
     
-    # 换行
     @staticmethod
     def br() -> 'Br':
         '''换行
 
         返回:
-            Br: 换行对象 `bestdori.utils.Br`
+            Br: 换行对象
         '''
-        return Br({'type': 'br'})
+        return Br('br')
     
-    # 表情
     @staticmethod
     def emoji(data: str) -> 'Emoji':
         '''表情
 
         参数:
-            data (str): 表情名称
+            data (str): 表情 ID
 
         返回:
-            Emoji: 表情对象 `bestdori.utils.Emoji`
+            Emoji: 表情对象
         '''
-        return Emoji({'type': 'emoji', 'data': data})
+        return Emoji('emoji', data)
     
-    # 提及
     @staticmethod
     def mention(data: str) -> 'Mention':
         '''提及
 
         参数:
-            data (str): 提及的用户名
+            data (str): 提及用户名
 
         返回:
-            Mention: 提及对象 `bestdori.utils.Mention`
+            Mention: 提及对象
         '''
-        return Mention({'type': 'mention', 'data': data})
+        return Mention('mention', data)
     
-    # 标题
     @staticmethod
-    def heading(data: str, margin: Literal['top']='top') -> 'Heading':
+    def heading(data: str, margin: Literal['top']) -> 'Heading':
         '''标题
 
         参数:
             data (str): 标题内容
-            
-            margin (Literal[&#39;top&#39;], optional): 页边空白位置
+            margin (Literal['top']): 页边空白位置
 
         返回:
-            Heading: 标题对象 `bestdori.utils.Heading`
+            Heading: 标题对象
         '''
-        return Heading({'type': 'heading', 'data': data, 'margin': margin})
+        return Heading('heading', data, margin)
     
-    # 图片
     @staticmethod
-    def image(objects: List[str], display: Literal[0, 1, 2]=0) -> 'Image':
+    def image(display: Literal[0, 1, 2], object: List[str]) -> 'Image':
         '''图片
 
         参数:
-            objects (List[str]): 图片对象网址列表
-            
-            display (Literal[&#39;0&#39;, &#39;1&#39;, &#39;2&#39;], optional): 显示类型 `0`: 大图 `1`: 缩略图 `2`: 图标
+            display (Literal[0, 1, 2]): 显示类型
+                `0`: 大图
+                `1`: 缩略图
+                `2`: 图标
+            object (List[str]): 图片对象网址列表
 
         返回:
-            Image: 图片对象 `bestdori.utils.Image`
+            Image: 图片对象
         '''
-        return Image({'type': 'image', 'objects': objects, 'display': display})
+        return Image('image', display, object)
     
-    # 链接
     @staticmethod
-    def link(
-        target: Literal[
-            'url',
-            'character-single',
-            'card-single',
-            'costume-single',
-            'event-single',
-            'gacha-single',
-            'song-single',
-            'logincampaign-single',
-            'comic-single',
-            'mission-single'
-        ],
-        data: str
-    ) -> 'Link':
+    def link(target: LinkTarget, data: str) -> 'Link':
         '''链接
 
         参数:
-            target (str): 链接对象
-            
+            target (LinkTarget): 链接对象
             data (str): 链接信息
 
         返回:
-            Link: 链接对象 `bestdori.utils.Link`
+            Link: 链接对象
         '''
-        if target != 'url':
-            if not data.isdigit():
-                raise ValueError('非 url 链接对象的 data 必须为数字。')
-        return Link({'type': 'link', 'target': target, 'data': data})
+        return Link('link', target, data)
     
-    # 列表
     @staticmethod
-    def list(
-        target: Literal[
-            'character-info',
-            'card-info',
-            'card-icon',
-            'costume-info',
-            'event-info',
-            'gacha-info',
-            'song-info',
-            'logincampaign-info',
-            'comic-info',
-            'mission-info'
-        ],
-        display: Literal[0, 1, 2],
-        objects: List[str]
-    ) -> 'ContentList':
+    def list(target: ListTarget, display: Literal[0, 1, 2], object: List[str]) -> 'ListContent':
         '''列表
 
         参数:
-            target (str): 列表对象
-            
-            display (Literal[&#39;0&#39;, &#39;1&#39;, &#39;2&#39;]): 显示类型
-            
-            objects (list[str]): 列表对象 ID 列表
+            target (ListTarget): 列表对象
+            display (Literal[0, 1, 2]): 显示类型
+            object (List[str]): 列表对象 ID 列表
 
         返回:
-            List: 列表对象 `bestdori.utils.List`
+            ListContent: 列表对象
         '''
-        return ContentList({'type': 'list', 'target': target, 'display': display, 'objects': objects})
+        return ListContent('list', target, display, object)
 
-# 文本类
+@dataclass
 class Text(Content):
     '''文本类'''
-    type: str = 'text'
+    type: Literal['text']
     '''内容类型'''
     data: str
     '''文本内容'''
 
-# 换行类
+@dataclass
 class Br(Content):
-    type: str = 'br'
+    '''换行类'''
+    type: Literal['br']
     '''内容类型'''
 
-# 表情类
+@dataclass
 class Emoji(Content):
     '''表情类'''
-    type: str = 'emoji'
+    type: Literal['emoji']
     '''内容类型'''
     data: str
-    '''表情名称'''
+    '''表情 ID'''
 
-# 提及类
+@dataclass
 class Mention(Content):
     '''提及类'''
-    type: str = 'mention'
+    type: Literal['mention']
     '''内容类型'''
     data: str
-    '''提及的用户名'''
+    '''提及用户名'''
 
-# 标题类
+@dataclass
 class Heading(Content):
     '''标题类'''
-    type: str = 'heading'
+    type: Literal['heading']
     '''内容类型'''
     data: str
     '''标题内容'''
-    margin: str
+    margin: Literal['top']
     '''页边空白位置'''
 
-# 图片类
+@dataclass
 class Image(Content):
     '''图片类'''
-    type: str = 'image'
+    type: Literal['image']
     '''内容类型'''
     display: Literal[0, 1, 2]
-    '''显示类型 `0`: 大图 `1`: 缩略图 `2`: 图标'''
-    objects: List[str]
+    '''显示类型
+    
+    `0`: 大图
+    
+    `1`: 缩略图
+    
+    `2`: 图标
+    '''
+    object: List[str]
     '''图片对象网址列表'''
 
-# 链接类
+@dataclass
 class Link(Content):
     '''链接类'''
-    type: str = 'link'
+    type: Literal['link']
     '''内容类型'''
-    target: str
+    target: LinkTarget
     '''链接对象'''
     data: str
     '''链接信息'''
 
-# 列表类
-class ContentList(Content):
-    '''列表类'''
-    type: str = 'list'
+@dataclass
+class ListContent(Content):
+    '''列表内容类'''
+    type: Literal['list']
     '''内容类型'''
-    target: str
+    target: ListTarget
     '''列表对象'''
     display: Literal[0, 1, 2]
     '''显示类型'''
-    objects: List[str]
+    object: List[str]
     '''列表对象 ID 列表'''
