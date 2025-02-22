@@ -72,7 +72,7 @@ from . import (
     models
 )
 
-from . import settings as settings
+from .settings import settings as settings
 
 __all__ = [
     'User',
