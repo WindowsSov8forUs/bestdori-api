@@ -1,0 +1,45 @@
+{
+    "characters": {
+        "character_kv_image": "/assets/{server}/ui/character_kv_image/{id:>03d}_rip/image.png",
+        "resourceset": "/assets/{server}/characters/resourceset/{resource_set_name}_rip/{name}_{type}.png",
+        "livesd": "/assets/{server}/characters/livesd/{sd_resource_name}_rip/sdchara.png"
+    },
+    "event": {
+        "banner": "/assets/{server}/event/{asset_bundle_name}/images_rip/banner.png",
+        "logo": "/assets/{server}/event/{asset_bundle_name}/images_rip/logo.png",
+        "topscreen": "/assets/{server}/event/{asset_bundle_name}/topscreen_rip/{type}_eventtop.png",
+        "loginbouns": "/assets/{server}/event/loginbonus/{asset_bundle_name}_rip/background.png"
+    },
+    "songs": {
+        "musicjacket": "/assets/{server}/musicjacket/musicjacket{index:>02d}_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket{index:>02d}-{jacket_image}-jacket.png",
+        "sound": "/assets/{server}/sound/bgm{id:>03d}_rip/bgm{id:>03d}.mp3"
+    },
+    "thumb": {
+        "chara": "/assets/{server}/thumb/chara/card{id:>05d}_rip/{resource_set_name}_{type}.png",
+        "degree": "/assets/{server}/thumb/degree_rip/{degree_name}.png",
+        "costume": "/assets/{server}/thumb/costume/group{id}_rip/{asset_bundle_name}.png"
+    },
+    "stamp": {
+        "get": "/assets/{server}/stamp/01_rip/{image_name}.png"
+    },
+    "homebanner": {
+        "get": "/assets/{server}/homebanner_rip/{banner_asset_bundle_name}.png"
+    },
+    "gacha": {
+        "screen": "/assets/{server}/gacha/screen/gacha{id}_rip/{asset_name}.png"
+    },
+    "comic": {
+        "comic": "/assets/{server}/comic/comic_{type}/{asset_bundle_name}_rip/{asset_bundle_name}.png",
+        "thumbnail": "/assets/{server}/comic/comic_{type}_thumbnail/{asset_bundle_name}_rip/{asset_bundle_name}.png"
+    },
+    "missions": {
+        "info": "/assets/{server}/missions/{id}.json",
+        "all": "/assets/{server}/missions/all.{index}.json"
+    },
+    "band": {
+        "logo": "/assets/{server}/band/logo/{id:>03d}_rip/{type}.png"
+    },
+    "live2d": {
+        "buildData": "/assets/{server}/live2d/chara/{asset_bundle_name}_rip/buildData.asset"
+    }
+}

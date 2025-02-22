@@ -12,8 +12,11 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/WindowsSov8forUs/bestdori-api',
-    include_package_data=False,
+    include_package_data=True,
     packages=find_packages(),
+    package_data={
+        "bestdori": ["data/api/*.json", "data/api/bestdori/*.json"]
+    },
     license='MIT',
     classifiers=[
         'Programming Language :: Python :: 3.8',

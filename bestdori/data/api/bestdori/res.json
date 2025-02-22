@@ -1,0 +1,12 @@
+{
+    "icon": {
+        "svg": "/res/icon/{name}.svg",
+        "png": "/res/icon/{name}.png"
+    },
+    "image": {
+        "png": "/res/image/{name}.png"
+    },
+    "emoji": {
+        "png": "/res/emoji/{name}.png"
+    }
+}

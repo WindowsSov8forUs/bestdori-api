@@ -1,0 +1,81 @@
+{
+    "user": {
+        "info": "/api/user",
+        "login": "/api/user/login",
+        "me": "/api/user/me"
+    },
+    "post": {
+        "basic": "/api/post/basic",
+        "details": "/api/post/details",
+        "list": "/api/post/list",
+        "tag": "/api/post/tag",
+        "post": "/api/post",
+        "find": "/api/post/find",
+        "like": "/api/post/like"
+    },
+    "charts": {
+        "info": "/api/charts/{id}/{diff}.json"
+    },
+    "characters": {
+        "info": "/api/characters/{id}.json",
+        "all": "/api/characters/all.{index}.json"
+    },
+    "cards": {
+        "info": "/api/cards/{id}.json",
+        "all": "/api/cards/all.{index}.json"
+    },
+    "costumes": {
+        "info": "/api/costumes/{id}.json",
+        "all": "/api/costumes/all.{index}.json"
+    },
+    "events": {
+        "info": "/api/events/{id}.json",
+        "all": "/api/events/all.{index}.json",
+        "top": "/api/eventtop/data"
+    },
+    "festival": {
+        "stages": "/api/festival/stages/{id}.json",
+        "rotation_musics": "/api/festival/rotationMusics/{id}.json"
+    },
+    "gacha": {
+        "info": "/api/gacha/{id}.json",
+        "all": "/api/gacha/all.{index}.json"
+    },
+    "songs": {
+        "info": "/api/songs/{id}.json",
+        "all": "/api/songs/all.{index}.json"
+    },
+    "loginCampaigns": {
+        "info": "/api/loginCampaigns/{id}.json",
+        "all": "/api/loginCampaigns/all.{index}.json"
+    },
+    "bands": {
+        "all": "/api/bands/all.{index}.json",
+        "main": "/api/bands/main.{index}.json"
+    },
+    "upload": {
+        "file": "/api/upload/file/{hash}",
+        "prepare": "/api/upload/prepare",
+        "upload": "/api/upload",
+        "status": "/api/upload/status/{hash}"
+    },
+    "misc": {
+        "llsif": "/api/misc/llsif.{index}.json"
+    },
+    "player": {
+        "info": "/api/player/{server}/{id}"
+    },
+    "tracker": {
+        "eventtop": "/api/eventtop/data",
+        "eventtracker": "/api/tracker/data"
+    },
+    "all": {
+        "skills": "/api/skills/all.{index}.json",
+        "stamps": "/api/stamps/all.{index}.json",
+        "degrees": "/api/degrees/all.{index}.json",
+        "meta": "/api/songs/meta/all.{index}.json",
+        "archives": "/api/archives/all.{index}.json",
+        "miracleTicketExchanges": "/api/miracleTicketExchanges/all.{index}.json",
+        "comics": "/api/comics/all.{index}.json"
+    }
+}
