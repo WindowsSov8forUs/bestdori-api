@@ -5,10 +5,16 @@ from typing import Literal, Any, Dict, Tuple
 
 from httpx import Response
 
-from .utils import API, RES,ASSETS
 from .network import Api, Res, Assets
 from bestdori.exceptions import (
     AssetsNotExistError
+)
+
+from ._api import (
+    API as API,
+    RES as RES,
+    ASSETS as ASSETS,
+    AYACHAN as AYACHAN,
 )
 
 # 将十六进制颜色代码转换为 RGB 元组
@@ -27,7 +33,7 @@ def hexto_rgb(hex: str) -> Tuple[int, int, int]:
         hex = hex[0] * 2 + hex[1] * 2 + hex[2] * 2
     rgb = tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
     if len(rgb) != 3:
-        raise ValueError('十六进制颜色代码')
+        raise ValueError('Invalid hex color code')
     return rgb
 
 # 获取称号资源
