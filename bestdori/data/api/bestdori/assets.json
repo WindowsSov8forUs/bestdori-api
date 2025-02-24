@@ -41,5 +41,8 @@
     },
     "live2d": {
         "buildData": "/assets/{server}/live2d/chara/{asset_bundle_name}_rip/buildData.asset"
+    },
+    "llsif": {
+        "assets": "https://card.niconi.co.ni/{assets}"
     }
 }
