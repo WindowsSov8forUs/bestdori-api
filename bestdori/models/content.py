@@ -36,7 +36,7 @@ class Content:
     '''内容类型'''
     
     @property
-    def dict(self) -> Dict[str, Any]:
+    def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
         return asdict(self)
     

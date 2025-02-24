@@ -1,219 +1,133 @@
 '''`bestdori.utils.note`
 
 谱面音符相关模块'''
-from typing import Literal, Any, Dict, List
-from typing_extensions import override
 
-# 谱面音符类
-class NoteType:
-    '''谱面音符类'''
+from dataclasses import asdict, dataclass
+from typing import Any, Dict, List, Literal, Optional
+
+@dataclass
+class Note:
+    '''音符基类'''
     type: str
     '''音符类型'''
     beat: float
-    '''节拍数'''
-    # 初始化
-    def __init__(self, **values) -> None:
-        '''初始化'''
-        for key, value in values.items():
-            if key == 'type':
-                continue
-            setattr(self, key, value)
-        return
+    '''音符所在节拍值'''
     
-    def __getitem__(self, key: str) -> Any:
-        '''获取属性'''
-        return getattr(self, key)
-    
-    # 节拍数增减
-    def beat_move(self, beat: float) -> None:
-        '''节拍数增减
-
-        参数:
-            beat (float): 移动的节拍数
-        '''
-        self.beat += beat
-
-# 滑条节点
-class Connection:
-    '''滑条节点类
-
-    参数:
-        beat (float): 节拍数
-        
-        lane (int): 轨道数
-        
-        hidden (bool, optional): 是否隐藏'''
-    beat: float
-    '''节拍数'''
-    lane: int
-    '''轨道数'''
-    hidden: bool = False
-    '''是否隐藏'''
-    flick: bool = False
-    '''是否为滑键'''
-    skill: bool = False
-    '''是否为技能键'''
-    # 初始化
-    def __init__(self, **values) -> None:
-        '''初始化'''
-        for key, value in values.items():
-            setattr(self, key, value)
-        return
-    
-    # 字典化
     @property
     def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
-        note = {'beat': self.beat, 'lane': self.lane}
-        if self.hidden:
-            note['hidden'] = self.hidden
-        if self.flick:
-            note['flick'] = self.flick
-        if self.skill:
-            note['skill'] = self.skill
-        return note
+        return asdict(self)
+    
+    def move(self, beat: float) -> None:
+        '''移动音符'''
+        self.beat += beat
 
-# BPM
-class BPM(NoteType):
-    '''BPM
-
-    参数:
-        bpm (float): BPM 值
-        
-        beat (float): 节拍数'''
-    type: str = 'BPM'
+@dataclass
+class BPM(Note):
+    '''BPM 音符'''
+    type: Literal['BPM']
     '''音符类型'''
     bpm: float
     '''BPM 值'''
-    # 字典化
+
+@dataclass
+class Single(Note):
+    '''单点音符'''
+    type: Literal['Single']
+    '''音符类型'''
+    lane: float
+    '''音符所在轨道'''
+    flick: bool = False
+    '''是否为 flick'''
+    skill: bool = False
+    '''是否为技能音符'''
+    
+    @property
+    def __dict__(self) -> Dict[str, Any]:
+        '''字典化'''
+        _dict = asdict(self)
+        for key in list(_dict.keys()):
+            if _dict[key] is False:
+                _dict.pop(key)
+        return _dict
+
+@dataclass
+class Directional(Note):
+    '''方向滑键音符'''
+    type: Literal['Directional']
+    '''音符类型'''
+    lane: float
+    '''音符所在轨道'''
+    width: Literal[1, 2, 3]
+    '''滑键宽度'''
+    direction: Literal['Left', 'Right']
+    '''滑键方向'''
+
+@dataclass
+class Connection(Note):
+    '''滑条节点音符'''
+    lane: float
+    '''音符所在轨道'''
+    hidden: bool = False
+    '''是否为隐藏音符'''
+    flick: bool = False
+    '''是否为 flick'''
+    skill: bool = False
+    '''是否为技能音符'''
+    type: Literal['Connection'] = 'Connection'
+    '''音符类型'''
+    prev: Optional['Connection'] = None
+    '''上一个音符'''
+    next: Optional['Connection'] = None
+    '''下一个音符'''
+    
+    @property
+    def __dict__(self) -> Dict[str, Any]:
+        '''字典化'''
+        _dict = asdict(self)
+        _dict.pop('type')
+        for key in list(_dict.keys()):
+            if _dict[key] is False:
+                _dict.pop(key)
+        return _dict
+
+@dataclass
+class Slide(Note):
+    '''滑条音符'''
+    type: Literal['Slide']
+    '''音符类型'''
+    connections: List[Connection]
+    '''滑条节点音符列表'''
+    beat: float = 0
+    '''音符所在节拍值'''
+    
+    def __post_init__(self) -> None:
+        self.beat = self.connections[0].beat
+        for index, connection in enumerate(self.connections):
+            if index == 0:
+                continue
+            connection.prev = self.connections[index - 1]
+            self.connections[index - 1].next = connection
+    
     @property
     def __dict__(self) -> Dict[str, Any]:
         '''字典化'''
         return {
-            'bpm': self.bpm,
-            'beat': self.beat,
-            'type': self.type
-        }
-
-# 单键
-class Single(NoteType):
-    '''单键
-
-    参数:
-        beat (float): 节拍数
-        
-        lane (int): 轨道数
-        
-        flick (bool, optional): 是否为滑键
-        
-        skill (bool, optional): 是否为技能键'''
-    type: str = 'Single'
-    '''音符类型'''
-    lane: int
-    '''轨道数'''
-    flick: bool = False
-    '''是否为滑键'''
-    skill: bool = False
-    '''是否为技能键'''
-    # 字典化
-    @property
-    def __dict__(self) -> Dict[str, Any]:
-        '''字典化'''
-        note = {
-            'beat': self.beat,
-            'lane': self.lane,
-            'type': self.type
-        }
-        if self.flick:
-            note['flick'] = self.flick
-        if self.skill:
-            note['skill'] = self.skill
-        return note
-
-# 方向滑键
-class Directional(NoteType):
-    '''方向滑键
-
-    参数:
-        beat (float): 节拍数
-        
-        lane (int): 轨道数
-        
-        width (int): 滑键宽度
-        
-        direction (Literal[&#39;Left&#39;, &#39;Right&#39;]): 滑键方向'''
-    type: str = 'Directional'
-    '''音符类型'''
-    lane: int
-    '''轨道数'''
-    width: int
-    '''滑键宽度'''
-    direction: Literal['Left', 'Right']
-    '''滑键方向'''
-    # 字典化
-    @property
-    def __dict__(self) -> Dict[str, Any]:
-        '''字典化'''
-        note = {
-            'beat': self.beat,
-            'lane': self.lane,
             'type': self.type,
-            'width': self.width,
-            'direction': self.direction
+            'connections': [connection.__dict__ for connection in self.connections],
         }
-        return note
-
-# 滑条
-class Slide(NoteType):
-    '''滑条
-
-    参数:
-        connections (List[Connection]): 滑键节点'''
-    type: str = 'Slide'
-    '''音符类型'''
-    connections: List[Connection]
-    '''滑键节点'''
-    # 初始化
-    def __init__(self, **values) -> None:
-        '''初始化'''
-        for key, value in values.items():
-            if key == 'type':
-                continue
-            if key == 'connections':
-                connections: List[Connection] = []
-                # 提取起始节拍数
-                self.beat = value[0]['beat']
-                
-                for connection in value:
-                    connections.append(Connection(**connection))
-                value = connections
-            setattr(self, key, value)
-        return
     
-    # 字典化
-    @property
-    def __dict__(self) -> Dict[str, Any]:
-        '''字典化'''
-        note: Dict[str, Any] = {
-            'type': self.type
-        }
-        if self.connections:
-            note['connections'] = [connection.__dict__ for connection in self.connections]
-        return note
-    
-    # 节拍数增减
-    @override
-    def beat_move(self, beat: float) -> None:
+    def move(self, beat: float) -> None:
+        '''移动音符'''
         for connection in self.connections:
-            connection.beat += beat
-        self.beat = self.connections[0].beat
-        return
+            connection.move(beat)
+        self.beat += beat
 
 __all__ = [
-    'NoteType',
-    'Connection',
+    'Note',
     'BPM',
     'Single',
     'Directional',
-    'Slide'
+    'Connection',
+    'Slide',
 ]

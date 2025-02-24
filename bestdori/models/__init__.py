@@ -8,11 +8,11 @@ from .content import Image as Image
 from .content import Content as Content
 from .content import Heading as Heading
 from .content import Mention as Mention
-from .content import ContentList as ContentList
+from .content import ListContent as ListContent
 
 from .note import BPM as BPM
+from .note import Note as Note
 from .note import Slide as Slide
 from .note import Single as Single
-from .note import NoteType as NoteType
 from .note import Connection as Connection
 from .note import Directional as Directional
