@@ -4,7 +4,7 @@
 from copy import deepcopy
 from json import dumps, loads
 from dataclasses import dataclass
-from typing import Any, Dict, List, Union, Literal
+from typing import Any, Dict, List, Literal
 
 from .utils import get_api
 from .models.note import *
