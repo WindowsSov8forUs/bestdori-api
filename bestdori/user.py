@@ -2,7 +2,7 @@
 
 BanG Dream! 歌曲相关操作'''
 from http.cookies import SimpleCookie
-from typing import TYPE_CHECKING, Any, Dict, List, Self, Literal, Optional, TypedDict
+from typing import TYPE_CHECKING, Self, Literal
 
 from . import post
 from .utils import get_api
