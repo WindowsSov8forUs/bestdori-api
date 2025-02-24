@@ -2,14 +2,16 @@
 
 BanG Dream! 歌曲相关操作'''
 from http.cookies import SimpleCookie
-from typing import Any, Dict, Literal, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Self, Literal, Optional, TypedDict
 
-from httpx import Response
-
-from . import settings
-from .utils.utils import API
+from . import post
+from .utils import get_api
 from .utils.network import Api
-from .post import get_list, get_list_async
+
+if TYPE_CHECKING:
+    from .typing import PostList, UserInfo, UserMeInfo
+
+API = get_api('bestdori.api')
 
 # 用户类
 class User:
@@ -19,46 +21,117 @@ class User:
         username (str): 用户名
     '''
     # 初始化
-    def __init__(self, username: str) -> None:
-        '''用户类
-
-        参数:
-            username (str): 用户名
-        '''        
+    def __init__(self, username: str) -> None:     
         self.username: str = username
         '''用户名'''
-        self.__info: Dict[str, Any] = {}
+        self._info: 'UserInfo'
         '''用户信息'''
         return
     
-    # 获取用户详细信息
-    def get_info(self) -> Dict[str, Any]:
-        '''获取用户详细信息
+    # 获取用户实例
+    @classmethod
+    def get(cls, username: str) -> Self:
+        '''获取用户对象
 
         返回:
-            Dict[str, Any]: 用户详细信息
+            Self: 用户对象
+        '''
+        user = cls(username)
+        user.get_info()
+        
+        return user
+    
+    # 异步获取用户实例
+    @classmethod
+    async def get_async(cls, username: str) -> Self:
+        '''获取用户对象
+
+        返回:
+            Self: 用户对象
+        '''
+        user = cls(username)
+        await user.get_info_async()
+        
+        return user
+    
+    def get_info(self) -> 'UserInfo':
+        '''获取用户信息
+
+        返回:
+            UserInfo: 用户信息
         '''
         response = Api(
             API['user']['info']
         ).get(params={'username': self.username})
-        self.__info = dict(response.json())
-        return self.__info
+        self._info = response.json()
+        
+        return self._info
     
-    # 异步获取用户详细信息
-    async def get_info_async(self) -> Dict[str, Any]:
-        '''获取用户详细信息
+    async def get_info_async(self) -> 'UserInfo':
+        '''获取用户信息
 
         返回:
-            Dict[str, Any]: 用户详细信息
+            UserInfo: 用户信息
         '''
         response = await Api(
             API['user']['info']
         ).aget(params={'username': self.username})
-        if isinstance(response, Response):
-            self.__info = dict(response.json())
-        else:
-            self.__info = dict(await response.json())
-        return self.__info
+        self._info = response.json()
+        
+        return self._info
+    
+    @property
+    def info(self) -> 'UserInfo':
+        '''用户信息'''
+        if getattr(self, '_info', None) is None:
+            raise ValueError(f'用户 {self.username} 未成功获取信息。')
+        return self._info
+    
+    @staticmethod
+    def login(username: str, password: str) -> 'Me':
+        '''登录用户账号。
+
+        参数:
+            username (str): 用户名
+            password (str): 密码
+
+        返回:
+            Me: 自身用户对象
+        '''
+        me = Me(username, password)
+        
+        response = Api(
+            API['user']['login']
+        ).post(data={'username': me.username, 'password': me.password})
+        me._cookies = response.cookies
+
+        response = Api(API['user']['me']).get(cookies=me.cookies)
+        me._me = response.json()
+        
+        return me
+    
+    @staticmethod
+    async def login_async(username: str, password: str) -> 'Me':
+        '''登录用户账号。
+
+        参数:
+            username (str): 用户名
+            password (str): 密码
+
+        返回:
+            Me: 自身用户对象
+        '''
+        me = Me(username, password)
+        
+        response = await Api(
+            API['user']['login']
+        ).apost(data={'username': me.username, 'password': me.password})
+        me._cookies = response.cookies
+        
+        response = await Api(API['user']['me']).aget(cookies=me.cookies)
+        me._me = response.json()
+        
+        return me
     
     # 获取用户帖子
     def get_posts(
@@ -66,7 +139,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户帖子
 
         参数:
@@ -75,16 +148,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[PostListPost] 列举出的帖子
                 }
                 ```
         '''
-        return get_list(
+        return post.get_list(
             username=self.username, limit=limit, offset=offset, order=order
         )
     
@@ -94,7 +167,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户帖子
 
         参数:
@@ -103,16 +176,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[PostListPost] 列举出的帖子
                 }
                 ```
         '''
-        return await get_list_async(
+        return await post.get_list_async(
             username=self.username, limit=limit, offset=offset, order=order
         )
     
@@ -122,7 +195,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户谱面
 
         参数:
@@ -131,16 +204,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 谱面排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的谱面总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的谱面
+                    "posts": ... # List[PostListPost] 列举出的谱面
                 }
                 ```
         '''
-        return get_list(
+        return post.get_list(
             username=self.username,
             category_name='SELF_POST',
             category_id='chart',
@@ -155,7 +228,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户谱面
 
         参数:
@@ -164,16 +237,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 谱面排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的谱面总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的谱面
+                    "posts": ... # List[PostListPost] 列举出的谱面
                 }
                 ```
         '''
-        return await get_list_async(
+        return await post.get_list_async(
             username=self.username,
             category_name='SELF_POST',
             category_id='chart',
@@ -188,7 +261,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户文本帖子
 
         参数:
@@ -197,16 +270,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[PostListPost] 列举出的帖子
                 }
                 ```
         '''
-        return get_list(
+        return post.get_list(
             username=self.username,
             category_name='SELF_POST',
             category_id='text',
@@ -221,7 +294,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户文本帖子
 
         参数:
@@ -230,16 +303,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的帖子总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的帖子
+                    "posts": ... # List[PostListPost] 列举出的帖子
                 }
                 ```
         '''
-        return await get_list_async(
+        return await post.get_list_async(
             username=self.username,
             category_name='SELF_POST',
             category_id='text',
@@ -254,7 +327,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户故事
 
         参数:
@@ -263,16 +336,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 故事排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的故事总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的故事
+                    "posts": ... # List[PostListPost] 列举出的故事
                 }
                 ```
         '''
-        return get_list(
+        return post.get_list(
             username=self.username,
             category_name='SELF_POST',
             category_id='story',
@@ -287,7 +360,7 @@ class User:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
-    ) -> Dict[str, Any]:
+    ) -> 'PostList':
         '''获取用户故事
 
         参数:
@@ -296,16 +369,16 @@ class User:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 故事排序，默认时间倒序
 
         返回:
-            Dict[str, Any]: 获取结果
+            PostList: 获取结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的故事总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的故事
+                    "posts": ... # List[PostListPost] 列举出的故事
                 }
                 ```
         '''
-        return await get_list_async(
+        return await post.get_list_async(
             username=self.username,
             category_name='SELF_POST',
             category_id='story',
@@ -333,88 +406,54 @@ class Me(User):
         super().__init__(username)
         self.password: str = password
         '''密码'''
-        self.__cookies: Optional[SimpleCookie] = None
+        self._cookies: SimpleCookie
         '''用户 Cookies'''
-        self.__me: Dict[str, Any] = {}
+        self._me: 'UserMeInfo'
         '''用户自我信息'''
         return
     
-    # 用户登录
-    @classmethod
-    def login(cls, username: str, password: str) -> 'Me':
-        '''用户登录
-
-        参数:
-            username (str): 用户名
-            password (str): 密码
-
-        返回:
-            Me: 自身用户对象
-        '''
-        me = cls(username, password)
-        response = Api(
-            API['user']['login']
-        ).post(data={'username': me.username, 'password': me.password})
-        me.__cookies = SimpleCookie(response.cookies)
-        me.me()
-        settings._me = me
-        return me
-    
-    # 用户异步登录
-    @classmethod
-    async def alogin(cls, username: str, password: str) -> 'Me':
-        '''用户登录
-
-        参数:
-            username (str): 用户名
-            password (str): 密码
-
-        返回:
-            Me: 自身用户对象
-        '''
-        me = cls(username, password)
-        response = await Api(
-            API['user']['login']
-        ).apost(data={'username': me.username, 'password': me.password})
-        if isinstance(response, Response):
-            me.__cookies = SimpleCookie(response.cookies)
-        else:
-            me.__cookies = response.cookies
-        await me.ame()
-        settings._me = me
-        return me
-    
-    # 获取用户 Cookies
+    # 用户 Cookies
     @property
     def cookies(self) -> SimpleCookie:
-        '''获取用户 Cookies'''
-        if self.__cookies is None:
+        '''用户 Cookies'''
+        if getattr(self, '_cookies', None) is None:
             raise ValueError(f'用户 {self.username} 未登录。')
-        return self.__cookies
+        return self._cookies
     
-    # 获取用户自我信息
-    def me(self) -> Dict[str, Any]:
-        '''获取用户自我信息
+    # 用户自我信息
+    @property
+    def me(self) -> 'UserMeInfo':
+        '''用户自我信息'''
+        if getattr(self, '_me', None) is None:
+            raise ValueError(f'用户 {self.username} 未登录。')
+        return self._me
+    
+    def update_info(self, info: 'UserInfo') -> 'UserInfo':
+        '''更新用户信息
+
+        参数:
+            info (UserInfo): 更新后的用户信息
 
         返回:
-            Dict[str, Any]: 自我信息
+            UserInfo: 更新成功后的用户信息
         '''
-        if len(self.__me) == 0:
-            response = Api(API['user']['me']).get(cookies=self.cookies)
-            self.__me = dict(response.json())
-        return self.__me
+        Api(
+            API['user']['info']
+        ).post(data=dict(info), cookies=self.cookies)
+        
+        return self.get_info()
     
-    # 异步获取用户自我信息
-    async def ame(self) -> Dict[str, Any]:
-        '''获取用户自我信息
-
+    async def update_info_async(self, info: 'UserInfo') -> 'UserInfo':
+        '''更新用户信息
+        
+        参数:
+            info (UserInfo): 更新后的用户信息
+        
         返回:
-            Dict[str, Any]: 自我信息
+            UserInfo: 更新成功后的用户信息
         '''
-        if len(self.__me) == 0:
-            response = await Api(API['user']['me']).aget(cookies=self.cookies)
-            if isinstance(response, Response):
-                self.__me = dict(response.json())
-            else:
-                self.__me = dict(await response.json())
-        return self.__me
+        await Api(
+            API['user']['info']
+        ).apost(data=dict(info), cookies=self.cookies)
+        
+        return await self.get_info_async()
