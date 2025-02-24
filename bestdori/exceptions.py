@@ -3,10 +3,9 @@
 API 错误信息相关操作'''
 from typing import TYPE_CHECKING, Any, Dict, Type
 
-from httpx._exceptions import RequestError
-
 if TYPE_CHECKING:
-    from bestdori.network.client import Response
+    from .typing import PostInfo
+    from .utils.network import Response
 
 # 错误基类
 class BestdoriException(Exception):
@@ -25,7 +24,7 @@ class BestdoriException(Exception):
 class RequestException(BestdoriException):
     '''请求发送错误'''
     # 初始化
-    def __init__(self, api: str, msg: str='无错误代码获取', **kwargs: Any) -> None:
+    def __init__(self, api: str, msg: str='No error code received.', **kwargs: Any) -> None:
         if len(kwargs) > 0:
             msg += f': {kwargs}'
         else:
@@ -37,7 +36,16 @@ class RequestException(BestdoriException):
     # 字符串化
     def __str__(self) -> str:
         '''输出字符串'''
-        return f'向 Bestdori {self.api} 发送请求时出错。{self.message}'
+        return f'An error occured while sending request to Bestdori \'{self.api}\': {self.message}'
+
+# 没有获取到 ContentType
+class NoContentTypeError(RequestException):
+    '''没有获取到 ContentType'''
+    # 初始化
+    def __init__(self, url: str) -> None:
+        msg = f'没有获取到 {url} 的 ContentType'
+        super().__init__(msg)
+        return
 
 # 资源错误
 class AssetsException(BestdoriException):
@@ -53,7 +61,7 @@ class AssetsException(BestdoriException):
     # 字符串化
     def __str__(self) -> str:
         '''输出字符串'''
-        return f'获取资源时出错。{self.message}'
+        return f'An error occured while requesting for assets: {self.message}'
 
 # 帖子错误
 class PostException(BestdoriException):
@@ -69,9 +77,9 @@ class PostException(BestdoriException):
 class PostHasNoChartError(PostException):
     '''帖子不是社区谱面'''
     # 初始化
-    def __init__(self, post: Dict[str, Any]) -> None:
+    def __init__(self, post: PostInfo) -> None:
         name = post.get('categoryName', 'DEFAULT_POST')
-        msg = f'该帖子类型 {name} 不是社区谱面。'
+        msg = f'Post \'{name}\' is not a chart post.'
         super().__init__(msg)
         return
 
@@ -79,37 +87,9 @@ class PostHasNoChartError(PostException):
 class PostHasNoSongError(PostException):
     '''帖子没有音乐字段'''
     # 初始化
-    def __init__(self, post: Dict[str, Any]) -> None:
+    def __init__(self, post: PostInfo) -> None:
         name = post.get('categoryName', 'DEFAULT_POST')
-        msg = f'该帖子类型 {name} 不存在歌曲资源。'
-        super().__init__(msg)
-        return
-
-# 某 id 指定的资源不存在
-class NotExistException(BestdoriException):
-    '''资源不存在'''
-    # 初始化
-    def __init__(self, src: str) -> None:
-        msg = f'{src} 不存在。'
-        super().__init__(msg)
-        self.message = msg
-        '''错误信息'''
-        return
-
-# 歌曲不存在
-class SongNotExistError(NotExistException):
-    '''歌曲不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        super().__init__(f'歌曲 ID {id}')
-        return
-
-# 歌曲难度不存在
-class DiffNotExistError(NotExistException):
-    '''歌曲难度不存在'''
-    # 初始化
-    def __init__(self, diff: str) -> None:
-        msg = f'歌曲难度 {diff}'
+        msg = f'Post \'{name}\' has no music assets.'
         super().__init__(msg)
         return
 
@@ -136,7 +116,7 @@ class RequestInvalidError(RequestException):
     '''请求无效'''
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '请求无效'
+        msg = 'Request Invalid.'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -145,7 +125,7 @@ class LoginRequiredError(RequestException):
     '''需要登录'''
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '需要登录'
+        msg = 'Login Required.'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -154,7 +134,7 @@ class CredentialsInvalidError(RequestException):
     '''证书无效'''
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '证书无效'
+        msg = 'Credentials Invalid.'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -163,7 +143,7 @@ class UserInvalidError(RequestException):
     '''用户无效'''
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '用户无效'
+        msg = 'User Invalid.'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -172,7 +152,7 @@ class AlreadyUploadedError(RequestException):
     '''文件已经被上传过'''
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '文件已经被上传过'
+        msg = 'Already Uploaded.'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -181,7 +161,7 @@ class PostInvalidError(RequestException):
     '''帖子无效'''
     # 初始化
     def __init__(self, api: str, **kwargs: Any) -> None:
-        msg = '帖子无效'
+        msg = 'Post Invalid.'
         super().__init__(api, msg, **kwargs)
         return
 
@@ -190,88 +170,18 @@ class AssetsNotExistError(AssetsException):
     '''资源不存在'''
     # 初始化
     def __init__(self, asset_name: str) -> None:
-        msg = f'资源 {asset_name} 可能不存在。'
+        msg = f'Assets {asset_name} may not exist.'
         super().__init__(msg)
 
-# 角色不存在
-class CharacterNotExistError(NotExistException):
-    '''角色不存在'''
+# 某 id 指定的资源不存在
+class NotExistException(BestdoriException):
+    '''资源不存在'''
     # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'角色 ID {id}'
+    def __init__(self, src: str) -> None:
+        msg = f'{src} is not exist.'
         super().__init__(msg)
-        return
-
-# 卡牌不存在
-class CardNotExistError(NotExistException):
-    '''卡牌不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'卡牌 ID {id}'
-        super().__init__(msg)
-        return
-
-# 服装不存在
-class CostumeNotExistError(NotExistException):
-    '''服装不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'服装 ID {id}'
-        super().__init__(msg)
-        return
-
-# 活动不存在
-class EventNotExistError(NotExistException):
-    '''活动不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'活动 ID {id}'
-        super().__init__(msg)
-        return
-
-# 招募不存在
-class GachaNotExistError(NotExistException):
-    '''招募不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'招募 ID {id}NotExistException'
-        super().__init__(msg)
-        return
-
-# 登录奖励不存在
-class LoginCampaignNotExistError(NotExistException):
-    '''登录奖励不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'登录奖励 ID {id} 不存在。'
-        super().__init__(msg)
-        return
-
-# 自选券不存在
-class MiracleTicketExchangeNotExistError(NotExistException):
-    '''自选券不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'自选券 ID {id} 不存在。'
-        super().__init__(msg)
-        return
-
-# 漫画不存在
-class ComicNotExistError(NotExistException):
-    '''漫画不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'漫画 ID {id} 不存在。'
-        super().__init__(msg)
-        return
-
-# 任务不存在
-class MissionNotExistError(NotExistException):
-    '''任务不存在'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'任务 ID {id} 不存在。'
-        super().__init__(msg)
+        self.message = msg
+        '''错误信息'''
         return
 
 # 玩家不存在
@@ -279,7 +189,7 @@ class PlayerNotExistError(NotExistException):
     '''玩家不存在'''
     # 初始化
     def __init__(self, server: str, id: int) -> None:
-        msg = f'服务器 {server} 上的玩家 ID {id} 不存在。'
+        msg = f'Player {id} is not exist in server \'{server}\'.'
         super().__init__(msg)
         return
 
@@ -288,7 +198,7 @@ class ServerNotAvailableError(BestdoriException):
     '''服务器指定错误'''
     # 初始化
     def __init__(self, name: str, server: str) -> None:
-        msg = f'{name} 在服务器 {server} 不可用。'
+        msg = f'{name} is not available in server \'{server}\'.'
         super().__init__(msg)
         self.message = msg
         '''错误信息'''
@@ -299,7 +209,7 @@ class EventHasNoStampError(BestdoriException):
     '''活动没有奖励贴纸错误'''
     # 初始化
     def __init__(self, id: int) -> None:
-        msg = f'活动 ID {id} 没有奖励贴纸。'
+        msg = f'Event {id} has no stamp reward.'
         super().__init__(msg)
         self.message = msg
         '''错误信息'''
@@ -310,7 +220,7 @@ class NoDataException(BestdoriException):
     '''无法获取到信息错误'''
     # 初始化
     def __init__(self, src: str) -> None:
-        msg = f'无法获取 {src} 。'
+        msg = f'Cannot get {src} data.'
         super().__init__(msg)
         self.message = msg
         '''错误信息'''
@@ -331,16 +241,7 @@ class NoCookiesError(SettingsException):
     '''没有设置 Cookies'''
     # 初始化
     def __init__(self) -> None:
-        msg = '没有设置 Cookies'
-        super().__init__(msg)
-        return
-
-# 没有获取到 ContentType
-class NoContentTypeError(RequestError):
-    '''没有获取到 ContentType'''
-    # 初始化
-    def __init__(self, url: str) -> None:
-        msg = f'没有获取到 {url} 的 ContentType'
+        msg = 'Cookies has not been set.'
         super().__init__(msg)
         return
 
