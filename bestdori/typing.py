@@ -35,6 +35,114 @@ class NoneDict(TypedDict):
     '''空字典'''
     pass
 
+CardRarity: TypeAlias = Literal[1, 2, 3, 4, 5]
+'''卡牌稀有度'''
+
+CardAttribute: TypeAlias = Literal['powerful', 'pure', 'cool', 'happy']
+'''卡牌属性'''
+
+class CardAll2Info(TypedDict):
+    characterId: int
+    attribute: CardAttribute
+
+CardAll2: TypeAlias = Dict[str, CardAll2Info]
+
+class CardAll3Info(TypedDict):
+    characterId: int
+    attribute: CardAttribute
+    prefix: List[Optional[str]]
+
+CardAll3: TypeAlias = Dict[str, CardAll3Info]
+
+class CardStat(TypedDict):
+    performance: int
+    technique: int
+    visual: int
+
+class CardStatEpisode(TypedDict):
+    performance: int
+    technique: int
+    visual: int
+
+class CardStatTraining(TypedDict):
+    levelLimit: int
+    performance: int
+    technique: int
+    visual: int
+
+class CardAll5Info(TypedDict):
+    characterId: int
+    rarity: CardRarity
+    attribute: CardAttribute
+    levelLimit: int
+    resourceSetName: str
+    prefix: List[Optional[str]]
+    releasedAt: List[Optional[str]]
+    skillId: int
+    type: str
+    stat: Dict[str, Union[CardStat, List[CardStatEpisode], CardStatTraining]]
+
+CardAll5: TypeAlias = Dict[str, CardAll5Info]
+
+class CardEpisodesEntireCostsEntire(TypedDict):
+    resourceId: int
+    resourceType: str
+    quantity: int
+    lbBonus: int
+
+class CardEpisodesEntireCosts(TypedDict):
+    entires: List[CardEpisodesEntireCostsEntire]
+
+class CardEpisodesEntireRewardsEntire(TypedDict):
+    resourceType: str
+    quantity: int
+    lbBonus: int
+
+class CardEpisodesEntireRewards(TypedDict):
+    entires: List[CardEpisodesEntireRewardsEntire]
+
+class CardEpisodesEntire(TypedDict):
+    episodeId: int
+    episodeType: str
+    situationId: int
+    scenarioId: str
+    appendPerformance: int
+    appendTechnique: int
+    appendVisual: int
+    releaseLevel: int
+    costs: CardEpisodesEntireCosts
+    rewards: CardEpisodesEntireRewards
+    title: List[Optional[str]]
+    characterId: int
+
+class CardEpisodes(TypedDict):
+    entires: List[CardEpisodesEntire]
+
+class CardSourceGacha(TypedDict):
+    probability: float
+
+class CardSource(TypedDict):
+    gacha: Dict[str, CardSourceGacha]
+
+class CardInfo(TypedDict):
+    '''卡牌信息'''
+    characterId: int
+    rarity: CardRarity
+    attribute: CardAttribute
+    levelLimit: int
+    resourceSetName: str
+    sdResourceName: str
+    episodes: CardEpisodes
+    costumeId: int
+    gachaText: List[Optional[str]]
+    prefix: List[Optional[str]]
+    releasedAt: List[Optional[str]]
+    skillName: List[Optional[str]]
+    skillId: int
+    source: List[Union[CardSource, NoneDict]]
+    type: str
+    stat: Dict[str, Union[CardStat, List[CardStatEpisode], CardStatTraining]]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']

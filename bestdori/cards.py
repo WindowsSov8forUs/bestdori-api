@@ -1,51 +1,131 @@
 '''`bestdori.cards`
 
 BanG Dream! 卡牌相关操作'''
-from typing import Any, Dict, Literal
 
-from aiohttp import ClientResponseError
-from httpx import Response, HTTPStatusError
+from typing_extensions import overload
+from typing import TYPE_CHECKING, Dict, Union, Literal, Optional
 
-from .utils.utils import API, RES, ASSETS
+from .utils import get_api
 from .post import get_list, get_list_async
-from .utils.network import Api, Res, Assets
+from .utils.network import Api
 from .exceptions import (
+    HTTPStatusError,
     NoDataException,
-    CardNotExistError
+    NotExistException,
 )
 
+if TYPE_CHECKING:
+    from .typing import (
+        CardAll2,
+        CardAll3,
+        CardAll5,
+        CardInfo,
+        NoneDict,
+        PostList,
+        ServerName,
+    )
+
+API = get_api('bestdori.api')
+RES = get_api('bestdori.res')
+ASSETS = get_api('bestdori.assets')
+
 # 获取总卡牌信息
-def get_all(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
+@overload
+def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总卡牌信息
 
     参数:
-        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
-            `0`: 仅获取所有已有卡牌 ID `all.0.json`
-            `5`: 获取所有已有卡牌的简洁信息 `all.5.json`
+        index (Literal[0]): 指定获取哪种 `all.json`
 
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总卡牌信息
+        Dict[str, NoneDict]: 所有已有卡牌 ID `all.0.json`
     '''
+    ...
+@overload
+def get_all(index: Literal[2]) -> 'CardAll2':
+    '''获取总卡牌信息
+
+    参数:
+        index (Literal[2]): 指定获取哪种 `all.json`
+
+    返回:
+        CardAll2: 所有已有卡牌的属性信息 `all.2.json`
+    '''
+    ...
+@overload
+def get_all(index: Literal[3]) -> 'CardAll3':
+    '''获取总卡牌信息
+
+    参数:
+        index (Literal[3]): 指定获取哪种 `all.json`
+
+    返回:
+        CardAll3: 所有已有卡牌的简洁信息 `all.3.json`
+    '''
+    ...
+@overload
+def get_all(index: Literal[5]) -> 'CardAll5':
+    '''获取总卡牌信息
+
+    参数:
+        index (Literal[5]): 指定获取哪种 `all.json`
+
+    返回:
+        CardAll5: 所有已有卡牌的较详细信息 `all.5.json`
+    '''
+    ...
+
+def get_all(index: Literal[0, 2, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CardAll2', 'CardAll3', 'CardAll5']:
     return Api(API['cards']['all'].format(index=index)).get().json()
 
 # 异步获取总卡牌信息
-async def get_all_async(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
+@overload
+async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总卡牌信息
 
     参数:
-        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
-            `0`: 仅获取所有已有卡牌 ID `all.0.json`
-            `5`: 获取所有已有卡牌的简洁信息 `all.5.json`
+        index (Literal[0]): 指定获取哪种 `all.json`
 
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总卡牌信息
+        Dict[str, NoneDict]: 所有已有卡牌 ID `all.0.json`
     '''
-    response = await Api(API['cards']['all'].format(index=index)).aget()
-    
-    if isinstance(response, Response):
-        return response.json()
-    else:
-        return await response.json()
+    ...
+@overload
+async def get_all_async(index: Literal[2]) -> 'CardAll2':
+    '''获取总卡牌信息
+
+    参数:
+        index (Literal[2]): 指定获取哪种 `all.json`
+
+    返回:
+        CardAll2: 所有已有卡牌的属性信息 `all.2.json`
+    '''
+    ...
+@overload
+async def get_all_async(index: Literal[3]) -> 'CardAll3':
+    '''获取总卡牌信息
+
+    参数:
+        index (Literal[3]): 指定获取哪种 `all.json`
+
+    返回:
+        CardAll3: 所有已有卡牌的简洁信息 `all.3.json`
+    '''
+    ...
+@overload
+async def get_all_async(index: Literal[5]) -> 'CardAll5':
+    '''获取总卡牌信息
+
+    参数:
+        index (Literal[5]): 指定获取哪种 `all.json`
+
+    返回:
+        CardAll5: 所有已有卡牌的较详细信息 `all.5.json`
+    '''
+    ...
+
+async def get_all_async(index: Literal[0, 2, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CardAll2', 'CardAll3', 'CardAll5']:
+    return (await Api(API['cards']['all'].format(index=index)).aget()).json()
 
 # 获取属性图标
 def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy']) -> bytes:
@@ -61,7 +141,7 @@ def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy']) 
     返回:
         bytes: 属性图标字节数据
     '''
-    return Res(RES['icon']['svg'].format(name=f'{attribute}')).get()
+    return Api(RES['icon']['svg'].format(name=f'{attribute}')).get().content
 
 # 异步获取属性图标
 async def get_attribute_icon_async(attribute: Literal['powerful', 'pure', 'cool', 'happy']) -> bytes:
@@ -77,7 +157,7 @@ async def get_attribute_icon_async(attribute: Literal['powerful', 'pure', 'cool'
     返回:
         bytes: 属性图标字节数据
     '''
-    return await Res(RES['icon']['svg'].format(name=f'{attribute}')).aget()
+    return (await Api(RES['icon']['svg'].format(name=f'{attribute}')).aget()).content
 
 # 获取星星图标
 def get_star_icon(star: Literal['star', 'star_trained']) -> bytes:
@@ -91,7 +171,7 @@ def get_star_icon(star: Literal['star', 'star_trained']) -> bytes:
     返回:
         bytes: 星星图标字节数据
     '''
-    return Res(RES['icon']['png'].format(name=f'{star}')).get()
+    return Api(RES['icon']['png'].format(name=f'{star}')).get().content
 
 # 异步获取星星图标
 async def get_star_icon_async(star: Literal['star', 'star_trained']) -> bytes:
@@ -105,7 +185,7 @@ async def get_star_icon_async(star: Literal['star', 'star_trained']) -> bytes:
     返回:
         bytes: 星星图标字节数据
     '''
-    return await Res(RES['icon']['png'].format(name=f'{star}')).aget()
+    return (await Api(RES['icon']['png'].format(name=f'{star}')).aget()).content
 
 # 获取卡牌完整边框
 def get_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -117,7 +197,7 @@ def get_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌完整边框字节数据
     '''
-    return Res(RES['image']['png'].format(name=f'frame-{level}')).get()
+    return Api(RES['image']['png'].format(name=f'frame-{level}')).get().content
 
 # 异步获取卡牌完整边框
 async def get_frame_async(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -129,7 +209,7 @@ async def get_frame_async(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌完整边框字节数据
     '''
-    return await Res(RES['image']['png'].format(name=f'frame-{level}')).aget()
+    return (await Api(RES['image']['png'].format(name=f'frame-{level}')).aget()).content
 
 # 获取卡牌缩略图边框
 def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -141,7 +221,7 @@ def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌缩略图边框字节数据
     '''
-    return Res(RES['image']['png'].format(name=f'card-{level}')).get()
+    return Api(RES['image']['png'].format(name=f'card-{level}')).get().content
 
 # 异步获取卡牌缩略图边框
 async def get_card_frame_async(level: Literal[1, 2, 3, 4, 5]) -> bytes:
@@ -153,7 +233,7 @@ async def get_card_frame_async(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     返回:
         bytes: 卡牌缩略图边框字节数据
     '''
-    return await Res(RES['image']['png'].format(name=f'card-{level}')).aget()
+    return (await Api(RES['image']['png'].format(name=f'card-{level}')).aget()).content
 
 # 卡牌类
 class Card:
@@ -171,32 +251,37 @@ class Card:
         '''
         self.id: int = id
         '''卡牌 ID'''
-        self.__info: Dict[str, Any] = {}
+        self.__info: Optional['CardInfo'] = None
         '''卡牌信息存储'''
         return
+    
+    @property
+    def info(self) -> 'CardInfo':
+        '''卡牌信息'''
+        if self.__info is None:
+            raise RuntimeError('Card info were not retrieved.')
+        return self.__info
     
     # 卡牌标题
     @property
     def prefix(self) -> str:
         '''卡牌标题'''
-        info = self.__info
+        info = self.info
         # 获取 prefix 数据
-        if (prefix := info.get('prefix', None)) is None:
-            raise NoDataException('卡牌标题')
+        prefix = info['prefix']
         # 获取第一个非 None 卡牌标题
         try:
-            return next(filter(lambda x: x is not None, prefix))
+            return next(x for x in prefix if x is not None)
         except StopIteration:
-            raise NoDataException('卡牌标题')
+            raise NoDataException('card prefix')
     
     # 卡牌所在默认服务器
     @property
-    def server(self) -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
+    def server(self) -> ServerName:
         '''卡牌所在默认服务器'''
-        info = self.__info
+        info = self.info
         # 获取 releasedAt 数据
-        if (released_at := info.get('releasedAt', None)) is None:
-            raise NoDataException('卡牌发布时间')
+        released_at = info['releasedAt']
         # 根据 releasedAt 数据判断服务器
         if released_at[0] is not None: return 'jp'
         elif released_at[1] is not None: return 'en'
@@ -204,77 +289,59 @@ class Card:
         elif released_at[3] is not None: return 'cn'
         elif released_at[4] is not None: return 'kr'
         else:
-            raise NoDataException('卡牌所在服务器')
+            raise NoDataException('card server')
     
-    # 获取卡牌信息
-    def get_info(self) -> Dict[str, Any]:
-        '''获取卡牌信息
+    # 获取卡牌数据
+    @classmethod
+    def get(cls, id: int) -> 'Card':
+        '''获取卡牌数据
+
+        参数:
+            id (int): 卡牌 ID
 
         返回:
-            Dict[str, Any]: 卡牌详细信息
+            Card: 卡牌对象
         '''
+        card = cls(id)
+        
         try:
             response = Api(
-                API['cards']['info'].format(id=self.id)
+                API['cards']['info'].format(id=card.id)
             ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise CardNotExistError(self.id)
+                raise NotExistException(f'Card {card.id}')
             else:
                 raise exception
         
-        self.__info = dict(response.json())
-        return self.__info
+        card.__info = response.json()
+        return card
     
-    # 异步获取卡牌信息
-    async def get_info_async(self) -> Dict[str, Any]:
+    # 异步获取卡牌数据
+    @classmethod
+    async def get_async(cls, id: int) -> 'Card':
         '''获取卡牌信息
 
+        参数:
+            id (int): 卡牌 ID
+
         返回:
-            Dict[str, Any]: 卡牌详细信息
+            Card: 卡牌对象
         '''
+        card = cls(id)
+        
         try:
             response = await Api(
-                API['cards']['info'].format(id=self.id)
+                API['cards']['info'].format(id=card.id)
             ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise CardNotExistError(self.id)
-            else:
-                raise exception
-        except ClientResponseError as exception:
-            if exception.status == 404:
-                raise CardNotExistError(self.id)
+                raise NotExistException(f'Card {card.id}')
             else:
                 raise exception
         
-        if isinstance(response, Response):
-            self.__info = dict(response.json())
-        else:
-            self.__info = dict(await response.json())
-        return self.__info
-    
-    # 获取缓存信息
-    def __get_info_cache(self) -> Dict[str, Any]:
-        '''获取缓存信息
-
-        返回:
-            Dict[str, Any]: 缓存信息
-        '''
-        if not self.__info:
-            return self.get_info()
-        return self.__info
-    
-    # 异步获取缓存信息
-    async def __get_info_cache_async(self) -> Dict[str, Any]:
-        '''获取缓存信息
-
-        返回:
-            Dict[str, Any]: 缓存信息
-        '''
-        if not self.__info:
-            return await self.get_info_async()
-        return self.__info
+        card.__info = response.json()
+        return card
     
     # 获取卡牌评论
     def get_comment(
@@ -282,7 +349,7 @@ class Card:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> Dict[str, Any]:
+    ) -> PostList:
         '''获取卡牌评论
 
         参数:
@@ -291,12 +358,12 @@ class Card:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            Dict[str, Any]: 搜索结果
+            PostList: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的评论
+                    "posts": ... # List[PostListPost] 列举出的评论
                 }
                 ```
         '''
@@ -314,7 +381,7 @@ class Card:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> Dict[str, Any]:
+    ) -> PostList:
         '''获取卡牌评论
 
         参数:
@@ -323,12 +390,12 @@ class Card:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            Dict[str, Any]: 搜索结果
+            PostList: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的评论
+                    "posts": ... # List[PostListPost] 列举出的评论
                 }
                 ```
         '''
@@ -351,14 +418,14 @@ class Card:
             bytes: 卡牌完整图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.__get_info_cache()
+        info = self.info
         if (resource_set_name := info.get('resourceSetName', None)) is None:
-            raise ValueError('无法获取卡牌数据包名称。')
-        return Assets(
+            raise ValueError('Cannot get card resource set name.')
+        return Api(
             ASSETS['characters']['resourceset'].format(
-                resource_set_name=resource_set_name, name='card', type=type
-            ), self.server
-        ).get()
+                server=self.server, resource_set_name=resource_set_name, name='card', type=type
+            )
+        ).get().content
     
     # 异步获取卡牌完整图片
     async def get_card_async(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -371,14 +438,14 @@ class Card:
             bytes: 卡牌完整图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = await self.__get_info_cache_async()
+        info = self.info
         if (resource_set_name := info.get('resourceSetName', None)) is None:
-            raise ValueError('无法获取卡牌数据包名称。')
-        return await Assets(
+            raise ValueError('Cannot get card resource set name.')
+        return (await Api(
             ASSETS['characters']['resourceset'].format(
-                resource_set_name=resource_set_name, name='card', type=type
-            ), self.server
-        ).aget()
+                server=self.server, resource_set_name=resource_set_name, name='card', type=type
+            )
+        ).aget()).content
     
     # 获取卡牌无背景图片
     def get_trim(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -391,14 +458,14 @@ class Card:
             bytes: 卡牌无背景图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.__get_info_cache()
+        info = self.info
         if (resource_set_name := info.get('resourceSetName', None)) is None:
-            raise ValueError('无法获取卡牌数据包名称。')
-        return Assets(
+            raise ValueError('Cannot get card resource set name.')
+        return Api(
             ASSETS['characters']['resourceset'].format(
-                resource_set_name=resource_set_name, name='trim', type=type
-            ), self.server
-        ).get()
+                server=self.server, resource_set_name=resource_set_name, name='trim', type=type
+            )
+        ).get().content
     
     # 异步获取卡牌无背景图片
     async def get_trim_async(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -411,14 +478,14 @@ class Card:
             bytes: 卡牌无背景图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = await self.__get_info_cache_async()
+        info = self.info
         if (resource_set_name := info.get('resourceSetName', None)) is None:
             raise ValueError('无法获取卡牌数据包名称。')
-        return await Assets(
+        return (await Api(
             ASSETS['characters']['resourceset'].format(
-                resource_set_name=resource_set_name, name='trim', type=type
-            ), self.server
-        ).aget()
+                server=self.server, resource_set_name=resource_set_name, name='trim', type=type
+            )
+        ).aget()).content
     
     # 获取卡牌缩略图图片
     def get_thumb(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -431,14 +498,14 @@ class Card:
             bytes: 卡牌缩略图图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.__get_info_cache()
+        info = self.info
         if (resource_set_name := info.get('resourceSetName', None)) is None:
-            raise ValueError('无法获取卡牌数据包名称。')
-        return Assets(
+            raise ValueError('Cannot get card resource set name.')
+        return Api(
             ASSETS['thumb']['chara'].format(
-                id=self.id // 50, resource_set_name=resource_set_name, type=type
-            ), self.server
-        ).get()
+                server=self.server, id=self.id // 50, resource_set_name=resource_set_name, type=type
+            )
+        ).get().content
     
     # 异步获取卡牌缩略图图片
     async def get_thumb_async(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -451,14 +518,14 @@ class Card:
             bytes: 卡牌缩略图图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = await self.__get_info_cache_async()
+        info = self.info
         if (resource_set_name := info.get('resourceSetName', None)) is None:
             raise ValueError('无法获取卡牌数据包名称。')
-        return await Assets(
+        return (await Api(
             ASSETS['thumb']['chara'].format(
-                id=self.id // 50, resource_set_name=resource_set_name, type=type
-            ), self.server
-        ).aget()
+                server=self.server, id=self.id // 50, resource_set_name=resource_set_name, type=type
+            )
+        ).aget()).content
     
     # 获取 LIVE 服装图片
     def get_livesd(self) -> bytes:
@@ -468,14 +535,14 @@ class Card:
             bytes: 卡牌 LIVE 服装图片字节数据 `bytes`
         '''
         # 获取卡牌 livesd 数据包名称
-        info = self.__get_info_cache()
+        info = self.info
         if (sd_resource_name := info.get('sdResourceName', None)) is None:
-            raise ValueError('无法获取卡牌 livesd 数据包名称。')
-        return Assets(
+            raise ValueError('Cannot get card livesd resource name.')
+        return Api(
             ASSETS['characters']['livesd'].format(
-                sd_resource_name=sd_resource_name
-            ), self.server
-        ).get()
+                server=self.server, sd_resource_name=sd_resource_name
+            )
+        ).get().content
     
     # 异步获取 LIVE 服装图片
     async def get_livesd_async(self) -> bytes:
@@ -485,11 +552,11 @@ class Card:
             bytes: 卡牌 LIVE 服装图片字节数据 `bytes`
         '''
         # 获取卡牌 livesd 数据包名称
-        info = await self.__get_info_cache_async()
+        info = self.info
         if (sd_resource_name := info.get('sdResourceName', None)) is None:
             raise ValueError('无法获取卡牌 livesd 数据包名称。')
-        return await Assets(
+        return (await Api(
             ASSETS['characters']['livesd'].format(
-                sd_resource_name=sd_resource_name
-            ), self.server
-        ).aget()
+                server=self.server, sd_resource_name=sd_resource_name
+            )
+        ).aget()).content
