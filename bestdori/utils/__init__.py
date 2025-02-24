@@ -1,24 +1,39 @@
 '''`bestdori.utils`
 
 杂项模块'''
+from json import load
+from functools import lru_cache
+from importlib import resources
 from typing import Literal, Any, Dict, Tuple
 
 from httpx import Response
 
-from .network import Api, Res, Assets
+from .network import Api
 from bestdori.exceptions import (
     AssetsNotExistError
 )
 
-from ._api import (
-    API as API,
-    RES as RES,
-    ASSETS as ASSETS,
-    AYACHAN as AYACHAN,
-)
+@lru_cache(maxsize=128)
+def get_api(*paths: str) -> Dict[str, Dict[str, str]]:
+    '''获取 API 字典
+
+    参数:
+        *path (str): API 文件路径
+
+    返回:
+        Dict[str, Dict[str, str]]: API 字典
+    '''
+    if len(paths) == 1:
+        _path = "bestdori.data.api"
+    else:
+        _path = "bestdori.data.api." + '.'.join(paths[:-1])
+    filename = paths[-1] + '.json'
+    
+    with resources.open_text(_path, filename) as f:
+        return load(f)
 
 # 将十六进制颜色代码转换为 RGB 元组
-def hexto_rgb(hex: str) -> Tuple[int, int, int]:
+def hex_to_rgb(hex: str) -> Tuple[int, int, int]:
     '''将十六进制颜色代码转换为 RGB 元组
 
     参数:
