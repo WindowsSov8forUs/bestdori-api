@@ -13,7 +13,12 @@ from bestdori.exceptions import (
     AyachanResponseError,
 )
 
-from .client import Client, Request, Response, AsyncClient
+from .client import (
+    Client as Client,
+    Request as Request,
+    Response as Response,
+    AsyncClient as AsyncClient,
+)
 
 PREFIX = {
     'ayachan': 'https://api.ayachan.fun',
