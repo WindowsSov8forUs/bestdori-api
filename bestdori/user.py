@@ -2,7 +2,7 @@
 
 BanG Dream! 歌曲相关操作'''
 from http.cookies import SimpleCookie
-from typing import TYPE_CHECKING, Self, Literal
+from typing import TYPE_CHECKING, Self, Literal, Optional
 
 from . import post
 from .utils import get_api
@@ -24,7 +24,7 @@ class User:
     def __init__(self, username: str) -> None:     
         self.username: str = username
         '''用户名'''
-        self._info: 'UserInfo'
+        self.__info: Optional['UserInfo'] = None
         '''用户信息'''
         return
     
@@ -63,9 +63,9 @@ class User:
         response = Api(
             API['user']['info']
         ).get(params={'username': self.username})
-        self._info = response.json()
+        self.__info = response.json()
         
-        return self._info
+        return self.info
     
     async def get_info_async(self) -> 'UserInfo':
         '''获取用户信息
@@ -76,16 +76,16 @@ class User:
         response = await Api(
             API['user']['info']
         ).aget(params={'username': self.username})
-        self._info = response.json()
+        self.__info = response.json()
         
-        return self._info
+        return self.info
     
     @property
     def info(self) -> 'UserInfo':
         '''用户信息'''
-        if getattr(self, '_info', None) is None:
-            raise ValueError(f'用户 {self.username} 未成功获取信息。')
-        return self._info
+        if self.__info is None:
+            raise ValueError(f'User \'{self.username}\' info were not retrieved.')
+        return self.__info
     
     @staticmethod
     def login(username: str, password: str) -> 'Me':
@@ -103,10 +103,10 @@ class User:
         response = Api(
             API['user']['login']
         ).post(data={'username': me.username, 'password': me.password})
-        me._cookies = response.cookies
+        me.__cookies = response.cookies
 
         response = Api(API['user']['me']).get(cookies=me.cookies)
-        me._me = response.json()
+        me.__me = response.json()
         
         return me
     
@@ -126,10 +126,10 @@ class User:
         response = await Api(
             API['user']['login']
         ).apost(data={'username': me.username, 'password': me.password})
-        me._cookies = response.cookies
+        me.__cookies = response.cookies
         
         response = await Api(API['user']['me']).aget(cookies=me.cookies)
-        me._me = response.json()
+        me.__me = response.json()
         
         return me
     
@@ -406,9 +406,9 @@ class Me(User):
         super().__init__(username)
         self.password: str = password
         '''密码'''
-        self._cookies: SimpleCookie
+        self.__cookies: Optional[SimpleCookie] = None
         '''用户 Cookies'''
-        self._me: 'UserMeInfo'
+        self.__me: Optional['UserMeInfo'] = None
         '''用户自我信息'''
         return
     
@@ -416,17 +416,17 @@ class Me(User):
     @property
     def cookies(self) -> SimpleCookie:
         '''用户 Cookies'''
-        if getattr(self, '_cookies', None) is None:
-            raise ValueError(f'用户 {self.username} 未登录。')
-        return self._cookies
+        if self.__cookies is None:
+            raise ValueError(f'User {self.username} has not logged in.')
+        return self.__cookies
     
     # 用户自我信息
     @property
     def me(self) -> 'UserMeInfo':
         '''用户自我信息'''
-        if getattr(self, '_me', None) is None:
-            raise ValueError(f'用户 {self.username} 未登录。')
-        return self._me
+        if self.__me is None:
+            raise ValueError(f'User {self.username} has not logged in.')
+        return self.__me
     
     def update_info(self, info: 'UserInfo') -> 'UserInfo':
         '''更新用户信息
