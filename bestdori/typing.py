@@ -209,6 +209,20 @@ class ComicInfo(TypedDict):
 
 ComicsAll5: TypeAlias = Dict[str, ComicInfo]
 
+class CostumesAll5Info(TypedDict):
+    characterId: int
+    assetBundleName: str
+    description: List[Optional[str]]
+    publishedAt: List[Optional[str]]
+
+CostumesAll5: TypeAlias = Dict[str, CostumesAll5Info]
+
+class CostumeInfo(CostumesAll5Info):
+    '''服装信息'''
+    sdResourceName: str
+    howToGet: List[Optional[str]]
+    cards: List[int]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']
