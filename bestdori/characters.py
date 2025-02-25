@@ -3,7 +3,7 @@
 BanG Dream! 角色相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Any, Dict, Tuple, Union, Literal, Optional
+from typing import TYPE_CHECKING, Dict, Tuple, Union, Literal
 
 from . import post
 from .utils.network import Api
