@@ -243,32 +243,19 @@ class Card:
         id (int): 卡牌 ID
     '''
     # 初始化
-    def __init__(self, id: int) -> None:
-        '''卡牌类
-
-        参数:
-            id (int): 卡牌 ID
-        '''
+    def __init__(self, id: int, info: 'CardInfo') -> None:
         self.id: int = id
         '''卡牌 ID'''
-        self.__info: Optional['CardInfo'] = None
-        '''卡牌信息存储'''
-        return
-    
-    @property
-    def info(self) -> 'CardInfo':
+        self.info: 'CardInfo' = info
         '''卡牌信息'''
-        if self.__info is None:
-            raise RuntimeError('Card info were not retrieved.')
-        return self.__info
+        return
     
     # 卡牌标题
     @property
     def prefix(self) -> str:
         '''卡牌标题'''
-        info = self.info
         # 获取 prefix 数据
-        prefix = info['prefix']
+        prefix = self.info['prefix']
         # 获取第一个非 None 卡牌标题
         try:
             return next(x for x in prefix if x is not None)
@@ -279,9 +266,8 @@ class Card:
     @property
     def server(self) -> ServerName:
         '''卡牌所在默认服务器'''
-        info = self.info
         # 获取 releasedAt 数据
-        released_at = info['releasedAt']
+        released_at = self.info['releasedAt']
         # 根据 releasedAt 数据判断服务器
         if released_at[0] is not None: return 'jp'
         elif released_at[1] is not None: return 'en'
@@ -291,10 +277,10 @@ class Card:
         else:
             raise NoDataException('card server')
     
-    # 获取卡牌数据
+    # 获取卡牌
     @classmethod
     def get(cls, id: int) -> 'Card':
-        '''获取卡牌数据
+        '''获取卡牌
 
         参数:
             id (int): 卡牌 ID
@@ -302,25 +288,22 @@ class Card:
         返回:
             Card: 卡牌对象
         '''
-        card = cls(id)
-        
         try:
             response = Api(
-                API['cards']['info'].format(id=card.id)
+                API['cards']['info'].format(id=id)
             ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise NotExistException(f'Card {card.id}')
+                raise NotExistException(f'Card {id}')
             else:
                 raise exception
         
-        card.__info = response.json()
-        return card
+        return cls(id, response.json())
     
-    # 异步获取卡牌数据
+    # 异步获取卡牌
     @classmethod
     async def get_async(cls, id: int) -> 'Card':
-        '''获取卡牌信息
+        '''获取卡牌
 
         参数:
             id (int): 卡牌 ID
@@ -328,20 +311,17 @@ class Card:
         返回:
             Card: 卡牌对象
         '''
-        card = cls(id)
-        
         try:
             response = await Api(
-                API['cards']['info'].format(id=card.id)
+                API['cards']['info'].format(id=id)
             ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise NotExistException(f'Card {card.id}')
+                raise NotExistException(f'Card {id}')
             else:
                 raise exception
         
-        card.__info = response.json()
-        return card
+        return cls(id, response.json())
     
     # 获取卡牌评论
     def get_comment(
@@ -418,8 +398,7 @@ class Card:
             bytes: 卡牌完整图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.info
-        if (resource_set_name := info.get('resourceSetName', None)) is None:
+        if (resource_set_name := self.info.get('resourceSetName', None)) is None:
             raise ValueError('Cannot get card resource set name.')
         return Api(
             ASSETS['characters']['resourceset'].format(
@@ -438,8 +417,7 @@ class Card:
             bytes: 卡牌完整图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.info
-        if (resource_set_name := info.get('resourceSetName', None)) is None:
+        if (resource_set_name := self.info.get('resourceSetName', None)) is None:
             raise ValueError('Cannot get card resource set name.')
         return (await Api(
             ASSETS['characters']['resourceset'].format(
@@ -458,8 +436,7 @@ class Card:
             bytes: 卡牌无背景图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.info
-        if (resource_set_name := info.get('resourceSetName', None)) is None:
+        if (resource_set_name := self.info.get('resourceSetName', None)) is None:
             raise ValueError('Cannot get card resource set name.')
         return Api(
             ASSETS['characters']['resourceset'].format(
@@ -478,8 +455,7 @@ class Card:
             bytes: 卡牌无背景图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.info
-        if (resource_set_name := info.get('resourceSetName', None)) is None:
+        if (resource_set_name := self.info.get('resourceSetName', None)) is None:
             raise ValueError('无法获取卡牌数据包名称。')
         return (await Api(
             ASSETS['characters']['resourceset'].format(
@@ -498,8 +474,7 @@ class Card:
             bytes: 卡牌缩略图图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.info
-        if (resource_set_name := info.get('resourceSetName', None)) is None:
+        if (resource_set_name := self.info.get('resourceSetName', None)) is None:
             raise ValueError('Cannot get card resource set name.')
         return Api(
             ASSETS['thumb']['chara'].format(
@@ -518,8 +493,7 @@ class Card:
             bytes: 卡牌缩略图图片字节数据 `bytes`
         '''
         # 获取卡牌数据包名称
-        info = self.info
-        if (resource_set_name := info.get('resourceSetName', None)) is None:
+        if (resource_set_name := self.info.get('resourceSetName', None)) is None:
             raise ValueError('无法获取卡牌数据包名称。')
         return (await Api(
             ASSETS['thumb']['chara'].format(
@@ -535,8 +509,7 @@ class Card:
             bytes: 卡牌 LIVE 服装图片字节数据 `bytes`
         '''
         # 获取卡牌 livesd 数据包名称
-        info = self.info
-        if (sd_resource_name := info.get('sdResourceName', None)) is None:
+        if (sd_resource_name := self.info.get('sdResourceName', None)) is None:
             raise ValueError('Cannot get card livesd resource name.')
         return Api(
             ASSETS['characters']['livesd'].format(
@@ -552,8 +525,7 @@ class Card:
             bytes: 卡牌 LIVE 服装图片字节数据 `bytes`
         '''
         # 获取卡牌 livesd 数据包名称
-        info = self.info
-        if (sd_resource_name := info.get('sdResourceName', None)) is None:
+        if (sd_resource_name := self.info.get('sdResourceName', None)) is None:
             raise ValueError('无法获取卡牌 livesd 数据包名称。')
         return (await Api(
             ASSETS['characters']['livesd'].format(
