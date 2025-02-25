@@ -3,7 +3,7 @@
 BanG Dream! 服装相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Any, Dict, Union, Literal
+from typing import TYPE_CHECKING, Dict, Union, Literal
 
 from . import post
 from .utils import get_api
