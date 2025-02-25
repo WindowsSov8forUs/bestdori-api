@@ -199,6 +199,16 @@ class CharacterInfo(CharacterAll5Info):
     ruby: List[Optional[str]]
     profile: NotRequired[CharacterProfile]
 
+class ComicInfo(TypedDict):
+    '''漫画信息'''
+    assetBundleName: str
+    title: List[Optional[str]]
+    subTitle: List[Optional[str]]
+    publicStartAt: List[Optional[Union[str, Literal[1]]]]
+    characterId: List[int]
+
+ComicsAll5: TypeAlias = Dict[str, ComicInfo]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']
