@@ -637,7 +637,7 @@ class Post:
         id (str): 社区帖子 ID
     '''
     # 初始化
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: int, basic: 'PostBasic') -> None:
         '''社区帖子类
 
         参数:
@@ -645,9 +645,9 @@ class Post:
         '''
         self.id: int = id
         '''社区帖子 ID'''
-        self.__post: Optional[PostInfo] = None
+        self.__post: Optional['PostInfo'] = None
         '''社区帖子详细内容'''
-        self.__basic: Optional[PostBasic] = None
+        self.basic: 'PostBasic' = basic
         '''社区帖子基础信息'''
         return
     
@@ -657,13 +657,6 @@ class Post:
         if not self.__post:
             raise RuntimeError('Post detail were not retrieved.')
         return self.__post
-    
-    @property
-    def basic(self) -> 'PostBasic':
-        '''社区帖子基础信息'''
-        if not self.__basic:
-            raise RuntimeError('Post basic were not retrieved.')
-        return self.__basic
     
     # 谱面对象
     @property
@@ -698,29 +691,24 @@ class Post:
     # 获取帖子
     @classmethod
     def get(cls, id: int) -> 'Post':
-        '''获取帖子
+        '''获取帖子，只会获取基础信息。
 
         返回:
             Post: 帖子对象
         '''
-        post = cls(id)
-        response = Api(API['post']['basic']).get(params={'id': post.id})
-        post.__basic = response.json()
-        return post
+        response = Api(API['post']['basic']).get(params={'id': id})
+        return cls(id, response.json())
     
     # 异步获取帖子
     @classmethod
     async def get_async(cls, id: int) -> 'Post':
-        '''获取帖子
+        '''获取帖子，只会获取基础信息。
 
         返回:
             Post: 帖子对象
         '''
-        post = cls(id)
-        response = await Api(API['post']['basic']).aget(params={'id': post.id})
-        post.__basic = response.json()
-        return post
-        
+        response = await Api(API['post']['basic']).aget(params={'id': id})
+        return cls(id, response.json())
     
     # 获取帖子信息
     def get_details(self) -> 'PostInfo':
