@@ -18,7 +18,8 @@
     },
     "characters": {
         "info": "/api/characters/{id}.json",
-        "all": "/api/characters/all.{index}.json"
+        "all": "/api/characters/all.{index}.json",
+        "main": "/api/characters/main.{index}.json"
     },
     "cards": {
         "info": "/api/cards/{id}.json",
