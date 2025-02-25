@@ -47,9 +47,7 @@ class CardAll2Info(TypedDict):
 
 CardAll2: TypeAlias = Dict[str, CardAll2Info]
 
-class CardAll3Info(TypedDict):
-    characterId: int
-    attribute: CardAttribute
+class CardAll3Info(CardAll2Info):
     prefix: List[Optional[str]]
 
 CardAll3: TypeAlias = Dict[str, CardAll3Info]
@@ -70,13 +68,10 @@ class CardStatTraining(TypedDict):
     technique: int
     visual: int
 
-class CardAll5Info(TypedDict):
-    characterId: int
+class CardAll5Info(CardAll3Info):
     rarity: CardRarity
-    attribute: CardAttribute
     levelLimit: int
     resourceSetName: str
-    prefix: List[Optional[str]]
     releasedAt: List[Optional[str]]
     skillId: int
     type: str
@@ -124,24 +119,85 @@ class CardSourceGacha(TypedDict):
 class CardSource(TypedDict):
     gacha: Dict[str, CardSourceGacha]
 
-class CardInfo(TypedDict):
+class CardInfo(CardAll5Info):
     '''卡牌信息'''
-    characterId: int
-    rarity: CardRarity
-    attribute: CardAttribute
-    levelLimit: int
-    resourceSetName: str
     sdResourceName: str
     episodes: CardEpisodes
     costumeId: int
     gachaText: List[Optional[str]]
-    prefix: List[Optional[str]]
-    releasedAt: List[Optional[str]]
     skillName: List[Optional[str]]
-    skillId: int
     source: List[Union[CardSource, NoneDict]]
-    type: str
-    stat: Dict[str, Union[CardStat, List[CardStatEpisode], CardStatTraining]]
+
+class CharacterAll2Info(TypedDict):
+    characterType: str
+    characterName: List[Optional[str]]
+    nickname: List[Optional[str]]
+    bandId: NotRequired[int]
+    colorCode: NotRequired[str]
+
+CharacterAll2: TypeAlias = Dict[str, CharacterAll2Info]
+
+class CharacterSeasonCostumeListMapEntireSeasonEntire(TypedDict):
+    characterId: int
+    basicSeasonId: int
+    costumeType: str
+    seasonCostumeType: str
+    sdAssetBundleName: str
+    live2AssetBundleName: str
+    seasonType: str
+
+class CharacterSeasonCostumeListMapEntireSeason(TypedDict):
+    entires: List[CharacterSeasonCostumeListMapEntireSeasonEntire]
+
+class CharacterSeasonCostumeListMap(TypedDict):
+    entires: Dict[str, CharacterSeasonCostumeListMapEntireSeason]
+
+class CharacterAll5Info(CharacterAll2Info):
+    firstName: List[Optional[str]]
+    lastName: List[Optional[str]]
+    seasonCostumeListMap: NotRequired[CharacterSeasonCostumeListMap]
+
+CharacterAll5: TypeAlias = Dict[str, CharacterAll5Info]
+
+class CharacterMain1Info(TypedDict):
+    characterType: str
+    bandId: int
+
+CharacterMain1: TypeAlias = Dict[str, CharacterMain1Info]
+
+class CharacterMain2Info(CharacterMain1Info):
+    characterName: List[Optional[str]]
+    nickname: List[Optional[str]]
+    colorCode: str
+
+CharacterMain2: TypeAlias = Dict[str, CharacterMain2Info]
+
+class CharacterMain3Info(CharacterMain2Info):
+    firstName: List[Optional[str]]
+    lastName: List[Optional[str]]
+
+CharacterMain3: TypeAlias = Dict[str, CharacterMain3Info]
+
+class CharacterProfile(TypedDict):
+    characterVoice: List[Optional[str]]
+    favoriteFood: List[Optional[str]]
+    hatedFood: List[Optional[str]]
+    hobby: List[Optional[str]]
+    selfIntroduction: List[Optional[str]]
+    school: List[Optional[str]]
+    schoolCls: List[Optional[str]]
+    schoolYear: List[Optional[str]]
+    part: str
+    birthday: str
+    constellation: str
+    height: float
+
+class CharacterInfo(CharacterAll5Info):
+    '''角色信息'''
+    sdAssetBundleName: str
+    defaultCostumeId: NotRequired[int]
+    ruby: List[Optional[str]]
+    profile: NotRequired[CharacterProfile]
 
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
