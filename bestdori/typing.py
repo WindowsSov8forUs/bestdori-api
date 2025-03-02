@@ -223,6 +223,32 @@ class CostumeInfo(CostumesAll5Info):
     howToGet: List[Optional[str]]
     cards: List[int]
 
+class EventArchiveInfo(TypedDict):
+    '''活动归档信息'''
+    cutoff: List[Union[NoneDict, Dict[str, int]]]
+    board: List[int]
+
+EventArchiveAll5: TypeAlias = Dict[str, EventArchiveInfo]
+
+class EventTopPoint(TypedDict):
+    time: float
+    uid: int
+    value: int
+
+class EventTopUser(TypedDict):
+    uid: int
+    name: str
+    introduction: str
+    rank: int
+    sid: int
+    strained: int
+    degrees: List[int]
+
+class EventTop(TypedDict):
+    '''活动排名信息'''
+    points: List[EventTopPoint]
+    users: List[EventTopUser]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']
