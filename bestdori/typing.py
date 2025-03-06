@@ -249,6 +249,128 @@ class EventTop(TypedDict):
     points: List[EventTopPoint]
     users: List[EventTopUser]
 
+class EventsAll1Info(TypedDict):
+    eventName: List[Optional[str]]
+
+EventsAll1: TypeAlias = Dict[str, EventsAll1Info]
+
+class EventsAll3Info(EventsAll1Info):
+    eventType: str
+    assetBundleName: str
+    bannerAssetBundleName: str
+    startAt: List[Optional[str]]
+    endAt: List[Optional[str]]
+
+EventsAll3: TypeAlias = Dict[str, EventsAll3Info]
+
+class EventsAll4Info(EventsAll3Info):
+    rewardCards: List[int]
+
+EventsAll4: TypeAlias = Dict[str, EventsAll4Info]
+
+class EventAttribute(TypedDict):
+    eventId: NotRequired[int]
+    attribute: str
+    percent: int
+
+class EventCharacter(TypedDict):
+    eventId: NotRequired[int]
+    characterId: int
+    percent: int
+    seq: NotRequired[int]
+
+class EventAttributeAndCharacterBonus(TypedDict):
+    eventId: NotRequired[int]
+    pointPercent: int
+    parameterPercent: int
+
+class EventCharacterParameterBonus(TypedDict):
+    eventId: NotRequired[int]
+    performance: int
+    technique: int
+    visual: int
+
+class EventMember(TypedDict):
+    eventId: int
+    situationId: int
+    percent: int
+    seq: int
+
+class EventLimitBreak(TypedDict):
+    rarity: int
+    rank: int
+    percent: float
+
+class EventsAll5Info(EventsAll4Info):
+    attributes: List[EventAttribute]
+    characters: List[EventCharacter]
+    eventAttributeAndCharacterBonus: NotRequired[EventAttributeAndCharacterBonus]
+    eventCharacterParameterBonus: NotRequired[EventCharacterParameterBonus]
+    members: List[EventMember]
+    limitBreaks: List[EventLimitBreak]
+
+EventsAll5: TypeAlias = Dict[str, EventsAll5Info]
+
+EventsAll6Info = EventsAll5Info
+
+EventsAll6: TypeAlias = Dict[str, EventsAll6Info]
+
+class EventPointReward(TypedDict):
+    point: str
+    rewardType: str
+    rewardId: NotRequired[int]
+    rewardQuantity: int
+
+class EventRankingReward(TypedDict):
+    fromRank: int
+    toRank: int
+    rewardType: str
+    rewardId: int
+    rewardQuantity: int
+
+class EventStoryReward(TypedDict):
+    rewardType: str
+    rewardId: NotRequired[int]
+    rewardQuantity: int
+
+class EventStory(TypedDict):
+    scenarioId: str
+    coverImage: str
+    backgroundImage: str
+    releasePt: str
+    rewards: List[EventStoryReward]
+    caption: List[Optional[str]]
+    title: List[Optional[str]]
+    synopsis: List[Optional[str]]
+    releaseConditions: List[Optional[str]]
+
+class EventMusicRankingReward(TypedDict):
+    fromRank: int
+    toRank: int
+    resourceType: str
+    resourceId: int
+    quantity: int
+
+class EventMusic(TypedDict):
+    musicId: int
+    musicRankingRewards: List[EventMusicRankingReward]
+
+class EventInfo(EventsAll6Info):
+    '''活动信息'''
+    enableFlag: List[Optional[Literal[True]]]
+    publicStartAt: List[Optional[str]]
+    publicEndAt: List[Optional[str]]
+    distributionStartAt: List[Optional[str]]
+    distributionEndAt: List[Optional[str]]
+    bgmAssetBundleName: str
+    bgmFileName: str
+    aggregateEndAt: List[Optional[str]]
+    exchangeEndAt: List[Optional[str]]
+    pointRewards: List[Optional[List[EventPointReward]]]
+    rankingRewards: List[Optional[List[EventRankingReward]]]
+    stories: List[EventStory]
+    musics: List[Optional[List[EventMusic]]]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']
@@ -463,3 +585,8 @@ class LLSifSongInfo(TypedDict):
 
 LLSifMisc: TypeAlias = Dict[str, LLSifSongInfo]
 '''LLSIF 信息'''
+
+class StampInfo(TypedDict):
+    imageName: str
+
+StampsAll2: TypeAlias = Dict[str, StampInfo]
