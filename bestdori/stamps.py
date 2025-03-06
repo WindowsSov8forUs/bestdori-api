@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Literal, Optional
 from .user import Me
 from .utils import get_api
 from .utils.network import Api
-from .exceptions import NotExistException
+from .exceptions import AssetsNotExistError
 
 if TYPE_CHECKING:
     from .typing import (
@@ -81,7 +81,7 @@ class Stamp:
         '''
         _all = get_all(me=self.__me)
         if str(self.id) not in _all:
-            raise NotExistException(f'Stamp {self.id}')
+            raise AssetsNotExistError(f'stamp {self.id}')
         self.__info = _all[str(self.id)]
         
         return self.__info
@@ -100,7 +100,7 @@ class Stamp:
         '''
         _all = await get_all_async(me=self.__me)
         if str(self.id) not in _all:
-            raise NotExistException(f'Stamp {self.id}')
+            raise AssetsNotExistError(f'stamp {self.id}')
         self.__info = _all[str(self.id)]
         
         return self.__info
