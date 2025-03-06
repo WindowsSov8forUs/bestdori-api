@@ -2,7 +2,7 @@
 
 BanG Dream! 歌曲相关操作'''
 from http.cookies import SimpleCookie
-from typing import TYPE_CHECKING, Self, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from . import post
 from .utils import get_api
@@ -21,38 +21,21 @@ class User:
         username (str): 用户名
     '''
     # 初始化
-    def __init__(self, username: str) -> None:     
+    def __init__(self, username: str, *, me: Optional['Me'] = None) -> None:     
         self.username: str = username
         '''用户名'''
         self.__info: Optional['UserInfo'] = None
         '''用户信息'''
+        
+        self.__me: Optional['Me'] = me
         return
     
-    # 获取用户实例
-    @classmethod
-    def get(cls, username: str) -> Self:
-        '''获取用户对象
-
-        返回:
-            Self: 用户对象
-        '''
-        user = cls(username)
-        user.get_info()
-        
-        return user
-    
-    # 异步获取用户实例
-    @classmethod
-    async def get_async(cls, username: str) -> Self:
-        '''获取用户对象
-
-        返回:
-            Self: 用户对象
-        '''
-        user = cls(username)
-        await user.get_info_async()
-        
-        return user
+    @property
+    def info(self) -> 'UserInfo':
+        '''用户信息'''
+        if self.__info is None:
+            raise ValueError(f'User \'{self.username}\' info were not retrieved.')
+        return self.__info
     
     def get_info(self) -> 'UserInfo':
         '''获取用户信息
@@ -62,9 +45,17 @@ class User:
         '''
         response = Api(
             API['user']['info']
-        ).get(params={'username': self.username})
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
+            params={'username': self.username},
+        )
         self.__info = response.json()
         
+        return self.info
+    
+    def __get_info__(self) -> 'UserInfo':
+        if self.__info is None:
+            return self.get_info()
         return self.info
     
     async def get_info_async(self) -> 'UserInfo':
@@ -75,63 +66,18 @@ class User:
         '''
         response = await Api(
             API['user']['info']
-        ).aget(params={'username': self.username})
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me is not None else None,
+            params={'username': self.username},
+        )
         self.__info = response.json()
         
         return self.info
     
-    @property
-    def info(self) -> 'UserInfo':
-        '''用户信息'''
+    async def __get_info_async__(self) -> 'UserInfo':
         if self.__info is None:
-            raise ValueError(f'User \'{self.username}\' info were not retrieved.')
-        return self.__info
-    
-    @staticmethod
-    def login(username: str, password: str) -> 'Me':
-        '''登录用户账号。
-
-        参数:
-            username (str): 用户名
-            password (str): 密码
-
-        返回:
-            Me: 自身用户对象
-        '''
-        me = Me(username, password)
-        
-        response = Api(
-            API['user']['login']
-        ).post(data={'username': me.username, 'password': me.password})
-        me.__cookies = response.cookies
-
-        response = Api(API['user']['me']).get(cookies=me.cookies)
-        me.__me = response.json()
-        
-        return me
-    
-    @staticmethod
-    async def login_async(username: str, password: str) -> 'Me':
-        '''登录用户账号。
-
-        参数:
-            username (str): 用户名
-            password (str): 密码
-
-        返回:
-            Me: 自身用户对象
-        '''
-        me = Me(username, password)
-        
-        response = await Api(
-            API['user']['login']
-        ).apost(data={'username': me.username, 'password': me.password})
-        me.__cookies = response.cookies
-        
-        response = await Api(API['user']['me']).aget(cookies=me.cookies)
-        me.__me = response.json()
-        
-        return me
+            return await self.get_info_async()
+        return self.info
     
     # 获取用户帖子
     def get_posts(
@@ -158,7 +104,7 @@ class User:
                 ```
         '''
         return post.get_list(
-            username=self.username, limit=limit, offset=offset, order=order
+            username=self.username, limit=limit, offset=offset, order=order, me=self.__me,
         )
     
     # 异步获取用户帖子
@@ -186,7 +132,7 @@ class User:
                 ```
         '''
         return await post.get_list_async(
-            username=self.username, limit=limit, offset=offset, order=order
+            username=self.username, limit=limit, offset=offset, order=order, me=self.__me,
         )
     
     # 获取用户谱面
@@ -219,7 +165,8 @@ class User:
             category_id='chart',
             limit=limit,
             offset=offset,
-            order=order
+            order=order,
+            me=self.__me,
         )
     
     # 异步获取用户谱面
@@ -252,7 +199,8 @@ class User:
             category_id='chart',
             limit=limit,
             offset=offset,
-            order=order
+            order=order,
+            me=self.__me,
         )
     
     # 获取用户文本帖子
@@ -285,7 +233,8 @@ class User:
             category_id='text',
             limit=limit,
             offset=offset,
-            order=order
+            order=order,
+            me=self.__me,
         )
     
     # 异步获取用户文本帖子
@@ -318,7 +267,8 @@ class User:
             category_id='text',
             limit=limit,
             offset=offset,
-            order=order
+            order=order,
+            me=self.__me,
         )
     
     # 获取用户故事
@@ -351,7 +301,8 @@ class User:
             category_id='story',
             limit=limit,
             offset=offset,
-            order=order
+            order=order,
+            me=self.__me,
         )
     
     # 异步获取用户故事
@@ -384,7 +335,8 @@ class User:
             category_id='story',
             limit=limit,
             offset=offset,
-            order=order
+            order=order,
+            me=self.__me,
         )
 
 # 自身用户类
@@ -427,6 +379,36 @@ class Me(User):
         if self.__me is None:
             raise ValueError(f'User {self.username} has not logged in.')
         return self.__me
+    
+    def login(self) -> None:
+        '''登录用户账号。'''
+        response = Api(
+            API['user']['login']
+        ).post(data={'username': self.username, 'password': self.password})
+        self.__cookies = response.cookies
+
+        response = Api(API['user']['me']).get(cookies=self.cookies)
+        self.__me = response.json()
+    
+    async def login_async(self) -> None:
+        '''登录用户账号。'''
+        response = await Api(
+            API['user']['login']
+        ).apost(data={'username': self.username, 'password': self.password})
+        self.__cookies = response.cookies
+        
+        response = await Api(API['user']['me']).aget(cookies=self.cookies)
+        self.__me = response.json()
+    
+    def __get_cookies__(self) -> SimpleCookie:
+        if self.__cookies is None:
+            self.login()
+        return self.cookies
+    
+    async def __get_cookies_async__(self) -> SimpleCookie:
+        if self.__cookies is None:
+            await self.login_async()
+        return self.cookies
     
     def update_info(self, info: 'UserInfo') -> 'UserInfo':
         '''更新用户信息

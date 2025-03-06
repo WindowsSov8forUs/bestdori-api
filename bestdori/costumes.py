@@ -3,9 +3,10 @@
 BanG Dream! 服装相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, Union, Literal
+from typing import TYPE_CHECKING, Dict, Union, Literal, Optional
 
 from . import post
+from .user import Me
 from .utils import get_api
 from .utils.network import Api
 from .exceptions import (
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
     from .typing import (
         NoneDict,
         PostList,
+        ServerName,
         CostumeInfo,
         CostumesAll5,
     )
@@ -28,7 +30,7 @@ ASSETS = get_api('bestdori.assets')
 
 # 获取总服装信息
 @overload
-def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
+def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总服装信息
 
     参数:
@@ -39,7 +41,7 @@ def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''
     ...
 @overload
-def get_all(index: Literal[5]) -> 'CostumesAll5':
+def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'CostumesAll5':
     '''获取总服装信息
 
     参数:
@@ -50,12 +52,14 @@ def get_all(index: Literal[5]) -> 'CostumesAll5':
     '''
     ...
 
-def get_all(index: Literal[0, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CostumesAll5']:
-    return Api(API['costumes']['all'].format(index=index)).get().json()
+def get_all(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'CostumesAll5']:
+    return Api(API['costumes']['all'].format(index=index)).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
 
 # 异步获取总服装信息
 @overload
-async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
+async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总服装信息
 
     参数:
@@ -66,7 +70,7 @@ async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5]) -> 'CostumesAll5':
+async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'CostumesAll5':
     '''获取总服装信息
 
     参数:
@@ -77,8 +81,10 @@ async def get_all_async(index: Literal[5]) -> 'CostumesAll5':
     '''
     ...
 
-async def get_all_async(index: Literal[0, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CostumesAll5']:
-    return (await Api(API['costumes']['all'].format(index=index)).aget()).json()
+async def get_all_async(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'CostumesAll5']:
+    return (await Api(API['costumes']['all'].format(index=index)).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 服装类
 class Costume:
@@ -88,7 +94,7 @@ class Costume:
         id (int): 服装 ID
     '''
     # 初始化
-    def __init__(self, id: int, info: 'CostumeInfo') -> None:
+    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
         '''服装类
 
         参数:
@@ -96,42 +102,51 @@ class Costume:
         '''
         self.id: int = id
         '''服装 ID'''
-        self.info: 'CostumeInfo' = info
+        self.__info: Optional['CostumeInfo'] = None
         '''服装信息'''
+
+        self.__me = me
         return
     
-    # 角色 ID
     @property
-    def character_id(self) -> int:
-        '''角色 ID'''
-        return self.info['characterId']
+    def info(self) -> 'CostumeInfo':
+        '''服装信息'''
+        if self.__info is None:
+            raise ValueError(f'Costume \'{self.id}\' info were not retrieved.')
+        return self.__info
+
+    # 提取角色 ID
+    @staticmethod
+    def character_id(info: 'CostumeInfo') -> int:
+        '''提取角色 ID'''
+        return info['characterId']
     
-    # 卡牌 ID
-    @property
-    def card_id(self) -> int:
-        '''卡牌 ID'''
+    # 提取卡牌 ID
+    @staticmethod
+    def card_id(info: 'CostumeInfo') -> int:
+        '''提取卡牌 ID'''
         # 获取 cards 数据
-        cards = self.info['cards']
+        cards = info['cards']
         if len(cards) <= 0:
             raise NoDataException('Card ID')
         return cards[0]
     
-    # 服装标题
-    @property
-    def description(self) -> str:
-        '''服装标题'''
+    # 提取服装标题
+    @staticmethod
+    def description(info: 'CostumeInfo') -> str:
+        '''提取服装标题'''
         # 获取第一个非 None 服装标题
         try:
-            return next(x for x in self.info['description'] if x is not None)
+            return next(x for x in info['description'] if x is not None)
         except StopIteration:
             raise NoDataException('costume description')
     
-    # 服装所在默认服务器
-    @property
-    def server(self) -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
-        '''服装所在默认服务器'''
+    # 提取服装所在默认服务器
+    @staticmethod
+    def server(info: 'CostumeInfo') -> 'ServerName':
+        '''提取服装所在默认服务器'''
         # 获取 publishedAt 数据
-        published_at = self.info['publishedAt']
+        published_at = info['publishedAt']
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -142,44 +157,52 @@ class Costume:
             raise NoDataException('costume server')
     
     # 获取服装信息
-    @classmethod
-    def get(cls, id: int) -> 'Costume':
+    def get_info(self) -> 'CostumeInfo':
         '''获取服装信息
 
         返回:
-            Costume: 服装详细信息
+            CostumeInfo: 服装详细信息
         '''
         try:
             response = Api(
-                API['costumes']['info'].format(id=id)
-            ).get()
+                API['costumes']['info'].format(id=self.id)
+            ).get(cookies=self.__me.__get_cookies__() if self.__me else None)
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise NotExistException(f'Costume {id}') from exception
+                raise NotExistException(f'Costume {self.id}') from exception
             else:
                 raise exception
-        
-        return cls(id, response.json())
+        self.__info = response.json()
+        return self.info
     
+    def __get_info__(self) -> 'CostumeInfo':
+        if self.__info is None:
+            self.get_info()
+        return self.info
+
     # 异步获取服装信息
-    @classmethod
-    async def get_async(cls, id: int) -> 'Costume':
+    async def get_info_async(self) -> 'CostumeInfo':
         '''获取服装信息
 
         返回:
-            Costume: 服装详细信息
+            CostumeInfo: 服装详细信息
         '''
         try:
             response = await Api(
-                API['costumes']['info'].format(id=id)
-            ).aget()
+                API['costumes']['info'].format(id=self.id)
+            ).aget(cookies=await self.__me.__get_cookies_async__() if self.__me else None)
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise NotExistException(f'Costume {id}') from exception
+                raise NotExistException(f'Costume {self.id}') from exception
             else:
                 raise exception
-        
-        return cls(id, response.json())
+        self.__info = response.json()
+        return self.info
+    
+    async def __get_info_async__(self) -> 'CostumeInfo':
+        if self.__info is None:
+            await self.get_info_async()
+        return self.info
     
     # 获取服装评论
     def get_comment(
@@ -210,7 +233,8 @@ class Costume:
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 异步获取服装评论
@@ -242,7 +266,8 @@ class Costume:
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 获取 LIVE 服装图片
@@ -252,11 +277,14 @@ class Costume:
         返回:
             bytes: 服装 LIVE 图片字节数据 `bytes`
         '''
+        info = self.__get_info__()
         return Api(
             ASSETS['characters']['livesd'].format(
-                server=self.server, sd_resource_name=self.info['sdResourceName']
+                server=self.server(info), sd_resource_name=info['sdResourceName']
             )
-        ).get().content
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+        ).content
     
     # 异步获取 LIVE 服装图片
     async def get_sdchara_async(self) -> bytes:
@@ -265,11 +293,14 @@ class Costume:
         返回:
             bytes: 服装 LIVE 图片字节数据 `bytes`
         '''
+        info = await self.__get_info_async__()
         return (await Api(
             ASSETS['characters']['livesd'].format(
-                server=self.server, sd_resource_name=self.info['sdResourceName']
+                server=self.server(info), sd_resource_name=info['sdResourceName']
             )
-        ).aget()).content
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+        )).content
     
     # 获取服装模型数据
     def get_build_data(self) -> bytes:
@@ -278,16 +309,19 @@ class Costume:
         返回:
             bytes: 服装模型数据
         '''
+        info = self.__get_info__()
         # 获取服装数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         try:
             return Api(
                 ASSETS['live2d']['buildData'].format(
-                    server=self.server, asset_bundle_name=asset_bundle_name
+                    server=self.server(info), asset_bundle_name=asset_bundle_name
                 )
-            ).get().content
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            ).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.server}')
+            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.server(info)}')
     
     # 异步获取服装模型数据
     async def get_build_data_async(self) -> bytes:
@@ -296,16 +330,19 @@ class Costume:
         返回:
             bytes: 服装模型数据
         '''
+        info = await self.__get_info_async__()
         # 获取服装数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         try:
             return (await Api(
                 ASSETS['live2d']['buildData'].format(
-                    server=self.server, asset_bundle_name=asset_bundle_name
+                    server=self.server(info), asset_bundle_name=asset_bundle_name
                 )
-            ).aget()).content
+            ).aget(
+                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+            )).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.server}')
+            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.server(info)}')
     
     # 获取服装图标
     def get_icon(self) -> bytes:
@@ -314,16 +351,19 @@ class Costume:
         返回:
             bytes: 服装图标
         '''
+        info = self.__get_info__()
         # 获取服装数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         try:
             return Api(
                 ASSETS['thumb']['costume'].format(
-                    server=self.server, id=str(self.id // 50), asset_bundle_name=asset_bundle_name
+                    server=self.server(info), id=str(self.id // 50), asset_bundle_name=asset_bundle_name
                 )
-            ).get().content
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            ).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.server}')
+            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.server(info)}')
     
     # 异步获取服装图标
     async def get_icon_async(self) -> bytes:
@@ -332,13 +372,16 @@ class Costume:
         返回:
             bytes: 服装图标
         '''
+        info = await self.__get_info_async__()
         # 获取服装数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         try:
             return (await Api(
                 ASSETS['thumb']['costume'].format(
-                    server=self.server, id=str(self.id // 50), asset_bundle_name=asset_bundle_name
+                    server=self.server(info), id=str(self.id // 50), asset_bundle_name=asset_bundle_name
                 )
-            ).aget()).content
+            ).aget(
+                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+            )).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.server}')
+            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.server(info)}')

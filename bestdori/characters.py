@@ -3,9 +3,10 @@
 BanG Dream! 角色相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, Tuple, Union, Literal
+from typing import TYPE_CHECKING, Dict, Tuple, Union, Literal, Optional
 
 from . import post
+from .user import Me
 from .utils.network import Api
 from .utils import get_api, hex_to_rgb
 from .exceptions import (
@@ -32,7 +33,7 @@ ASSETS = get_api('bestdori.assets')
 
 # 获取总角色信息
 @overload
-def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
+def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总角色信息
 
     参数:
@@ -43,7 +44,7 @@ def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''
     ...
 @overload
-def get_all(index: Literal[2]) -> 'CharacterAll2':
+def get_all(index: Literal[2], *, me: Optional[Me] = None) -> 'CharacterAll2':
     '''获取总角色信息
 
     参数:
@@ -54,7 +55,7 @@ def get_all(index: Literal[2]) -> 'CharacterAll2':
     '''
     ...
 @overload
-def get_all(index: Literal[5]) -> 'CharacterAll5':
+def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'CharacterAll5':
     '''获取总角色信息
 
     参数:
@@ -65,12 +66,14 @@ def get_all(index: Literal[5]) -> 'CharacterAll5':
     '''
     ...
 
-def get_all(index: Literal[0, 2, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CharacterAll2', 'CharacterAll5']:
-    return Api(API['characters']['all'].format(index=index)).get().json()
+def get_all(index: Literal[0, 2, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'CharacterAll2', 'CharacterAll5']:
+    return Api(API['characters']['all'].format(index=index)).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
 
 # 异步获取总角色信息
 @overload
-async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
+async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总角色信息
 
     参数:
@@ -81,7 +84,7 @@ async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''
     ...
 @overload
-async def get_all_async(index: Literal[2]) -> 'CharacterAll2':
+async def get_all_async(index: Literal[2], *, me: Optional[Me] = None) -> 'CharacterAll2':
     '''获取总角色信息
 
     参数:
@@ -92,7 +95,7 @@ async def get_all_async(index: Literal[2]) -> 'CharacterAll2':
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5]) -> 'CharacterAll5':
+async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'CharacterAll5':
     '''获取总角色信息
 
     参数:
@@ -103,12 +106,14 @@ async def get_all_async(index: Literal[5]) -> 'CharacterAll5':
     '''
     ...
 
-async def get_all_async(index: Literal[0, 2, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CharacterAll2', 'CharacterAll5']:
-    return (await Api(API['characters']['all'].format(index=index)).aget()).json()
+async def get_all_async(index: Literal[0, 2, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'CharacterAll2', 'CharacterAll5']:
+    return (await Api(API['characters']['all'].format(index=index)).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 获取主要角色信息
 @overload
-def get_main(index: Literal[1]) -> 'CharacterMain1':
+def get_main(index: Literal[1], *, me: Optional[Me] = None) -> 'CharacterMain1':
     '''获取主要角色信息
 
     参数:
@@ -119,7 +124,7 @@ def get_main(index: Literal[1]) -> 'CharacterMain1':
     '''
     ...
 @overload
-def get_main(index: Literal[2]) -> 'CharacterMain2':
+def get_main(index: Literal[2], *, me: Optional[Me] = None) -> 'CharacterMain2':
     '''获取主要角色信息
 
     参数:
@@ -130,7 +135,7 @@ def get_main(index: Literal[2]) -> 'CharacterMain2':
     '''
     ...
 @overload
-def get_main(index: Literal[3]) -> 'CharacterMain3':
+def get_main(index: Literal[3], *, me: Optional[Me] = None) -> 'CharacterMain3':
     '''获取主要角色信息
 
     参数:
@@ -141,12 +146,14 @@ def get_main(index: Literal[3]) -> 'CharacterMain3':
     '''
     ...
 
-def get_main(index: Literal[1, 2, 3]=3) -> Union['CharacterMain1', 'CharacterMain2', 'CharacterMain3']:
-    return Api(API['characters']['main'].format(index=index)).get().json()
+def get_main(index: Literal[1, 2, 3]=3, *, me: Optional[Me] = None) -> Union['CharacterMain1', 'CharacterMain2', 'CharacterMain3']:
+    return Api(API['characters']['main'].format(index=index)).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
 
 # 异步获取主要角色信息
 @overload
-async def get_main_async(index: Literal[1]) -> 'CharacterMain1':
+async def get_main_async(index: Literal[1], *, me: Optional[Me] = None) -> 'CharacterMain1':
     '''获取主要角色信息
 
     参数:
@@ -157,7 +164,7 @@ async def get_main_async(index: Literal[1]) -> 'CharacterMain1':
     '''
     ...
 @overload
-async def get_main_async(index: Literal[2]) -> 'CharacterMain2':
+async def get_main_async(index: Literal[2], *, me: Optional[Me] = None) -> 'CharacterMain2':
     '''获取主要角色信息
 
     参数:
@@ -168,7 +175,7 @@ async def get_main_async(index: Literal[2]) -> 'CharacterMain2':
     '''
     ...
 @overload
-async def get_main_async(index: Literal[3]) -> 'CharacterMain3':
+async def get_main_async(index: Literal[3], *, me: Optional[Me] = None) -> 'CharacterMain3':
     '''获取主要角色信息
 
     参数:
@@ -179,8 +186,10 @@ async def get_main_async(index: Literal[3]) -> 'CharacterMain3':
     '''
     ...
 
-async def get_main_async(index: Literal[1, 2, 3]=3) -> Union['CharacterMain1', 'CharacterMain2', 'CharacterMain3']:
-    return (await Api(API['characters']['main'].format(index=index)).aget()).json()
+async def get_main_async(index: Literal[1, 2, 3]=3, *, me: Optional[Me] = None) -> Union['CharacterMain1', 'CharacterMain2', 'CharacterMain3']:
+    return (await Api(API['characters']['main'].format(index=index)).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 角色类
 class Character:
@@ -190,7 +199,7 @@ class Character:
         id (int): 角色 ID
     '''
     # 初始化
-    def __init__(self, id: int, info: 'CharacterInfo') -> None:
+    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
         '''角色类
 
         参数:
@@ -198,15 +207,23 @@ class Character:
         '''
         self.id: int = id
         '''角色 ID'''
-        self.info: 'CharacterInfo' = info
+        self.__info: Optional['CharacterInfo'] = None
         '''角色信息'''
+        
+        self.__me: Optional[Me] = me
         return
     
-    # 角色名称
     @property
-    def name(self) -> str:
+    def info(self) -> 'CharacterInfo':
+        '''角色信息'''
+        if self.__info is None:
+            raise ValueError(f'Character \'{self.id}\' info were not retrieved.')
+        return self.__info
+
+    # 角色名称
+    @staticmethod
+    def name(info: 'CharacterInfo') -> str:
         '''角色名称'''
-        info = self.info
         # 获取 characterName 数据
         character_name = info.get('characterName')
         # 获取第一个非 None 角色名称
@@ -215,11 +232,10 @@ class Character:
         except StopIteration:
             raise NoDataException('character name')
     
-    # 角色代表色
-    @property
-    def color(self) -> Tuple[int, int, int]:
+    # 提取角色代表色
+    @staticmethod
+    def color(info: 'CharacterInfo') -> Tuple[int, int, int]:
         '''角色代表色'''
-        info = self.info
         # 获取 colorCode 数据
         if (color_code := info.get('colorCode', None)) is None:
             raise NoDataException('character color code')
@@ -229,51 +245,45 @@ class Character:
         except ValueError:
             raise NoDataException('character color code')
     
-    # 获取角色
-    @classmethod
-    def get(cls, id: int) -> 'Character':
+    # 获取角色信息
+    def get_info(self) -> 'CharacterInfo':
         '''获取角色
 
-        参数:
-            id (int): 角色 ID
-
         返回:
-            Character: 角色实例
+            CharacterInfo: 角色信息
         '''
         try:
             response = Api(
-                API['characters']['info'].format(id=id)
-            ).get()
+                API['characters']['info'].format(id=self.id)
+            ).get(cookies=self.__me.__get_cookies__() if self.__me else None)
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise NotExistException(f'Character {id}')
+                raise NotExistException(f'Character {self.id}')
             else:
                 raise exception
         
-        return cls(id, response.json())
+        self.__info = response.json()
+        return response.json()
     
-    # 异步获取角色
-    @classmethod
-    async def get_async(cls, id: int) -> 'Character':
+    # 异步获取角色信息
+    async def get_info_async(self) -> 'CharacterInfo':
         '''获取角色
 
-        参数:
-            id (int): 角色 ID
-
         返回:
-            Character: 角色实例
+            CharacterInfo: 角色信息
         '''
         try:
             response = await Api(
-                API['characters']['info'].format(id=id)
-            ).aget()
+                API['characters']['info'].format(id=self.id)
+            ).aget(cookies=await self.__me.__get_cookies_async__() if self.__me else None)
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise NotExistException(f'Character {id}')
+                raise NotExistException(f'Character {self.id}')
             else:
                 raise exception
         
-        return cls(id, response.json())
+        self.__info = response.json()
+        return response.json()
     
     # 获取角色评论
     def get_comment(
@@ -305,6 +315,7 @@ class Character:
             order=order,
             limit=limit,
             offset=offset,
+            me=self.__me,
         )
     
     # 异步获取角色评论
@@ -337,6 +348,7 @@ class Character:
             order=order,
             limit=limit,
             offset=offset,
+            me=self.__me,
         )
     
     # 获取角色图标
@@ -346,7 +358,9 @@ class Character:
         返回:
             bytes: 角色图标字节数据 `bytes`
         '''
-        return Api(RES['icon']['png'].format(name=f'chara_icon_{self.id}')).get().content
+        return Api(RES['icon']['png'].format(name=f'chara_icon_{self.id}')).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+        ).content
     
     # 异步获取角色图标
     async def get_icon_async(self) -> bytes:
@@ -355,7 +369,9 @@ class Character:
         返回:
             bytes: 角色图标字节数据 `bytes`
         '''
-        return (await Api(RES['icon']['png'].format(name=f'chara_icon_{self.id}')).aget()).content
+        return (await Api(RES['icon']['png'].format(name=f'chara_icon_{self.id}')).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+        )).content
     
     # 获取角色主视觉图
     def get_kv_image(self) -> bytes:
@@ -366,7 +382,9 @@ class Character:
         '''
         return Api(
             ASSETS['characters']['character_kv_image'].format(server='jp', id=self.id)
-        ).get().content
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+        ).content
     
     # 异步获取角色主视觉图
     async def get_kv_image_async(self) -> bytes:
@@ -377,4 +395,6 @@ class Character:
         '''
         return (await Api(
             ASSETS['characters']['character_kv_image'].format(server='jp', id=self.id)
-        ).aget()).content
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+        )).content

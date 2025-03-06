@@ -1,9 +1,10 @@
 '''`bestdori.comics`
 
 BanG Dream! 漫画相关操作'''
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from . import post
+from .user import Me
 from .utils import get_api
 from .utils.network import Api
 from .exceptions import (
@@ -13,36 +14,42 @@ from .exceptions import (
 )
 
 if TYPE_CHECKING:
-    from .typing import PostList, ComicInfo, ComicsAll5
+    from .typing import ServerName, PostList, ComicInfo, ComicsAll5
 
 API = get_api('bestdori.api')
 ASSETS = get_api('bestdori.assets')
 
 # 获取总漫画信息
-def get_all(index: Literal[5]=5) -> 'ComicsAll5':
+def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'ComicsAll5':
     '''获取总漫画信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
             `5`: 获取所有已有漫画信息 `all.5.json`
+        me (Optional[Me], optional): 用户验证信息
 
     返回:
         ComicsAll5: 获取到的总漫画信息
     '''
-    return Api(API['all']['comics'].format(index=index)).get().json()
+    return Api(API['all']['comics'].format(index=index)).get(
+        cookies=me.__get_cookies__() if me is not None else None,
+    ).json()
 
 # 异步获取总漫画信息
-async def get_all_async(index: Literal[5]=5) -> 'ComicsAll5':
+async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'ComicsAll5':
     '''获取总漫画信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
             `5`: 获取所有已有漫画信息 `all.5.json`
+        me (Optional[Me], optional): 用户验证信息
 
     返回:
         ComicsAll5: 获取到的总漫画信息
     '''
-    return (await Api(API['all']['comics'].format(index=index)).aget()).json()
+    return (await Api(API['all']['comics'].format(index=index)).aget(
+        cookies=await me.__get_cookies_async__() if me is not None else None,
+    )).json()
 
 # 漫画类
 class Comic:
@@ -52,7 +59,7 @@ class Comic:
         id (int): 漫画 ID
     '''
     # 初始化
-    def __init__(self, id: int, info: 'ComicInfo') -> None:
+    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
         '''漫画类
 
         参数:
@@ -60,44 +67,53 @@ class Comic:
         '''
         self.id: int = id
         '''漫画 ID'''
-        self.info: 'ComicInfo' = info
+        self.__info: Optional['ComicInfo'] = None
         '''漫画信息'''
+
+        self.__me: Optional[Me] = me
         return
     
-    # 漫画标题
     @property
-    def title(self) -> str:
-        '''漫画标题'''
+    def info(self) -> 'ComicInfo':
+        '''漫画信息'''
+        if self.__info is None:
+            raise ValueError(f'Comic \'{self.id}\' info were not retrieved.')
+        return self.__info
+
+    # 提取漫画标题
+    @staticmethod
+    def title(info: 'ComicInfo') -> str:
+        '''提取漫画标题'''
         # 获取 title 数据
-        title = self.info['title']
+        title = info['title']
         # 获取第一个非 None 漫画标题
         try:
             return next(x for x in title if x is not None)
         except StopIteration:
             raise NoDataException('comic title')
     
-    # 漫画副标题
-    @property
-    def sub_title(self) -> str:
-        '''漫画副标题'''
+    # 提取漫画副标题
+    @staticmethod
+    def sub_title(info: 'ComicInfo') -> str:
+        '''提取漫画副标题'''
         # 获取 subTitle 数据
-        sub_title = self.info['subTitle']
+        sub_title = info['subTitle']
         # 获取第一个非 None 漫画副标题
         try:
             return next(x for x in sub_title if x is not None)
         except StopIteration:
             raise NoDataException('comic subtitle')
     
-    # 漫画默认服务器
-    @property
-    def server(self) -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
-        '''漫画默认服务器
+    # 提取漫画默认服务器
+    @staticmethod
+    def server(info: 'ComicInfo') -> 'ServerName':
+        '''提取漫画默认服务器
 
         返回:
-            Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]: 歌曲所在服务器
+            ServerName: 歌曲所在服务器
         '''
         # 获取 publicStartAt 数据
-        public_start_at = self.info['publicStartAt']
+        public_start_at = info['publicStartAt']
         # 根据 publicStartAt 数据判断服务器
         if public_start_at[0] is not None: return 'jp'
         elif public_start_at[1] is not None: return 'en'
@@ -107,16 +123,16 @@ class Comic:
         else:
             raise NoDataException('comic server')
     
-    # 漫画类型
-    @property
-    def type(self) -> Literal['singleframe', 'fourframe']:
+    # 判断漫画类型
+    @staticmethod
+    def type(info: 'ComicInfo') -> Literal['singleframe', 'fourframe']:
         '''漫画类型
 
         返回:
             Literal[&#39;singleframe&#39;, &#39;fourframe&#39;]: 漫画类型
         '''
         # 获取漫画数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         # 判断漫画类型
         if 'fourframe' in asset_bundle_name:
             return 'fourframe'
@@ -124,31 +140,41 @@ class Comic:
             return 'singleframe'
     
     # 获取漫画信息
-    @classmethod
-    def get(cls, id: int) -> 'Comic':
+    def get_info(self) -> 'ComicInfo':
         '''获取漫画信息
 
         返回:
-            Dict[str, Any]: 漫画详细信息
+            ComicInfo: 漫画详细信息
         '''
-        _all = get_all()
-        if str(id) not in _all:
-            raise NotExistException(f'Comic {id}')
-        return cls(id, _all[str(id)])
+        _all = get_all(me=self.__me)
+        if str(self.id) not in _all:
+            raise NotExistException(f'Comic {self.id}')
+        self.__info = _all[str(self.id)]
+        return self.info
     
+    def __get_info__(self) -> 'ComicInfo':
+        if self.__info is None:
+            return self.get_info()
+        return self.info
+
     # 异步获取漫画信息
-    @classmethod
-    async def get_async(cls, id: int) -> 'Comic':
+    async def get_info_async(self) -> 'ComicInfo':
         '''获取漫画信息
 
         返回:
-            Dict[str, Any]: 漫画详细信息
+            ComicInfo: 漫画详细信息
         '''
-        _all = await get_all_async()
-        if str(id) not in _all:
-            raise NotExistException(f'Comic {id}')
-        return cls(id, _all[str(id)])
+        _all = await get_all_async(me=self.__me)
+        if str(self.id) not in _all:
+            raise NotExistException(f'Comic {self.id}')
+        self.__info = _all[str(self.id)]
+        return self.info
     
+    async def __get_info_async__(self) -> 'ComicInfo':
+        if self.__info is None:
+            return await self.get_info_async()
+        return self.info
+
     # 获取漫画评论
     def get_comment(
         self,
@@ -178,7 +204,8 @@ class Comic:
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 异步获取漫画评论
@@ -210,7 +237,8 @@ class Comic:
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 获取漫画缩略图图像
@@ -223,19 +251,22 @@ class Comic:
         返回:
             bytes: 漫画缩略图图像字节数据 `bytes`
         '''
+        info = self.__get_info__()
         # 获取漫画数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         # 判断服务器
-        public_start_at = self.info['publicStartAt']
+        public_start_at = info['publicStartAt']
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if public_start_at[index] is None:
-            raise ServerNotAvailableError(f'Comic {self.title}', server)
+            raise ServerNotAvailableError(f'Comic {self.title(info)}', server)
         return Api(
             ASSETS['comic']['thumbnail'].format(
-                server=server, type=self.type, asset_bundle_name=asset_bundle_name
+                server=server, type=self.type(info), asset_bundle_name=asset_bundle_name
             )
-        ).get().content
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
+        ).content
     
     # 异步获取漫画缩略图图像
     async def get_thumbnail_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
@@ -247,19 +278,22 @@ class Comic:
         返回:
             bytes: 漫画缩略图图像字节数据 `bytes`
         '''
+        info = await self.__get_info_async__()
         # 获取漫画数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         # 判断服务器
-        public_start_at = self.info['publicStartAt']
+        public_start_at = info['publicStartAt']
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if public_start_at[index] is None:
-            raise ServerNotAvailableError(f'Comic {self.title}', server)
+            raise ServerNotAvailableError(f'Comic {self.title(info)}', server)
         return (await Api(
             ASSETS['comic']['thumbnail'].format(
-                server=server, type=self.type, asset_bundle_name=asset_bundle_name
+                server=server, type=self.type(info), asset_bundle_name=asset_bundle_name
             )
-        ).aget()).content
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me is not None else None,
+        )).content
     
     # 获取漫画图像
     def get_asset(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
@@ -271,19 +305,22 @@ class Comic:
         返回:
             bytes: 漫画图像字节数据 `bytes`
         '''
+        info = self.__get_info__()
         # 获取漫画数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         # 判断服务器
-        public_start_at = self.info['publicStartAt']
+        public_start_at = info['publicStartAt']
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if public_start_at[index] is None:
-            raise ServerNotAvailableError(f'Comic {self.title}', server)
+            raise ServerNotAvailableError(f'Comic {self.title(info)}', server)
         return Api(
             ASSETS['comic']['comic'].format(
-                server=server, type=self.type, asset_bundle_name=asset_bundle_name
+                server=server, type=self.type(info), asset_bundle_name=asset_bundle_name
             )
-        ).get().content
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
+        ).content
     
     # 异步获取漫画图像
     async def get_asset_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
@@ -295,16 +332,19 @@ class Comic:
         返回:
             bytes: 漫画图像字节数据 `bytes`
         '''
+        info = await self.__get_info_async__()
         # 获取漫画数据包名称
-        asset_bundle_name = self.info['assetBundleName']
+        asset_bundle_name = info['assetBundleName']
         # 判断服务器
-        public_start_at = self.info['publicStartAt']
+        public_start_at = info['publicStartAt']
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if public_start_at[index] is None:
-            raise ServerNotAvailableError(f'Comic {self.title}', server)
+            raise ServerNotAvailableError(f'Comic {self.title(info)}', server)
         return (await Api(
             ASSETS['comic']['comic'].format(
-                server=server, type=self.type, asset_bundle_name=asset_bundle_name
+                server=server, type=self.type(info), asset_bundle_name=asset_bundle_name
             )
-        ).aget()).content
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me is not None else None,
+        )).content

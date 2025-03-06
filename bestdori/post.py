@@ -63,7 +63,8 @@ def get_list(
     tags: List[PostTag]=[],
     order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC',
     limit: int=20,
-    offset: int=0
+    offset: int=0,
+    me: Optional['Me']=None,
 ) -> 'PostList':
     '''搜索社区谱面
         ```python
@@ -79,6 +80,7 @@ def get_list(
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         PostList: 搜索结果
@@ -97,7 +99,8 @@ def get_list(
     username: str,
     limit: int=20,
     offset: int=0,
-    order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
+    order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC',
+    me: Optional['Me']=None,
 ) -> 'PostList':
     '''搜索用户帖子
 
@@ -106,6 +109,7 @@ def get_list(
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         PostList: 搜索结果
@@ -129,7 +133,8 @@ def get_list(
     username: Optional[str]=None,
     order: Literal['TIME_DESC', 'TIME_ASC'],
     limit: int=20,
-    offset: int=0
+    offset: int=0,
+    me: Optional['Me']=None,
 ) -> 'PostList':
     '''搜索帖子
 
@@ -143,6 +148,7 @@ def get_list(
         username (Optional[str], optional): 用户名
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         PostList: 搜索结果
@@ -151,6 +157,7 @@ def get_list(
 
 # 搜索帖子
 def get_list(**kwargs: Any) -> 'PostList':
+    me: 'Me' = kwargs.pop('me', None)
     # 去除 None 值字段
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     # 将下划线字段名转换为小驼峰字段名
@@ -159,7 +166,10 @@ def get_list(**kwargs: Any) -> 'PostList':
             "".join(x.capitalize() if i > 0 else x for i, x in enumerate(key.split("_")))
         ): value for key, value in kwargs.items() if value is not None
     }
-    response = Api(API['post']['list']).post(data=kwargs)
+    response = Api(API['post']['list']).post(
+        cookies=me.__get_cookies__() if me else None,
+        data=kwargs,
+    )
     return response.json()
 
 # 异步搜索社区谱面
@@ -172,7 +182,8 @@ async def get_list_async(
     tags: List[PostTag]=[],
     order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC',
     limit: int=20,
-    offset: int=0
+    offset: int=0,
+    me: Optional['Me']=None,
 ) -> 'PostList':
     '''搜索社区谱面
         ```python
@@ -188,6 +199,7 @@ async def get_list_async(
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         PostList: 搜索结果
@@ -206,7 +218,8 @@ async def get_list_async(
     username: str,
     limit: int=20,
     offset: int=0,
-    order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC'
+    order: Literal['TIME_DESC', 'TIME_ASC']='TIME_DESC',
+    me: Optional['Me']=None,
 ) -> 'PostList':
     '''搜索用户帖子
 
@@ -215,6 +228,7 @@ async def get_list_async(
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
         order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 帖子排序，默认时间倒序
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         PostList: 搜索结果
@@ -238,7 +252,8 @@ async def get_list_async(
     username: Optional[str]=None,
     order: Literal['TIME_DESC', 'TIME_ASC'],
     limit: int=20,
-    offset: int=0
+    offset: int=0,
+    me: Optional['Me']=None,
 ) -> 'PostList':
     '''搜索帖子
 
@@ -252,6 +267,7 @@ async def get_list_async(
         username (Optional[str], optional): 用户名
         limit (int, optional): 展示出的帖子数，默认 20
         offset (int, optional): 忽略前面的 `offset` 个帖子，默认 0
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         PostList: 搜索结果
@@ -260,6 +276,7 @@ async def get_list_async(
 
 # 异步搜索帖子
 async def get_list_async(**kwargs: Any) -> 'PostList':
+    me: 'Me' = kwargs.pop('me', None)
     # 去除 None 值字段
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     # 将下划线字段名转换为小驼峰字段名
@@ -268,14 +285,19 @@ async def get_list_async(**kwargs: Any) -> 'PostList':
             "".join(x.capitalize() if i > 0 else x for i, x in enumerate(key.split("_")))
         ): value for key, value in kwargs.items() if value is not None
     }
-    response = await Api(API['post']['list']).apost(data=kwargs)
+    response = await Api(API['post']['list']).apost(
+        cookies=(await me.__get_cookies_async__()) if me else None,
+        data=kwargs,
+    )
     return response.json()
 
 # 搜索标签
 def search_tags(
     type: str,
     data: str='',
-    fuzzy: bool=True
+    fuzzy: bool=True,
+    *,
+    me: Optional['Me']=None,
 ) -> List['PostTagGetResultTag']:
     '''搜索已有标签
 
@@ -283,6 +305,7 @@ def search_tags(
         type (str): 标签类型
         data (str, optional): 搜索标签数据关键词
         fuzzy (bool, optional): 是否使用模糊搜索
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         List[PostTagGetResultTag]: 标签类 `Tag` 列表搜索结果
@@ -294,11 +317,12 @@ def search_tags(
             }
     '''
     response = Api(API['post']['tag']).get(
+        cookies=me.__get_cookies__() if me else None,
         params={
             'type': type,
             'data': data,
             'fuzzy': fuzzy
-        }
+        },
     )
     result: 'PostTagGetResult' = response.json()
     return result['tags']
@@ -307,7 +331,9 @@ def search_tags(
 async def search_tags_async(
     type: str,
     data: str='',
-    fuzzy: bool=True
+    fuzzy: bool=True,
+    *,
+    me: Optional['Me']=None,
 ) -> List['PostTagGetResultTag']:
     '''搜索已有标签
 
@@ -326,11 +352,12 @@ async def search_tags_async(
             }
     '''
     response = await Api(API['post']['tag']).aget(
+        cookies=(await me.__get_cookies_async__()) if me else None,
         params={
             'type': type,
             'data': data,
             'fuzzy': fuzzy
-        }
+        },
     )
     result: 'PostTagGetResult' = response.json()
     return result['tags']
@@ -455,7 +482,7 @@ def post(
         ): value for key, value in kwargs.items() if value is not None
     }
     response = Api(API['post']['post']).post(
-        cookies=me.cookies,
+        cookies=me.__get_cookies__(),
         data=kwargs
     )
     return response.json().get('id')
@@ -580,19 +607,20 @@ async def post_async(
         ): value for key, value in kwargs.items() if value is not None
     }
     response = await Api(API['post']['post']).apost(
-        cookies=me.cookies,
+        cookies=await me.__get_cookies_async__(),
         data=kwargs
     )
     return response.json().get('id')
 
 # 查询帖子顺序
-def find_post(category_name: str, category_id: str, id: int) -> int:
+def find_post(category_name: str, category_id: str, id: int, *, me: Optional['Me'] = None) -> int:
     '''查询帖子顺序
 
     参数:
         category_name (str): 画廊名称
         category_id (str): 画廊 ID
         id (int): 查询的帖子 ID
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         int: 帖子在该画廊的时间顺序
@@ -602,19 +630,23 @@ def find_post(category_name: str, category_id: str, id: int) -> int:
         'categoryId': category_id,
         'id': id
     }
-    response = Api(API['post']['find']).get(params=params)
+    response = Api(API['post']['find']).get(
+        cookies=me.__get_cookies__() if me else None,
+        params=params,
+    )
     if (position := response.json().get('position', None)) is None:
         raise ValueError('Unknown error occurred while finding post.')
     return position
 
 # 异步查询帖子顺序
-async def find_post_async(category_name: str, category_id: str, id: int) -> int:
+async def find_post_async(category_name: str, category_id: str, id: int, *, me: Optional['Me'] = None) -> int:
     '''查询帖子顺序
 
     参数:
         category_name (str): 画廊名称
         category_id (str): 画廊 ID
         id (int): 查询的帖子 ID
+        me (Optional[Me], optional): 用户验证对象
 
     返回:
         int: 帖子在该画廊的时间顺序
@@ -624,7 +656,10 @@ async def find_post_async(category_name: str, category_id: str, id: int) -> int:
         'categoryId': category_id,
         'id': id
     }
-    response = await Api(API['post']['find']).aget(params=params)
+    response = await Api(API['post']['find']).aget(
+        cookies=(await me.__get_cookies_async__()) if me else None,
+        params=params,
+    )
     if (position := response.json().get('position', None)) is None:
         raise ValueError('Unknown error occurred while finding post.')
     return position
@@ -637,7 +672,7 @@ class Post:
         id (str): 社区帖子 ID
     '''
     # 初始化
-    def __init__(self, id: int, basic: 'PostBasic') -> None:
+    def __init__(self, id: int, *, me: Optional['Me'] = None) -> None:
         '''社区帖子类
 
         参数:
@@ -647,8 +682,10 @@ class Post:
         '''社区帖子 ID'''
         self.__post: Optional['PostInfo'] = None
         '''社区帖子详细内容'''
-        self.basic: 'PostBasic' = basic
+        self.__basic: Optional['PostBasic'] = None
         '''社区帖子基础信息'''
+        
+        self.__me: Optional['Me'] = me
         return
     
     @property
@@ -658,27 +695,34 @@ class Post:
             raise RuntimeError('Post detail were not retrieved.')
         return self.__post
     
-    # 谱面对象
     @property
-    def chart(self) -> Chart:
-        '''谱面对象'''
-        if (chart := self.post.get('chart', None)) is not None:
+    def basic(self) -> 'PostBasic':
+        '''社区帖子基础信息'''
+        if not self.__basic:
+            raise RuntimeError('Post basic were not retrieved.')
+        return self.__basic
+    
+    # 提取谱面对象
+    @staticmethod
+    def chart(post: 'PostInfo') -> Chart:
+        '''提取谱面对象'''
+        if (chart := post.get('chart', None)) is not None:
             return Chart.from_python(chart)
         else:
-            raise PostHasNoChartError(self.post)
+            raise PostHasNoChartError(post)
     
-    # 帖子标签
-    @property
-    def tags(self) -> List['PostTag']:
-        '''帖子标签'''
-        return self.post['tags']
+    # 提取帖子标签
+    @staticmethod
+    def tags(post: 'PostInfo') -> List['PostTag']:
+        '''提取帖子标签'''
+        return post['tags']
     
-    # 帖子内容
-    @property
-    def content(self) -> str:
-        '''帖子内容'''
+    # 提取帖子内容
+    @staticmethod
+    def content(post: 'PostInfo') -> str:
+        '''提取帖子内容'''
         result: str = ''
-        if (content := list(self.post['content'])) is not None:
+        if (content := list(post['content'])) is not None:
             for seg in content:
                 if seg.get('type', None) in ['text', 'link']:
                     result += seg.get('data', '') + '\n'
@@ -688,27 +732,33 @@ class Post:
                     result += '\n'
         return result
     
-    # 获取帖子
-    @classmethod
-    def get(cls, id: int) -> 'Post':
+    # 获取帖子基础信息
+    def get_basic(self) -> 'PostBasic':
         '''获取帖子，只会获取基础信息。
 
         返回:
-            Post: 帖子对象
+            PostBasic: 帖子基础信息
         '''
-        response = Api(API['post']['basic']).get(params={'id': id})
-        return cls(id, response.json())
+        response = Api(API['post']['basic']).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+            params={'id': self.id},
+        )
+        self.__basic = response.json()
+        return response.json()
     
-    # 异步获取帖子
-    @classmethod
-    async def get_async(cls, id: int) -> 'Post':
+    # 异步获取帖子基础信息
+    async def get_basic_async(self) -> 'PostBasic':
         '''获取帖子，只会获取基础信息。
 
         返回:
-            Post: 帖子对象
+            PostBasic: 帖子基础信息
         '''
-        response = await Api(API['post']['basic']).aget(params={'id': id})
-        return cls(id, response.json())
+        response = await Api(API['post']['basic']).aget(
+            cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+            params={'id': self.id},
+        )
+        self.__basic = response.json()
+        return response.json()
     
     # 获取帖子信息
     def get_details(self) -> 'PostInfo':
@@ -717,9 +767,17 @@ class Post:
         返回:
             PostInfo: 帖子详细信息
         '''
-        response = Api(API['post']['details']).get(params={'id': self.id})
+        response = Api(API['post']['details']).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+            params={'id': self.id},
+        )
         _detail: 'PostDetail' = response.json()
         self.__post = _detail['post']
+        return self.__post
+    
+    def __get_details__(self) -> 'PostInfo':
+        if not self.__post:
+            return self.get_details()
         return self.__post
     
     # 异步获取帖子信息
@@ -729,29 +787,15 @@ class Post:
         返回:
             PostInfo: 帖子详细信息
         '''
-        response = await Api(API['post']['details']).aget(params={'id': self.id})
+        response = await Api(API['post']['details']).aget(
+            cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+            params={'id': self.id},
+        )
         _detail: 'PostDetail' = response.json()
         self.__post = _detail['post']
         return self.__post
     
-    # 获取缓存信息
-    def __get_post_cache(self) -> 'PostInfo':
-        '''获取缓存信息
-
-        返回:
-            PostInfo: 缓存信息
-        '''
-        if not self.__post:
-            return self.get_details()
-        return self.__post
-    
-    # 异步获取缓存信息
-    async def __get_post_cache_async(self) -> 'PostInfo':
-        '''获取缓存信息
-
-        返回:
-            PostInfo: 缓存信息
-        '''
+    async def __get_details_async__(self) -> 'PostInfo':
         if not self.__post:
             return await self.get_details_async()
         return self.__post
@@ -763,7 +807,7 @@ class Post:
         返回:
             SongResource: 歌曲音频与封面字节
         '''
-        post = self.__get_post_cache()
+        post = self.__get_details__()
         if (song := post.get('song', None)) is None:
             raise PostHasNoSongError(post)
         
@@ -774,13 +818,17 @@ class Post:
             if (audio := song.get('audio', None)) is None:
                 result['audio'] = None
             else:
-                response = Api(audio).get()
+                response = Api(audio).get(
+                    cookies=self.__me.__get_cookies__() if self.__me else None,
+                )
                 result['audio'] = response.content
             # 获取歌曲封面
             if (cover := song.get('cover', None)) is None:
                 result['cover'] = None
             else:
-                response = Api(cover).get()
+                response = Api(cover).get(
+                    cookies=self.__me.__get_cookies__() if self.__me else None,
+                )
                 result['cover'] = response.content
         
         elif _type == 'bandori': # BanG Dream! 歌曲
@@ -788,7 +836,9 @@ class Post:
             if (id := song.get('id', None)) is None:
                 raise ValueError('Unable to get song Id.')
             # 获取歌曲信息
-            info: 'SongInfo' = Api(API['songs']['info'].format(id=id)).get().json()
+            info: 'SongInfo' = Api(API['songs']['info'].format(id=id)).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            ).json()
             # 获取歌曲所在服务器
             published_at = info['publishedAt']
             # 根据 publishedAt 数据判断服务器
@@ -803,7 +853,9 @@ class Post:
             # 获取歌曲音频
             result['audio'] = Api(
                 ASSETS['songs']['sound'].format(server=server, id=id)
-            ).get().content
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            ).content
             
             # 获取歌曲封面
             # 获取数据包序列号
@@ -818,7 +870,9 @@ class Post:
                 ASSETS['songs']['musicjacket'].format(
                     server=server, index=index, jacket_image=jacket_image[-1]
                 )
-            ).get().content
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            ).content
         
         elif _type == 'llsif': # LoveLive! 歌曲
             # 获取歌曲 ID
@@ -847,7 +901,7 @@ class Post:
         返回:
             SongResource: 歌曲音频与封面字节
         '''
-        post = await self.__get_post_cache_async()
+        post = await self.__get_details_async__()
         if (song := post.get('song', None)) is None:
             raise PostHasNoSongError(post)
         
@@ -858,13 +912,17 @@ class Post:
             if (audio := song.get('audio', None)) is None:
                 result['audio'] = None
             else:
-                response = await Api(audio).aget()
+                response = await Api(audio).aget(
+                    cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+                )
                 result['audio'] = response.content
             # 获取歌曲封面
             if (cover := song.get('cover', None)) is None:
                 result['cover'] = None
             else:
-                response = await Api(cover).aget()
+                response = await Api(cover).aget(
+                    cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+                )
                 result['cover'] = response.content
         
         elif _type == 'bandori':
@@ -872,7 +930,9 @@ class Post:
             if (id := song.get('id', None)) is None:
                 raise ValueError('Unable to get song Id.')
             # 获取歌曲信息
-            info: 'SongInfo' = (await Api(API['songs']['info'].format(id=id)).aget()).json()
+            info: 'SongInfo' = (await Api(API['songs']['info'].format(id=id)).aget(
+                cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+            )).json()
             # 获取歌曲所在服务器
             published_at = info['publishedAt']
             # 根据 publishedAt 数据判断服务器
@@ -887,7 +947,9 @@ class Post:
             # 获取歌曲音频
             result['audio'] = (await Api(
                 ASSETS['songs']['sound'].format(server=server, id=id)
-            ).aget()).content
+            ).aget(
+                cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+            )).content
             
             # 获取歌曲封面
             # 获取数据包序列号
@@ -902,7 +964,9 @@ class Post:
                 ASSETS['songs']['musicjacket'].format(
                     server=server, index=index, jacket_image=jacket_image[-1]
                 )
-            ).aget()).content
+            ).aget(
+                cookies=(await self.__me.__get_cookies_async__()) if self.__me else None,
+            )).content
         
         elif _type == 'llsif':
             # 获取歌曲 ID
@@ -953,7 +1017,8 @@ class Post:
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 异步获取帖子评论
@@ -985,20 +1050,26 @@ class Post:
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 评论帖子
-    def comment(self, content: List[Content], *, me: 'Me') -> int:
+    def comment(self, content: List[Content], *, me: Optional['Me'] = None) -> int:
         '''评论帖子
 
         参数:
-            me (Me): 自身用户对象
+            me (Optional[Me], None): 自身用户对象
             content (List[Content]): 评论内容
 
         返回:
             int: 评论 ID
         '''
+        if me is None:
+            me = self.__me
+        if me is None:
+            raise ValueError('Please provide \'me\'.')
+        
         return post(
             me=me,
             category_id=str(self.id),
@@ -1007,16 +1078,20 @@ class Post:
         )
     
     # 异步评论帖子
-    async def acomment(self, content: List[Content], *, me: 'Me') -> int:
+    async def acomment(self, content: List[Content], *, me: Optional['Me'] = None) -> int:
         '''评论帖子
 
         参数:
-            me (Me): 自身用户对象
+            me (Optional[Me], None): 自身用户对象
             content (List[Content]): 评论内容
 
         返回:
             int: 评论 ID
         '''
+        if me is None:
+            me = self.__me
+        if me is None:
+            raise ValueError('Please provide \'me\'.')
         return await post_async(
             me=me,
             category_id=str(self.id),
@@ -1025,27 +1100,35 @@ class Post:
         )
     
     # 喜欢 / 取消喜欢帖子
-    def like(self, value: bool=True, *, me: 'Me') -> None:
+    def like(self, value: bool=True, *, me: Optional['Me'] = None) -> None:
         '''喜欢 / 取消喜欢帖子
 
         参数:
-            me (Me): 自身用户对象
+            me (Optional[Me], None): 自身用户对象
             value (bool, optional): 值 `True`: 喜欢帖子 `False`: 取消喜欢帖子
         '''
+        if me is None:
+            me = self.__me
+        if me is None:
+            raise ValueError('Please provide \'me\'.')
         Api(API['post']['like']).post(
             data={'id': self.id, 'value': value},
-            cookies=me.cookies
+            cookies=me.__get_cookies__()
         )
     
     # 异步喜欢 / 取消喜欢帖子
-    async def like_async(self, value: bool=True, *, me: 'Me') -> None:
+    async def like_async(self, value: bool=True, *, me: Optional['Me'] = None) -> None:
         '''喜欢 / 取消喜欢帖子
 
         参数:
-            me (Me): 自身用户对象
+            me (Optional[Me], None): 自身用户对象
             value (bool, optional): 值 `True`: 喜欢帖子 `False`: 取消喜欢帖子
         '''
+        if me is None:
+            me = self.__me
+        if me is None:
+            raise ValueError('Please provide \'me\'.')
         await Api(API['post']['like']).apost(
             data={'id': self.id, 'value': value},
-            cookies=me.cookies
+            cookies=await me.__get_cookies_async__()
         )
