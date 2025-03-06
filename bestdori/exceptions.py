@@ -204,17 +204,6 @@ class ServerNotAvailableError(BestdoriException):
         '''错误信息'''
         return
 
-# 活动没有奖励贴纸错误
-class EventHasNoStampError(BestdoriException):
-    '''活动没有奖励贴纸错误'''
-    # 初始化
-    def __init__(self, id: int) -> None:
-        msg = f'Event {id} has no stamp reward.'
-        super().__init__(msg)
-        self.message = msg
-        '''错误信息'''
-        return
-
 # 无法获取到信息错误
 class NoDataException(BestdoriException):
     '''无法获取到信息错误'''
