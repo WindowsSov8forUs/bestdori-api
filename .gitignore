@@ -4,4 +4,5 @@
 /dist/
 /for_test/test.py
 /.vscode/
+/.venv/
 test.py
