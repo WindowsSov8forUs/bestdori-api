@@ -236,15 +236,6 @@ class SettingsException(BestdoriException):
         '''错误信息'''
         return
 
-# 没有设置 Cookies
-class NoCookiesError(SettingsException):
-    '''没有设置 Cookies'''
-    # 初始化
-    def __init__(self) -> None:
-        msg = 'Cookies has not been set.'
-        super().__init__(msg)
-        return
-
 # 请求错误集合
 REQUEST_EXCEPTION: Dict[str, Type[RequestException]] = {
     'REQUEST_INVALID': RequestInvalidError,
