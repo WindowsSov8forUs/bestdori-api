@@ -371,6 +371,18 @@ class EventInfo(EventsAll6Info):
     stories: List[EventStory]
     musics: List[Optional[List[EventMusic]]]
 
+class FestivalRotationMusic(TypedDict):
+    '''团队佳节活动歌曲循环数据'''
+    musicId: int
+    startAt: str
+    endAt: str
+
+class FestivalStage(TypedDict):
+    '''团队佳节活动舞台数据'''
+    type: str
+    startAt: str
+    endAt: str
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']
@@ -461,43 +473,6 @@ class PostTagGetResult(TypedDict):
     result: Literal[True]
     tags: List[PostTagGetResultTag]
 
-class UserPosterCard(TypedDict):
-    '''海报'''
-    id: int
-    offset: int
-    trainedArt: bool
-
-class UserServerId(TypedDict):
-    id: int
-    server: Server
-
-class UserInfo(TypedDict):
-    '''用户信息'''
-    result: Literal[True]
-    followingCount: int
-    followeddByCount: int
-    followed: bool
-    nickname: str
-    titles: List[Title]
-    posterCard: UserPosterCard
-    selfIntro: str
-    serverIds: List[UserServerId]
-    socialMedia: str
-    favCharacters: List[int]
-    favCards: List[int]
-    favBands: List[int]
-    favSongs: List[int]
-    favCostumes: List[int]
-
-class UserMeInfo(TypedDict):
-    '''自身用户信息'''
-    result: Literal[True]
-    username: str
-    nickname: str
-    titles: List[Title]
-    email: str
-    messageCount: int
-
 class SongAchievement(TypedDict):
     musicId: int
     achievenemtType: str
@@ -585,6 +560,43 @@ class LLSifSongInfo(TypedDict):
 
 LLSifMisc: TypeAlias = Dict[str, LLSifSongInfo]
 '''LLSIF 信息'''
+
+class UserPosterCard(TypedDict):
+    '''海报'''
+    id: int
+    offset: int
+    trainedArt: bool
+
+class UserServerId(TypedDict):
+    id: int
+    server: Server
+
+class UserInfo(TypedDict):
+    '''用户信息'''
+    result: Literal[True]
+    followingCount: int
+    followeddByCount: int
+    followed: bool
+    nickname: str
+    titles: List[Title]
+    posterCard: UserPosterCard
+    selfIntro: str
+    serverIds: List[UserServerId]
+    socialMedia: str
+    favCharacters: List[int]
+    favCards: List[int]
+    favBands: List[int]
+    favSongs: List[int]
+    favCostumes: List[int]
+
+class UserMeInfo(TypedDict):
+    '''自身用户信息'''
+    result: Literal[True]
+    username: str
+    nickname: str
+    titles: List[Title]
+    email: str
+    messageCount: int
 
 class StampInfo(TypedDict):
     imageName: str
