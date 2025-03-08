@@ -244,7 +244,7 @@ class EventTopUser(TypedDict):
     strained: int
     degrees: List[int]
 
-class EventTop(TypedDict):
+class EventTopData(TypedDict):
     '''活动排名信息'''
     points: List[EventTopPoint]
     users: List[EventTopUser]

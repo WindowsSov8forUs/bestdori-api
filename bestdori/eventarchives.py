@@ -3,17 +3,17 @@
 BanG Dream! 活动数据相关操作'''
 from typing import TYPE_CHECKING, Literal, Optional
 
-from . import post
 from .user import Me
 from .utils import get_api
+from . import post, eventtop
 from .utils.network import Api
 from .exceptions import NotExistException
 
 if TYPE_CHECKING:
     from .typing import (
         Server,
-        EventTop,
         PostList,
+        EventTopData,
         EventArchiveAll5,
         EventArchiveInfo,
     )
@@ -102,13 +102,8 @@ class EventArchive:
         
         return self.__info
     
-    # 获取排名分数线
-    def get_top(
-        self,
-        server: 'Server',
-        mid: Literal['0']='0',
-        latest: Literal['1']='1'
-    ) -> 'EventTop':
+    # 获取最终排名分数线
+    def get_top(self, server: 'Server', mid: int = 0) -> 'EventTopData':
         '''获取排名分数线
 
         参数:
@@ -118,29 +113,15 @@ class EventArchive:
                 `2`: 台服
                 `3`: 国服
                 `4`: 韩服
-            mid (Literal[&#39;0&#39;], optional): 指定是否为中间分数线，默认为 `0`
-            latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
+            mid (int, optional): 歌曲 ID ，仅在查询歌曲分数排名时为非 `0` 值
 
         返回:
-            EventTop: 排名分数线数据
+            EventTopData: 最终排名分数线数据
         '''
-        return Api(API['events']['top']).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
-            params={
-                'server': server,
-                'event': self.id,
-                'mid': mid,
-                'latest': latest
-            },
-        ).json()
+        return eventtop.get_data(server, self.id, mid, latest=1, me=self.__me)
     
-    # 异步获取排名分数线
-    async def get_top_async(
-        self,
-        server: 'Server',
-        mid: Literal['0']='0',
-        latest: Literal['1']='1'
-    ) -> 'EventTop':
+    # 异步获取最终排名分数线
+    async def get_top_async(self, server: 'Server', mid: int = 0) -> 'EventTopData':
         '''获取排名分数线
 
         参数:
@@ -150,21 +131,12 @@ class EventArchive:
                 `2`: 台服
                 `3`: 国服
                 `4`: 韩服
-            mid (Literal[&#39;0&#39;], optional): 指定是否为中间分数线，默认为 `0`
-            latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
+            mid (int, optional): 歌曲 ID ，仅在查询歌曲分数排名时为非 `0` 值
 
         返回:
-            EventTop: 排名分数线数据
+            EventTopData: 最终排名分数线数据
         '''
-        return (await Api(API['events']['top']).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-            params={
-                'server': server,
-                'event': self.id,
-                'mid': mid,
-                'latest': latest
-            },
-        )).json()
+        return await eventtop.get_data_async(server, self.id, mid, latest=1, me=self.__me)
 
     # 获取活动数据评论
     def get_comment(
