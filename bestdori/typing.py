@@ -392,6 +392,62 @@ class FestivalStage(TypedDict):
     startAt: str
     endAt: str
 
+class GachaAll1Info(TypedDict):
+    gachaName: List[Optional[str]]
+
+GachaAll1: TypeAlias = Dict[str, GachaAll1Info]
+
+class GachaAll3Info(GachaAll1Info):
+    resourceName: str
+    bannerAssetBundleName: NotRequired[str]
+    publishedAt: List[Optional[str]]
+    type: str
+    newCards: List[int]
+
+GachaAll3: TypeAlias = Dict[str, GachaAll3Info]
+
+class GachaAll5Info(GachaAll3Info):
+    closedAt: List[Optional[str]]
+
+GachaAll5: TypeAlias = Dict[str, GachaAll5Info]
+
+class GachaDetail(TypedDict):
+    rarityIndex: int
+    weight: int
+    pickup: bool
+
+class GachaRate(TypedDict):
+    rate: float
+    weightTotal: int
+
+class GachaPaymentMethod(TypedDict):
+    gachaId: int
+    paymentMethod: str
+    quantity: int
+    paymentMethodId: int
+    count: int
+    behavior: str
+    pickup: bool
+    costItemQuantity: int
+    discountType: int
+    ticketId: NotRequired[int]
+
+class GachaInformation(TypedDict):
+    description: List[Optional[str]]
+    term: List[Optional[str]]
+    newMemberInfo: List[Optional[str]]
+    notice: List[Optional[str]]
+
+class GachaInfo(GachaAll5Info):
+    '''招募信息'''
+    details: List[Optional[Dict[str, GachaDetail]]]
+    rates: List[Optional[Dict[str, GachaRate]]]
+    paymentMethods: List[GachaPaymentMethod]
+    description: List[Optional[str]]
+    annotation: List[Optional[str]]
+    gachaPeriod: List[Optional[str]]
+    information: List[GachaInformation]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']

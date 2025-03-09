@@ -2,52 +2,138 @@
 
 BanG Dream! 招募相关操作'''
 import asyncio
-from typing import Any, Dict, List, Literal
+from typing_extensions import overload
+from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
-from aiohttp import ClientResponseError
-from httpx import Response, HTTPStatusError
-
-from .utils.utils import API, ASSETS
-from .utils.network import Api, Assets
-from .post import get_list, get_list_async
+from . import post
+from .user import Me
+from .utils import get_api
+from .utils.network import Api
 from .exceptions import (
     NoDataException,
-    GachaNotExistError,
+    HTTPStatusError,
+    NotExistException,
     AssetsNotExistError,
-    ServerNotAvailableError
+    ServerNotAvailableError,
 )
 
+if TYPE_CHECKING:
+    from .typing import (
+        NoneDict,
+        PostList,
+        GachaAll1,
+        GachaAll3,
+        GachaAll5,
+        GachaInfo,
+        ServerName,
+    )
+
+API = get_api('bestdori.api')
+ASSETS = get_api('bestdori.assets')
+
+
+
 # 获取总招募信息
-def get_all(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
+@overload
+def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总招募信息
 
     参数:
-        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
-            `0`: 仅获取所有已有招募 ID `all.0.json`
-            `5`: 获取所有已有招募的简洁信息 `all.5.json`
+        index (Literal[0]): 指定获取哪种 `all.json`
 
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总招募信息
+        Dict[str, NoneDict]: 所有已有招募 ID `all.0.json`
     '''
-    return Api(API['gacha']['all'].format(index=index)).get().json()
+    ...
+@overload
+def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'GachaAll1':
+    '''获取总招募信息
+
+    参数:
+        index (Literal[1]): 指定获取哪种 `all.json`
+
+    返回:
+        GachaAll1: 所有已有招募的简洁信息 `all.1.json`
+    '''
+    ...
+@overload
+def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'GachaAll3':
+    '''获取总招募信息
+
+    参数:
+        index (Literal[3]): 指定获取哪种 `all.json`
+
+    返回:
+        GachaAll3: 所有已有招募的较详细信息 `all.3.json`
+    '''
+    ...
+@overload
+def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'GachaAll5':
+    '''获取总招募信息
+
+    参数:
+        index (Literal[5]): 指定获取哪种 `all.json`
+
+    返回:
+        GachaAll5: 所有已有招募的详细信息 `all.5.json`
+    '''
+    ...
+
+def get_all(index: Literal[0, 1, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'GachaAll1', 'GachaAll3', 'GachaAll5']:
+    return Api(API['gacha']['all'].format(index=index)).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
 
 # 异步获取总招募信息
-async def get_all_async(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
+@overload
+async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总招募信息
 
     参数:
-        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
-            `0`: 仅获取所有已有招募 ID `all.0.json`
-            `5`: 获取所有已有招募的简洁信息 `all.5.json`
+        index (Literal[0]): 指定获取哪种 `all.json`
 
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总招募信息
+        Dict[str, NoneDict]: 所有已有招募 ID `all.0.json`
     '''
-    response = await Api(API['gacha']['all'].format(index=index)).aget()
-    if isinstance(response, Response):
-        return response.json()
-    else:
-        return await response.json()
+    ...
+@overload
+async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'GachaAll1':
+    '''获取总招募信息
+
+    参数:
+        index (Literal[1]): 指定获取哪种 `all.json`
+
+    返回:
+        GachaAll1: 所有已有招募的简洁信息 `all.1.json`
+    '''
+    ...
+@overload
+async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'GachaAll3':
+    '''获取总招募信息
+
+    参数:
+        index (Literal[3]): 指定获取哪种 `all.json`
+
+    返回:
+        GachaAll3: 所有已有招募的较详细信息 `all.3.json`
+    '''
+    ...
+@overload
+async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'GachaAll5':
+    '''获取总招募信息
+
+    参数:
+        index (Literal[5]): 指定获取哪种 `all.json`
+
+    返回:
+        GachaAll5: 所有已有招募的详细信息 `all.5.json`
+    '''
+    ...
+
+async def get_all_async(index: Literal[0, 1, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'GachaAll1', 'GachaAll3', 'GachaAll5']:
+    return (await Api(API['gacha']['all'].format(index=index)).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 招募类
 class Gacha:
@@ -57,7 +143,7 @@ class Gacha:
         id (int): 招募 ID
     '''
     # 初始化
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
         '''招募类
 
         参数:
@@ -65,40 +151,41 @@ class Gacha:
         '''
         self.id: int = id
         '''招募 ID'''
-        self.__info: Dict[str, Any] = {}
+        self.__info: Optional['GachaInfo'] = None
         '''招募信息'''
+
+        self.__me = me
         return
     
-    # 获取招募标题
     @property
-    def name(self) -> str:
-        '''获取招募标题
-
-        返回:
-            str: 招募标题
-        '''
-        info = self.__info
+    def info(self) -> 'GachaInfo':
+        '''招募信息'''
+        if not self.__info:
+            raise RuntimeError(f'Gacha \'{self.id}\' info were not retrieved.')
+        return self.__info
+    
+    # 提取招募标题
+    @staticmethod
+    def name(info: 'GachaInfo') -> str:
+        '''获取招募标题'''
         # 获取 eventName 数据
-        if (gacha_name := info.get('gachaName', None)) is None:
-            raise NoDataException('招募标题')
+        gacha_name = info['gachaName']
         # 获取第一个非 None 招募标题
         try:
-            return next(filter(lambda x: x is not None, gacha_name))
+            return next(x for x in gacha_name if x is not None)
         except StopIteration:
-            raise NoDataException('招募标题')
+            raise NoDataException('gacha name')
     
-    # 获取招募默认服务器
-    @property
-    def server(self) -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
-        '''获取招募默认服务器
+    #提取招募默认服务器
+    @staticmethod
+    def server(info: 'GachaInfo') -> 'ServerName':
+        '''提取招募默认服务器
 
         返回:
-            Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]: 歌曲所在服务器
+            ServerName: 歌曲所在服务器
         '''
-        info = self.__info
         # 获取 publishedAt 数据
-        if (published_at := info.get('publishedAt', None)) is None:
-            raise NoDataException('招募起始时间')
+        published_at = info['publishedAt']
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -106,66 +193,58 @@ class Gacha:
         elif published_at[3] is not None: return 'cn'
         elif published_at[4] is not None: return 'kr'
         else:
-            raise NoDataException('招募所在服务器')
+            raise NoDataException('gacha server')
     
     # 获取招募信息
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> 'GachaInfo':
         '''获取招募信息
 
         返回:
-            Dict[str, Any]: 招募详细信息
+            GachaInfo: 招募详细信息
         '''
         try:
             response = Api(
                 API['gacha']['info'].format(id=self.id)
-            ).get()
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            )
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise GachaNotExistError(self.id)
+                raise NotExistException(f'Gacha {self.id}')
             else:
                 raise exception
         
-        self.__info = dict(response.json())
-        return self.__info
+        self.__info = response.json()
+        return self.info
     
-    # 异步获取招募信息
-    async def get_info_async(self) -> Dict[str, Any]:
-        '''获取招募信息
-
-        返回:
-            Dict[str, Any]: 招募详细信息
-        '''
-        try:
-            response = await Api(
-                API['gacha']['info'].format(id=self.id)
-            ).aget()
-        except ClientResponseError as exception:
-            if exception.status == 404:
-                raise GachaNotExistError(self.id)
-            else:
-                raise exception
-        
-        self.__info = dict(await response.json())
-        return self.__info
-    
-    # 获取缓存信息
-    def __get_info_cache(self) -> Dict[str, Any]:
-        '''获取缓存信息
-
-        返回:
-            Dict[str, Any]: 缓存信息
-        '''
+    def __get_info__(self) -> 'GachaInfo':
         if not self.__info:
             return self.get_info()
         return self.__info
     
-    # 异步获取缓存信息
-    async def __get_info_cache_async(self) -> Dict[str, Any]:
-        '''获取缓存信息
+    # 异步获取招募信息
+    async def get_info_async(self) -> 'GachaInfo':
+        '''获取招募信息
 
         返回:
-            Dict[str, Any]: 缓存信息
+            GachaInfo: 招募详细信息
         '''
+        try:
+            response = await Api(
+                API['gacha']['info'].format(id=self.id)
+            ).aget(
+                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+            )
+        except HTTPStatusError as exception:
+            if exception.response.status_code == 404:
+                raise NotExistException(f'Gacha {self.id}')
+            else:
+                raise exception
+        
+        self.__info = response.json()
+        return self.info
+    
+    async def __get_info_async__(self) -> 'GachaInfo':
         if not self.__info:
             return await self.get_info_async()
         return self.__info
@@ -175,8 +254,8 @@ class Gacha:
         self,
         limit: int=20,
         offset: int=0,
-        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> Dict[str, Any]:
+        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC',
+    ) -> 'PostList':
         '''获取招募评论
 
         参数:
@@ -185,21 +264,22 @@ class Gacha:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            Dict[str, Any]: 搜索结果
+            PostList: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的评论
+                    "posts": ... # List[PostListPost] 列举出的评论
                 }
                 ```
         '''
-        return get_list(
+        return post.get_list(
             category_name='GACHA_COMMENT',
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 异步获取招募评论
@@ -207,8 +287,8 @@ class Gacha:
         self,
         limit: int=20,
         offset: int=0,
-        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> Dict[str, Any]:
+        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC',
+    ) -> 'PostList':
         '''获取招募评论
 
         参数:
@@ -217,83 +297,86 @@ class Gacha:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            Dict[str, Any]: 搜索结果
+            PostList: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的评论
+                    "posts": ... # List[PostListPost] 列举出的评论
                 }
                 ```
         '''
-        return await get_list_async(
+        return await post.get_list_async(
             category_name='GACHA_COMMENT',
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 获取招募缩略图图片
-    def get_banner(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
+    def get_banner(self, server: 'ServerName') -> bytes:
         '''获取招募缩略图图片
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
+            server (ServerName): 指定服务器
 
         返回:
             bytes: 招募缩略图图片字节数据 `bytes`
         '''
         # 获取招募数据包名称
-        info = self.__get_info_cache()
+        info = self.__get_info__()
         if (banner_asset_bundle_name := info.get('bannerAssetBundleName', None)) is None:
-            raise ValueError('无法获取招募数据包名称。')
+            raise ValueError('Gacha has no banner asset bundle name.')
         # 判断服务器
-        if (start_at := info.get('startAt', None)) is None:
-            raise ValueError('无法获取招募起始时间。')
+        published_at = info['publishedAt']
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
-        if start_at[index] is None:
-            raise ServerNotAvailableError(f'招募 {self.name}', server)
-        return Assets(
+        if published_at[index] is None:
+            raise ServerNotAvailableError(f'Gacha \'{self.name(info)}\'', server)
+        return Api(
             ASSETS['homebanner']['get'].format(
-                banner_asset_bundle_name=banner_asset_bundle_name
-            ), server
-        ).get()
+                server=server, banner_asset_bundle_name=banner_asset_bundle_name
+            )
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+        ).content
     
     # 异步获取招募缩略图图片
-    async def get_banner_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
+    async def get_banner_async(self, server: 'ServerName') -> bytes:
         '''获取招募缩略图图片
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
+            server (ServerName): 指定服务器
 
         返回:
             bytes: 招募缩略图图片字节数据 `bytes`
         '''
         # 获取招募数据包名称
-        info = await self.__get_info_cache_async()
+        info = await self.__get_info_async__()
         if (banner_asset_bundle_name := info.get('bannerAssetBundleName', None)) is None:
-            raise ValueError('无法获取招募数据包名称。')
+            raise ValueError('Gacha has no banner asset bundle name.')
         # 判断服务器
-        if (start_at := info.get('startAt', None)) is None:
-            raise ValueError('无法获取招募起始时间。')
+        published_at = info['publishedAt']
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
-        if start_at[index] is None:
-            raise ServerNotAvailableError(f'招募 {self.name}', server)
-        return await Assets(
+        if published_at[index] is None:
+            raise ServerNotAvailableError(f'Gacha \'{self.name(info)}\'', server)
+        return (await Api(
             ASSETS['homebanner']['get'].format(
-                banner_asset_bundle_name=banner_asset_bundle_name
-            ), server
-        ).aget()
+                server=server, banner_asset_bundle_name=banner_asset_bundle_name
+            )
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+        )).content
     
     # 获取招募 pickup 图像
-    def get_pickups(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> List[bytes]:
+    def get_pickups(self, server: 'ServerName') -> List[bytes]:
         '''获取招募 pickup 图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 服务器
+            server (ServerName): 服务器
 
         返回:
             List[bytes]: pickup 图像字节数据 `bytes` 列表
@@ -304,77 +387,92 @@ class Gacha:
         for pickup in PICKUPS:
             try:
                 pickup_list.append(
-                    Assets(
+                    Api(
                         ASSETS['gacha']['screen'].format(
-                            id=self.id, asset_name=pickup
-                        ), server
-                    ).get()
+                            server=server, id=self.id, asset_name=pickup,
+                        )
+                    ).get(
+                        cookies=self.__me.__get_cookies__() if self.__me else None,
+                    ).content
                 )
             except:
                 continue
         if len(pickup_list) <= 0:
             # 没有获取到任何 pickup 图像
-            raise AssetsNotExistError('招募 pickup 图像')
+            raise AssetsNotExistError('gacha pickups')
         return pickup_list
     
     # 异步获取招募 pickup 图像
-    async def get_pickups_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> List[bytes]:
+    async def get_pickups_async(self, server: 'ServerName') -> List[bytes]:
         '''获取招募 pickup 图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 服务器
+            server (ServerName): 服务器
 
         返回:
             List[bytes]: pickup 图像字节数据 `bytes` 列表
         '''
         PICKUPS = ['pickup1', 'pickup2', 'pickup']
+
         # 遍历尝试获取
-        pickup_list: List[bytes] = []
-        tasks = [Assets(ASSETS['gacha']['screen'].format(id=self.id, asset_name=pickup), server).aget() for pickup in PICKUPS]
-        for task in asyncio.as_completed(tasks):
+        async def fetch_pickup(pickup: str) -> Optional[bytes]:
             try:
-                pickup_list.append(await task)
+                return (await Api(
+                    ASSETS['gacha']['screen'].format(
+                    server=server, id=self.id, asset_name=pickup,
+                    )
+                ).aget(
+                    cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+                )).content
             except:
-                continue
+                return None
+
+        pickup_list = await asyncio.gather(*(fetch_pickup(pickup) for pickup in PICKUPS))
+        pickup_list = [pickup for pickup in pickup_list if pickup is not None]
+
         if len(pickup_list) <= 0:
             # 没有获取到任何 pickup 图像
-            raise AssetsNotExistError('招募 pickup 图像')
+            raise AssetsNotExistError('gacha pickups')
         return pickup_list
     
     # 获取招募 logo 图像
-    def get_logo(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
+    def get_logo(self, server: 'ServerName') -> bytes:
         '''获取招募 logo 图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 服务器
+            server (ServerName): 服务器
 
         返回:
             bytes: logo 图像字节数据 `bytes`
         '''
         try:
-            return Assets(
+            return Api(
                 ASSETS['gacha']['screen'].format(
-                    id=self.id, asset_name='logo'
-                ), server
-            ).get()
+                    server=server, id=self.id, asset_name='logo',
+                )
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            ).content
         except:
-            raise AssetsNotExistError('招募 logo 图像')
+            raise AssetsNotExistError('gacha logo')
     
     # 异步获取招募 logo 图像
-    async def get_logo_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
+    async def get_logo_async(self, server: 'ServerName') -> bytes:
         '''获取招募 logo 图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 服务器
+            server (ServerName): 服务器
 
         返回:
             bytes: logo 图像字节数据 `bytes`
         '''
         try:
-            return await Assets(
+            return (await Api(
                 ASSETS['gacha']['screen'].format(
-                    id=self.id, asset_name='logo'
-                ), server
-            ).aget()
+                    server=server, id=self.id, asset_name='logo',
+                )
+            ).aget(
+                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+            )).content
         except:
-            raise AssetsNotExistError('招募 logo 图像')
+            raise AssetsNotExistError('gacha logo')
