@@ -230,25 +230,6 @@ class EventArchiveInfo(TypedDict):
 
 EventArchiveAll5: TypeAlias = Dict[str, EventArchiveInfo]
 
-class EventTopPoint(TypedDict):
-    time: float
-    uid: int
-    value: int
-
-class EventTopUser(TypedDict):
-    uid: int
-    name: str
-    introduction: str
-    rank: int
-    sid: int
-    strained: int
-    degrees: List[int]
-
-class EventTopData(TypedDict):
-    '''活动排名信息'''
-    points: List[EventTopPoint]
-    users: List[EventTopUser]
-
 class EventsAll1Info(TypedDict):
     eventName: List[Optional[str]]
 
@@ -370,6 +351,34 @@ class EventInfo(EventsAll6Info):
     rankingRewards: List[Optional[List[EventRankingReward]]]
     stories: List[EventStory]
     musics: List[Optional[List[EventMusic]]]
+
+class EventTopPoint(TypedDict):
+    time: float
+    uid: int
+    value: int
+
+class EventTopUser(TypedDict):
+    uid: int
+    name: str
+    introduction: str
+    rank: int
+    sid: int
+    strained: int
+    degrees: List[int]
+
+class EventTopData(TypedDict):
+    '''活动排名信息'''
+    points: List[EventTopPoint]
+    users: List[EventTopUser]
+
+class EventTrackerCutoff(TypedDict):
+    time: float
+    ep: int
+
+class EventTrackerData(TypedDict):
+    '''活动分数线追踪信息'''
+    result: Literal[True]
+    cutoffs: List[EventTrackerCutoff]
 
 class FestivalRotationMusic(TypedDict):
     '''团队佳节活动歌曲循环数据'''

@@ -9,6 +9,7 @@ from .user import Me
 from .stamps import Stamp
 from .utils import get_api
 from .utils.network import Api
+from .eventtracker import EventTracker
 from .eventarchives import EventArchive
 from .festival import (
     get_stages,
@@ -26,7 +27,6 @@ from .exceptions import (
 if TYPE_CHECKING:
     from .typing import (
         Server,
-        EventTop,
         NoneDict,
         PostList,
         EventInfo,
@@ -36,6 +36,7 @@ if TYPE_CHECKING:
         EventsAll5,
         EventsAll6,
         ServerName,
+        EventTopData,
         FestivalStage,
         FestivalRotationMusic,
     )
@@ -222,7 +223,7 @@ class Event:
         self.id: int = id
         '''活动 ID'''
         self.archive: EventArchive = EventArchive(self.id)
-        '''活动数据'''
+        '''活动档案'''
         self.__info: Optional['EventInfo'] = None
         '''活动信息'''
 
@@ -267,6 +268,18 @@ class Event:
         else:
             raise NoDataException('event server')
     
+    # 获取对应服务器活动PT&排名追踪器
+    def tracker(self, server: 'Server') -> EventTracker:
+        '''获取对应服务器活动PT&排名追踪器
+
+        参数:
+            server (Server): 指定服务器
+
+        返回:
+            EventTracker: 活动追踪器
+        '''
+        return EventTracker(server, self.id, me=self.__me)
+
     # 获取活动信息
     def get_info(self) -> 'EventInfo':
         '''获取活动信息
@@ -609,69 +622,121 @@ class Event:
         stamp = Stamp(stamp_id)
         return await stamp.get_stamp_async(self.server(info))
 
-    # 获取排名分数线
+    # 获取最新 T10 排名分数线
+    @overload
     def get_top(
         self,
-        server: Optional['Server']=None,
-        mid: Literal['0']='0',
-        latest: Literal['1']='1'
-    ) -> 'EventTop':
-        '''获取排名分数线
+        server: 'Server',
+        mid: int = 0,
+        *,
+        interval: int,
+    ) -> 'EventTopData':
+        '''获取最新 T10 排名分数线
 
         参数:
-            server (Optional[Server], optional): 指定服务器
-                `0`: 日服
-                `1`: 英服
-                `2`: 台服
-                `3`: 国服
-                `4`: 韩服
-            mid (Literal[&#39;0&#39;], optional): 指定是否为中间分数线，默认为 `0`
-            latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
+            server (Server): 指定服务器
+            mid (int, optional): 歌曲 ID ，仅在查询歌曲分数排名时为非 `0` 值
+            interval (int): 间隔
 
         返回:
-            EventTop: 排名分数线数据
+            EventTopData: T10 排名数据
         '''
-        if server is None:
-            server_name = self.server(self.__get_info__())
-            if server_name == 'jp': server = 0
-            elif server_name == 'en': server = 1
-            elif server_name == 'tw': server = 2
-            elif server_name == 'cn': server = 3
-            elif server_name == 'kr': server = 4
-            else: raise NoDataException('event server')
-        return self.archive.get_top(server, mid, latest)
+        ...
+    # 获取最终 T10 排名分数线
+    @overload
+    def get_top(
+        self,
+        server: 'Server',
+        mid: int = 0,
+        *,
+        latest: Literal[1],
+    ) -> 'EventTopData':
+        '''获取最终 T10 排名分数线
+
+        参数:
+            server (Server): 指定服务器
+            mid (int, optional): 歌曲 ID ，仅在查询歌曲分数排名时为非 `0` 值
+            latest (Literal[1]): 获取最终排名分数线
+
+        返回:
+            EventTopData: T10 排名数据
+        '''
+        ...
+
+    # 获取 T10 排名分数线
+    def get_top(
+        self,
+        server: 'Server',
+        mid: int = 0,
+        *,
+        interval: Optional[int] = None,
+        latest: Optional[Literal[1]] = None,
+    ) -> 'EventTopData':
+        if interval is None:
+            if latest is None:
+                raise ValueError('Either `interval` or `latest` must be specified.')
+            return self.archive.get_top(server, mid)
+        if latest is None:
+            return self.tracker(server).get_top(mid, interval=interval)
+        raise ValueError('Both `interval` and `latest` cannot be specified at the same time.')
     
-    # 异步获取排名分数线
+    # 异步获取最新 T10 排名分数线
+    @overload
     async def get_top_async(
         self,
-        server: Optional['Server']=None,
-        mid: Literal['0']='0',
-        latest: Literal['1']='1'
-    ) -> 'EventTop':
-        '''获取排名分数线
+        server: 'Server',
+        mid: int = 0,
+        *,
+        interval: int,
+    ) -> 'EventTopData':
+        '''异步获取最新 T10 排名分数线
 
         参数:
-            server (Optional[Server], optional): 指定服务器
-                `0`: 日服
-                `1`: 英服
-                `2`: 台服
-                `3`: 国服
-                `4`: 韩服
-            mid (Literal[&#39;0&#39;], optional): 指定是否为中间分数线，默认为 `0`
-            latest (Literal[&#39;1&#39;], optional): 指定是否为最终分数线，默认为 `1`
+            server (Server): 指定服务器
+            mid (int, optional): 歌曲 ID ，仅在查询歌曲分数排名时为非 `0` 值
+            interval (int): 间隔
 
         返回:
-            EventTop: 排名分数线数据
+            EventTopData: T10 排名数据
         '''
-        if server is None:
-            server_name = self.server(await self.__get_info_async__())
-            if server_name == 'jp': server = 0
-            elif server_name == 'en': server = 1
-            elif server_name == 'tw': server = 2
-            elif server_name == 'cn': server = 3
-            elif server_name == 'kr': server = 4
-            else: raise NoDataException('event server')
-        return await self.archive.get_top_async(server, mid, latest)
+        ...
+    # 异步获取最终 T10 排名分数线
+    @overload
+    async def get_top_async(
+        self,
+        server: 'Server',
+        mid: int = 0,
+        *,
+        latest: Literal[1],
+    ) -> 'EventTopData':
+        '''异步获取最终 T10 排名分数线
+
+        参数:
+            server (Server): 指定服务器
+            mid (int, optional): 歌曲 ID ，仅在查询歌曲分数排名时为非 `0` 值
+            latest (Literal[1]): 获取最终排名分数线
+
+        返回:
+            EventTopData: T10 排名数据
+        '''
+        ...
+    
+    # 异步获取 T10 排名分数线
+    async def get_top_async(
+        self,
+        server: 'Server',
+        mid: int = 0,
+        *,
+        interval: Optional[int] = None,
+        latest: Optional[Literal[1]] = None,
+    ) -> 'EventTopData':
+        if interval is None:
+            if latest is None:
+                raise ValueError('Either `interval` or `latest` must be specified.')
+            return await self.archive.get_top_async(server, mid)
+        if latest is None:
+            return await self.tracker(server).get_top_async(mid, interval=interval)
+        raise ValueError('Both `interval` and `latest` cannot be specified at the same time.')
 
     # 获取团队 LIVE 佳节活动歌曲循环数据
     def get_rotation_musics(self) -> List['FestivalRotationMusic']:
