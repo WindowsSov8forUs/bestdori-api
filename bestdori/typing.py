@@ -448,6 +448,34 @@ class GachaInfo(GachaAll5Info):
     gachaPeriod: List[Optional[str]]
     information: List[GachaInformation]
 
+class LoginCampaignsAll1Info(TypedDict):
+    caption: List[Optional[str]]
+
+LoginCampaignsAll1: TypeAlias = Dict[str, LoginCampaignsAll1Info]
+
+class LoginCampaignsAll5Info(LoginCampaignsAll1Info):
+    loginBonusType: str
+    assetBundleName: List[str]
+    publishedAt: List[Optional[str]]
+    closedAt: List[Optional[str]]
+
+LoginCampaignsAll5: TypeAlias = Dict[str, LoginCampaignsAll5Info]
+
+class LoginCampaignDetail(TypedDict):
+    loginBonusId: int
+    days: int
+    resourceType: str
+    resourceId: int
+    quantity: int
+    voiceId: NotRequired[str]
+    seq: int
+    grantType: str
+
+class LoginCampaignInfo(LoginCampaignsAll5Info):
+    '''登录奖励信息'''
+    assetMap: List[Any]
+    details: List[Optional[List[LoginCampaignDetail]]]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']

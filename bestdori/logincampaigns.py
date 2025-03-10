@@ -1,49 +1,118 @@
 '''`bestdori.logincampaigns`
 
 BanG Dream! 登录奖励相关操作'''
-from typing import Any, Dict, List, Literal
 
-from aiohttp import ClientResponseError
-from httpx import Response, HTTPStatusError
+from typing_extensions import overload
+from typing import TYPE_CHECKING, Any, Dict, List, Union, Literal, Optional
 
-from .utils.utils import API, ASSETS
-from .utils.network import Api, Assets
-from .post import get_list, get_list_async
+from . import post
+from .user import Me
+from .utils import get_api
+from .utils.network import Api
 from .exceptions import (
+    HTTPStatusError,
     NoDataException,
+    NotExistException,
     ServerNotAvailableError,
-    LoginCampaignNotExistError
 )
 
+if TYPE_CHECKING:
+    from .typing import (
+        NoneDict,
+        PostList,
+        ServerName,
+        LoginCampaignInfo,
+        LoginCampaignsAll1,
+        LoginCampaignsAll5,
+    )
+
+API = get_api('bestdori.api')
+
 # 获取总登录奖励信息
-def get_all(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
+@overload
+def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总登录奖励信息
 
     参数:
-        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
-            `0`: 仅获取所有已有登录奖励 ID `all.0.json`
-            `5`: 获取所有已有登录奖励的简洁信息 `all.5.json`
-
+        index (Literal[0]): 指定获取哪种 `all.json`
+        me (Optional[Me], optional): 登录用户信息
+    
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总登录奖励信息
+        Dict[str, NoneDict]: 所有已有登录奖励 ID `all.0.json`
     '''
-    return Api(API['loginCampaigns']['all'].format(index=index)).get().json()
+    ...
+@overload
+def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'LoginCampaignsAll1':
+    '''获取总登录奖励信息
+
+    参数:
+        index (Literal[1]): 指定获取哪种 `all.json`
+        me (Optional[Me], optional): 登录用户信息
+    
+    返回:
+        LoginCampaignsAll1: 所有已有登录奖励简洁信息 `all.1.json`
+    '''
+    ...
+@overload
+def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'LoginCampaignsAll5':
+    '''获取总登录奖励信息
+
+    参数:
+        index (Literal[5]): 指定获取哪种 `all.json`
+        me (Optional[Me], optional): 登录用户信息
+    
+    返回:
+        LoginCampaignsAll5: 所有已有登录奖励的较详细信息 `all.5.json`
+    '''
+    ...
+
+def get_all(index: Literal[0, 1, 5], *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'LoginCampaignsAll1', 'LoginCampaignsAll5']:
+    return Api(API['loginCampaigns']['all'].format(index=index)).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
 
 # 异步获取总登录奖励信息
-async def get_all_async(index: Literal[0, 5]=5) -> Dict[str, Dict[str, Any]]:
+@overload
+async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总登录奖励信息
 
     参数:
-        index (Literal[0, 5], optional): 指定获取哪种 `all.json`
-            `0`: 仅获取所有已有登录奖励 ID `all.0.json`
-            `5`: 获取所有已有登录奖励的简洁信息 `all.5.json`
-
+        index (Literal[0]): 指定获取哪种 `all.json`
+        me (Optional[Me], optional): 登录用户信息
+    
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总登录奖励信息
+        Dict[str, NoneDict]: 所有已有登录奖励 ID `all.0.json`
     '''
-    response = await Api(API['loginCampaigns']['all'].format(index=index)).aget()
-    if isinstance(response, Response): return response.json()
-    return await response.json()
+    ...
+@overload
+async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'LoginCampaignsAll1':
+    '''获取总登录奖励信息
+
+    参数:
+        index (Literal[1]): 指定获取哪种 `all.json`
+        me (Optional[Me], optional): 登录用户信息
+    
+    返回:
+        LoginCampaignsAll1: 所有已有登录奖励简洁信息 `all.1.json`
+    '''
+    ...
+@overload
+async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'LoginCampaignsAll5':
+    '''获取总登录奖励信息
+
+    参数:
+        index (Literal[5]): 指定获取哪种 `all.json`
+        me (Optional[Me], optional): 登录用户信息
+    
+    返回:
+        LoginCampaignsAll5: 所有已有登录奖励的较详细信息 `all.5.json`
+    '''
+    ...
+
+async def get_all_async(index: Literal[0, 1, 5], *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'LoginCampaignsAll1', 'LoginCampaignsAll5']:
+    return (await Api(API['loginCampaigns']['all'].format(index=index)).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 登录奖励类
 class LoginCampaign:
@@ -53,7 +122,7 @@ class LoginCampaign:
         id (int): 登录奖励 ID
     '''
     # 初始化
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
         '''登录奖励类
 
         参数:
@@ -61,104 +130,94 @@ class LoginCampaign:
         '''
         self.id: int = id
         '''登录奖励 ID'''
-        self.__info: Dict[str, Any] = {}
+        self.__info: Optional['LoginCampaignInfo'] = None
         '''登录奖励信息'''
+
+        self.__me = me
         return
     
-    # 登录奖励标题
     @property
-    def name(self) -> str:
-        '''登录奖励标题'''
-        info = self.__info
-        # 获取 eventName 数据
-        if (caption := info.get('caption', None)) is None:
-            raise NoDataException('登录奖励标题')
+    def info(self) -> 'LoginCampaignInfo':
+        '''登录奖励信息'''
+        if not self.__info:
+            raise RuntimeError(f'LoginCampaign \'{self.id}\' info were not retrieved.')
+        return self.__info
+
+    # 登录奖励标题
+    @staticmethod
+    def name(info: 'LoginCampaignInfo') -> str:
+        '''提取登录奖励标题'''
+        # 获取 caption 数据
+        caption = info['caption']
         # 获取第一个非 None 登录奖励标题
         try:
-            return next(filter(lambda x: x is not None, caption))
+            return next(x for x in caption if x is not None)
         except StopIteration:
-            raise NoDataException('登录奖励标题')
+            raise NoDataException('logincampaign caption')
     
     # 登录奖励默认服务器
-    @property
-    def server(self) -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
+    @staticmethod
+    def server(info: 'LoginCampaignInfo') -> 'ServerName':
         '''登录奖励默认服务器'''
-        info = self.__info
-        # 获取 startAt 数据
-        if (published_at := info.get('publishedAt', None)) is None:
-            raise NoDataException('登录奖励起始时间')
-        # 根据 startAt 数据判断服务器
+        # 获取 publishedAt 数据
+        published_at = info['publishedAt']
+        # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
         elif published_at[2] is not None: return 'tw'
         elif published_at[3] is not None: return 'cn'
         elif published_at[4] is not None: return 'kr'
         else:
-            raise NoDataException('登录奖励所在服务器')
+            raise NoDataException('logincampaign server')
     
     # 获取登录奖励信息
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> 'LoginCampaignInfo':
         '''获取登录奖励信息
 
         返回:
-            Dict[str, Any]: 登录奖励详细信息
+            LoginCampaignInfo: 登录奖励详细信息
         '''
         try:
             response = Api(
                 API['loginCampaigns']['info'].format(id=self.id)
-            ).get()
+            ).get(
+                cookies=self.__me.__get_cookies__() if self.__me else None,
+            )
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
-                raise LoginCampaignNotExistError(self.id)
+                raise NotExistException(f'LoginCampaign {self.id}')
             raise exception
         
-        self.__info = dict(response.json())
-        return self.__info
-    
-    # 异步获取登录奖励信息
-    async def get_info_async(self) -> Dict[str, Any]:
-        '''获取登录奖励信息
+        self.__info = response.json()
+        return self.info
 
-        返回:
-            Dict[str, Any]: 登录奖励详细信息
-        '''
-        try:
-            response = await Api(
-                API['loginCampaigns']['info'].format(id=self.id)
-            ).aget()
-        except HTTPStatusError as exception:
-            if exception.response.status_code == 404:
-                raise LoginCampaignNotExistError(self.id)
-            raise exception
-        except ClientResponseError as exception:
-            if exception.status == 404:
-                raise LoginCampaignNotExistError(self.id)
-            raise exception
-        
-        if isinstance(response, Response):
-            self.__info = dict(response.json())
-        else:
-            self.__info = dict(await response.json())
-        return self.__info
-    
-    # 获取缓存信息
-    def __get_info_cache(self) -> Dict[str, Any]:
-        '''获取缓存信息
-
-        返回:
-            Dict[str, Any]: 缓存信息
-        '''
+    def __get_info__(self) -> 'LoginCampaignInfo':
         if not self.__info:
             return self.get_info()
         return self.__info
     
-    # 异步获取缓存信息
-    async def __get_info_cache_async(self) -> Dict[str, Any]:
-        '''获取缓存信息
+    # 异步获取登录奖励信息
+    async def get_info_async(self) -> 'LoginCampaignInfo':
+        '''获取登录奖励信息
 
         返回:
-            Dict[str, Any]: 缓存信息
+            LoginCampaignInfo: 登录奖励详细信息
         '''
+        try:
+            response = await Api(
+                API['loginCampaigns']['info'].format(id=self.id)
+            ).aget(
+                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+            )
+        except HTTPStatusError as exception:
+            if exception.response.status_code == 404:
+                raise NotExistException(f'LoginCampaign {self.id}')
+            raise exception
+        
+        self.__info = response.json()
+        return self.info
+    
+    async def __get_info_async__(self) -> 'LoginCampaignInfo':
         if not self.__info:
             return await self.get_info_async()
         return self.__info
@@ -168,8 +227,8 @@ class LoginCampaign:
         self,
         limit: int=20,
         offset: int=0,
-        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> Dict[str, Any]:
+        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC',
+    ) -> 'PostList':
         '''获取登录奖励评论
 
         参数:
@@ -178,21 +237,22 @@ class LoginCampaign:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            Dict[str, Any]: 搜索结果
+            PostList: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的评论
+                    "posts": ... # List[PostListPost] 列举出的评论
                 }
                 ```
         '''
-        return get_list(
+        return post.get_list(
             category_name='LOGINCAMPAIGN_COMMENT',
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 异步获取登录奖励评论
@@ -200,8 +260,8 @@ class LoginCampaign:
         self,
         limit: int=20,
         offset: int=0,
-        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> Dict[str, Any]:
+        order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC',
+    ) -> 'PostList':
         '''获取登录奖励评论
 
         参数:
@@ -210,69 +270,72 @@ class LoginCampaign:
             order (Literal[&#39;TIME_DESC&#39;, &#39;TIME_ASC&#39;], optional): 排序顺序，默认时间顺序
 
         返回:
-            Dict[str, Any]: 搜索结果
+            PostList: 搜索结果
                 ```python
                 {
                     "result": ... # bool 是否有响应
                     "count": ... # int 搜索到的评论总数
-                    "posts": ... # List[Dict[str, Any]] 列举出的评论
+                    "posts": ... # List[PostListPost] 列举出的评论
                 }
                 ```
         '''
-        return await get_list_async(
+        return await post.get_list_async(
             category_name='LOGINCAMPAIGN_COMMENT',
             category_id=str(self.id),
             order=order,
             limit=limit,
-            offset=offset
+            offset=offset,
+            me=self.__me,
         )
     
     # 获取登录奖励背景图图像
-    def get_background(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
+    def get_background(self, server: 'ServerName') -> bytes:
         '''获取登录奖励背景图图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
+            server (ServerName): 指定服务器
 
         返回:
             bytes: 登录奖励背景图图像字节数据 `bytes`
         '''
+        info = self.__get_info__()
         # 获取登录奖励数据包名称
-        info = self.__get_info_cache()
-        if (asset_bundle_name := info.get('assetBundleName', None)) is None:
-            raise ValueError('无法获取登录奖励数据包名称。')
+        asset_bundle_name = info['assetBundleName']
         # 判断服务器
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if asset_bundle_name[index] is None:
-            raise ServerNotAvailableError(f'登录奖励 {self.name}', server)
-        return Assets(
-            ASSETS['event']['loginbouns'].format(
-                asset_bundle_name=asset_bundle_name[index]
-            ), server
-        ).get()
+            raise ServerNotAvailableError(f'LoginCampaign \'{self.name(info)}\'', server)
+        return Api(
+            API['event']['loginbouns'].format(
+                server=server, asset_bundle_name=asset_bundle_name[index]
+            )
+        ).get(
+            cookies=self.__me.__get_cookies__() if self.__me else None,
+        ).content
     
     # 异步获取登录奖励背景图图像
-    async def get_background_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> bytes:
+    async def get_background_async(self, server: 'ServerName') -> bytes:
         '''获取登录奖励背景图图像
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
+            server (ServerName): 指定服务器
 
         返回:
             bytes: 登录奖励背景图图像字节数据 `bytes`
         '''
+        info = await self.__get_info_async__()
         # 获取登录奖励数据包名称
-        info = await self.__get_info_cache_async()
-        if (asset_bundle_name := info.get('assetBundleName', None)) is None:
-            raise ValueError('无法获取登录奖励数据包名称。')
+        asset_bundle_name = info['assetBundleName']
         # 判断服务器
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if asset_bundle_name[index] is None:
-            raise ServerNotAvailableError(f'登录奖励 {self.name}', server)
-        return await Assets(
-            ASSETS['event']['loginbouns'].format(
-                asset_bundle_name=asset_bundle_name[index]
-            ), server
-        ).aget()
+            raise ServerNotAvailableError(f'LoginCampaign \'{self.name(info)}\'', server)
+        return (await Api(
+            API['event']['loginbouns'].format(
+                server=server, asset_bundle_name=asset_bundle_name[index]
+            )
+        ).aget(
+            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
+        )).content

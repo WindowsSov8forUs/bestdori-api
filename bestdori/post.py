@@ -91,7 +91,6 @@ def get_list(
             ```
     '''
     ...
-
 # 搜索用户帖子
 @overload
 def get_list(
@@ -120,7 +119,6 @@ def get_list(
             ```
     '''
     ...
-
 # 搜索帖子
 @overload
 def get_list(
@@ -210,7 +208,6 @@ async def get_list_async(
             ```
     '''
     ...
-
 # 异步搜索用户帖子
 @overload
 async def get_list_async(
@@ -239,7 +236,6 @@ async def get_list_async(
             ```
     '''
     ...
-
 # 异步搜索帖子
 @overload
 async def get_list_async(
@@ -397,7 +393,6 @@ def post(
         int: 谱面 ID
     '''
     ...
-
 # 发表文本帖子
 @overload
 def post(
@@ -423,7 +418,6 @@ def post(
         int: 帖子 ID
     '''
     ...
-
 # 发表帖子
 @overload
 def post(
@@ -522,7 +516,6 @@ async def post_async(
         int: 谱面 ID
     '''
     ...
-
 # 异步发表文本帖子
 @overload
 async def post_async(
@@ -548,7 +541,6 @@ async def post_async(
         int: 帖子 ID
     '''
     ...
-
 # 异步发表帖子
 @overload
 async def post_async(
