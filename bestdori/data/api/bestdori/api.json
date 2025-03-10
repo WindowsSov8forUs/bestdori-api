@@ -50,6 +50,10 @@
         "info": "/api/loginCampaigns/{id}.json",
         "all": "/api/loginCampaigns/all.{index}.json"
     },
+    "missions": {
+        "info": "/api/missions/{id}.json",
+        "all": "/api/missions/all.{index}.json"
+    },
     "bands": {
         "all": "/api/bands/all.{index}.json",
         "main": "/api/bands/main.{index}.json"
@@ -61,7 +65,8 @@
         "status": "/api/upload/status/{hash}"
     },
     "misc": {
-        "llsif": "/api/misc/llsif.{index}.json"
+        "llsif": "/api/misc/llsif.{index}.json",
+        "rates": "/api/misc/rates.json"
     },
     "player": {
         "info": "/api/player/{server}/{id}"

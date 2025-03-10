@@ -485,6 +485,33 @@ class MiracleTicketEnchangeInfo(TypedDict):
 
 MiracleTicketEnchangesAll5: TypeAlias = Dict[str, MiracleTicketEnchangeInfo]
 
+class MissionsAll5Info(TypedDict):
+    type: str
+    startAt: List[Optional[str]]
+    endAt: List[Optional[str]]
+    title: List[Optional[str]]
+
+MissionsAll5: TypeAlias = Dict[str, MissionsAll5Info]
+
+class MissionDetailReward(TypedDict):
+    missionId: NotRequired[int]
+    seq: NotRequired[int]
+    missionRewardId: NotRequired[int]
+    resourceType: str
+    resourceId: int
+    quantity: int
+
+class MissionDetail(TypedDict):
+    seq: int
+    title: str
+    description: str
+    maxProgress: int
+    reward: MissionDetailReward
+
+class MissionInfo(MissionsAll5Info):
+    '''任务信息'''
+    details: List[Optional[List[MissionDetail]]]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']
