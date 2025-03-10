@@ -476,6 +476,15 @@ class LoginCampaignInfo(LoginCampaignsAll5Info):
     assetMap: List[Any]
     details: List[Optional[List[LoginCampaignDetail]]]
 
+class MiracleTicketEnchangeInfo(TypedDict):
+    '''自选券兑换信息'''
+    name: List[Optional[str]]
+    ids: List[Optional[List[int]]]
+    exchangeStartAt: List[Optional[str]]
+    exchangeEndAt: List[Optional[str]]
+
+MiracleTicketEnchangesAll5: TypeAlias = Dict[str, MiracleTicketEnchangeInfo]
+
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
     type: Literal['custom']

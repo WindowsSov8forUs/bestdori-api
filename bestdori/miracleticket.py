@@ -1,49 +1,57 @@
 '''`bestdori.miracleticket`
 
 BanG Dream! 自选券相关操作'''
-from typing import Any, Dict, List, Literal
+from typing import TYPE_CHECKING, List, Literal, Optional
 
-from httpx import Response
-
-from .utils.utils import API
+from .user import Me
+from .utils import get_api
 from .utils.network import Api
 from .exceptions import (
     NoDataException,
+    NotExistException,
     ServerNotAvailableError,
-    MiracleTicketExchangeNotExistError
 )
 
+if TYPE_CHECKING:
+    from .typing import (
+        ServerName,
+        MiracleTicketEnchangeInfo,
+        MiracleTicketEnchangesAll5,
+    )
+
+API = get_api('bestdori.api')
+
 # 获取总自选券信息
-def get_all(index: Literal[5]=5) -> Dict[str, Dict[str, Any]]:
+def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketEnchangesAll5':
     '''获取总自选券信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
-            `5`: 获取所有已有自选券信息 `all.5.json`
 
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总自选券信息
+        MiracleTicketEnchangesAll5: 所有已有自选券信息 `all.5.json`
     '''
     return Api(
         API['all']['miracleTicketExchanges'].format(index=index)
-    ).get().json()
+    ).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
 
 # 异步获取总自选券信息
-async def get_all_async(index: Literal[5]=5) -> Dict[str, Dict[str, Any]]:
+async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketEnchangesAll5':
     '''获取总自选券信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
-            `5`: 获取所有已有自选券信息 `all.5.json`
 
     返回:
-        Dict[str, Dict[str, Any]]: 获取到的总自选券信息
+        MiracleTicketEnchangesAll5: 所有已有自选券信息 `all.5.json`
     '''
-    response = await Api(
+    return (await Api(
         API['all']['miracleTicketExchanges'].format(index=index)
-    ).aget()
-    if isinstance(response, Response): return response.json()
-    return await response.json()
+    ).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 自选券类
 class MiracleTicketExchange:
@@ -53,7 +61,7 @@ class MiracleTicketExchange:
         id (int): 自选券 ID
     '''
     # 初始化
-    def __init__(self, id: int) -> None:
+    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
         '''自选券类
 
         参数:
@@ -61,32 +69,37 @@ class MiracleTicketExchange:
         '''
         self.id: int = id
         '''自选券 ID'''
-        self.__info: Dict[str, Any] = {}
+        self.__info: Optional[MiracleTicketEnchangeInfo] = None
         '''自选券信息'''
+
+        self.__me = me
         return
     
-    # 自选券标题
     @property
-    def name(self) -> str:
-        '''自选券标题'''
-        info = self.__info
-        # 获取 eventName 数据
-        if (name := info.get('name', None)) is None:
-            raise NoDataException('自选券标题')
+    def info(self) -> 'MiracleTicketEnchangeInfo':
+        '''自选券信息'''
+        if self.__info is None:
+            raise RuntimeError(f'Miracle ticket \'{self.id}\' info were not retrieved.')
+        return self.__info
+    
+    # 提取自选券标题
+    @staticmethod
+    def name(info: 'MiracleTicketEnchangeInfo') -> str:
+        '''提取自选券标题'''
+        # 获取 name 数据
+        name = info['name']
         # 获取第一个非 None 自选券标题
         try:
-            return next(filter(lambda x: x is not None, name))
+            return next(x for x in name if x is not None)
         except StopIteration:
-            raise NoDataException('自选券标题')
+            raise NoDataException('miracle ticket name')
     
-    # 自选券默认服务器
-    @property
-    def server(self) -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
-        '''自选券默认服务器'''
-        info = self.__info
+    # 提取自选券默认服务器
+    @staticmethod
+    def server(info: 'MiracleTicketEnchangeInfo') -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
+        '''提取自选券默认服务器'''
         # 获取 ids 数据
-        if (ids := info.get('ids', None)) is None:
-            raise NoDataException('自选券 ID 列表')
+        ids = info['ids']
         # 根据 ids 数据判断服务器
         if ids[0] is not None: return 'jp'
         elif ids[1] is not None: return 'en'
@@ -94,94 +107,82 @@ class MiracleTicketExchange:
         elif ids[3] is not None: return 'cn'
         elif ids[4] is not None: return 'kr'
         else:
-            raise NoDataException('自选券所在服务器')
+            raise NoDataException('miracle ticket server')
     
     # 获取自选券信息
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> 'MiracleTicketEnchangeInfo':
         '''获取自选券信息
 
         返回:
-            Dict[str, Any]: 自选券详细信息
+            MiracleTicketEnchangeInfo: 自选券详细信息
         '''
-        _all = get_all(5)
+        _all = get_all(5, me=self.__me)
         if not self.id in _all.keys():
-            raise MiracleTicketExchangeNotExistError(self.id)
+            raise NotExistException(f'Miracle ticket {self.id}')
         self.__info = _all[str(self.id)]
-        return self.__info
+        return self.info
+    
+    def __get_info__(self) -> 'MiracleTicketEnchangeInfo':
+        if self.__info is None:
+            return self.get_info()
+        return self.info
     
     # 异步获取自选券信息
-    async def get_info_async(self) -> Dict[str, Any]:
+    async def get_info_async(self) -> 'MiracleTicketEnchangeInfo':
         '''获取自选券信息
 
         返回:
-            Dict[str, Any]: 自选券详细信息
+            MiracleTicketEnchangeInfo: 自选券详细信息
         '''
-        _all = await get_all_async(5)
+        _all = await get_all_async(5, me=self.__me)
         if not self.id in _all.keys():
-            raise MiracleTicketExchangeNotExistError(self.id)
+            raise NotExistException(f'Miracle ticket {self.id}')
         self.__info = _all[str(self.id)]
-        return self.__info
+        return self.info
     
-    # 获取缓存信息
-    def __get_info_cache(self) -> Dict[str, Any]:
-        '''获取缓存信息
-
-        返回:
-            Dict[str, Any]: 缓存信息
-        '''
-        if not self.__info:
-            return self.get_info()
-        return self.__info
-    
-    # 异步获取缓存信息
-    async def __get_info_cache_async(self) -> Dict[str, Any]:
-        '''获取缓存信息
-
-        返回:
-            Dict[str, Any]: 缓存信息
-        '''
-        if not self.__info:
+    async def __get_info_async__(self) -> 'MiracleTicketEnchangeInfo':
+        if self.__info is None:
             return await self.get_info_async()
-        return self.__info
+        return self.info
     
     # 获取自选券 ID 列表
-    def get_ids(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> List[int]:
+    def get_ids(self, server: 'ServerName') -> List[int]:
         '''获取自选券 ID 列表
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
+            server (ServerName): 指定服务器
 
         返回:
             List[int]: 自选券 ID 列表
         '''
-        info = self.__get_info_cache()
+        info = self.__get_info__()
         # 获取 ids 数据
-        if (ids := info.get('ids', None)) is None:
-            raise NoDataException('自选券 ID 列表')
+        ids = info['ids']
         # 判断服务器
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
-        if ids[index] is None:
-            raise ServerNotAvailableError(f'活动 {self.name}', server)
-        return ids[index]
+        id_list = ids[index]
+        if id_list is None:
+            raise ServerNotAvailableError(f'Miracle ticket {self.name(info)}', server)
+        return id_list
     
     # 异步获取自选券 ID 列表
-    async def get_ids_async(self, server: Literal['jp', 'en', 'tw', 'cn', 'kr']) -> List[int]:
+    async def get_ids_async(self, server: 'ServerName') -> List[int]:
         '''获取自选券 ID 列表
 
         参数:
-            server (Literal[&#39;jp&#39;, &#39;en&#39;, &#39;tw&#39;, &#39;cn&#39;, &#39;kr&#39;]): 指定服务器
+            server (ServerName): 指定服务器
 
         返回:
             List[int]: 自选券 ID 列表
         '''
-        info = await self.__get_info_cache_async()
+        info = await self.__get_info_async__()
         # 获取 ids 数据
-        if (ids := info.get('ids', None)) is None:
-            raise NoDataException('自选券 ID 列表')
+        ids = info['ids']
         # 判断服务器
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
-        if ids[index] is None:
-            raise ServerNotAvailableError(f'活动 {self.name}', server)
-        return ids[index]
+        id_list = ids[index]
+        if id_list is None:
+            raise ServerNotAvailableError(f'Miracle ticket {self.name(info)}', server)
+        return id_list
