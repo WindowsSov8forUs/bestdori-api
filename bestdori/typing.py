@@ -30,6 +30,8 @@ Difficulty: TypeAlias = Literal[0, 1, 2, 3, 4]
 
 `4`: Special
 '''
+DifficultyName: TypeAlias = Literal['easy', 'normal', 'hard', 'expert', 'special']
+'''难度名称'''
 
 class NoneDict(TypedDict):
     '''空字典'''
@@ -511,6 +513,174 @@ class MissionDetail(TypedDict):
 class MissionInfo(MissionsAll5Info):
     '''任务信息'''
     details: List[Optional[List[MissionDetail]]]
+
+class PlayerDataProfileMainDeckUserSituationsEntireUserAppendParameter(TypedDict):
+    userId: str
+    situationId: int
+    performance: int
+    technique: int
+    visual: int
+    characterPotentialPerformance: int
+    characterPotentialTechnique: int
+    characterPotentialVisual: int
+    characterBonusPerformance: int
+    characterBonusTechnique: int
+    characterBonusVisual: int
+
+class PlayerDataProfileMainDeckUserSituationsEntire(TypedDict):
+    userId: str
+    situationId: int
+    level: int
+    exp: int
+    createdAt: str
+    addExp: int
+    trainingStatus: str
+    duplicateCount: int
+    illust: str
+    skillExp: int
+    skillLevel: int
+    userAppendParameter: PlayerDataProfileMainDeckUserSituationsEntireUserAppendParameter
+    limitBreakRank: int
+
+class PlayerDataProfileMainDeckUserSituations(TypedDict):
+    entires: List[PlayerDataProfileMainDeckUserSituationsEntire]
+
+class PlayerDataProfileEnabledUserAreaItemsEntire(TypedDict):
+    userId: str
+    areaItemId: int
+    areaItemCategory: int
+    level: int
+
+class PlayerDataProfileEnabledUserAreaItems(TypedDict):
+    entires: List[PlayerDataProfileEnabledUserAreaItemsEntire]
+
+class PlayerDataProfileBandRankMap(TypedDict):
+    entires: Dict[str, int]
+
+class PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicListEntire(TypedDict):
+    musicId: int
+    difficulty: DifficultyName
+    rating: int
+
+class PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList(TypedDict):
+    entires: List[PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicListEntire]
+
+class PlayerDataProfileUserHighScoreRating(TypedDict, total=False):
+    userPoppinPartyHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userAfterglowHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userPastelPalettesHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userHelloHappyWorldHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userRoseliaHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userOtherHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userMorfonicaHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userRaiseASuilenHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+    userMyGOScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
+
+class PlayerDataProfileMainUserDeck(TypedDict):
+    deckId: int
+    deckName: str
+    leader: int
+    member1: int
+    member2: int
+    member3: int
+    member4: int
+    deckType: str
+
+class PlayerDataProfileUserProfileSituation(TypedDict):
+    userId: str
+    situationId: int
+    illust: str
+    viewProfileSituationStatus: str
+
+class PlayerDataProfileUserProfileDegreeMapEntire(TypedDict):
+    userId: str
+    profileDegreeType: str
+    degreeId: int
+
+class PlayerDataProfileUserProfileDegreeMap(TypedDict):
+    entires: Dict[str, PlayerDataProfileUserProfileDegreeMapEntire]
+
+class PlayerDataProfileUserTwitter(TypedDict):
+    twitterId: str
+    twitterName: str
+    screenName: str
+    url: str
+    profileImageUrl: str
+
+class PlayerDataProfileUserDeckTotalRatingMapEntire(TypedDict):
+    rank: str
+    score: int
+    level: int
+    lowerRating: int
+    upperRating: int
+
+class PlayerDataProfileUserDeckTotalRatingMap(TypedDict):
+    entires: Dict[str, PlayerDataProfileUserDeckTotalRatingMapEntire]
+
+class PlayerDataProfileStageChallengeAchievementConditionsMap(TypedDict):
+    entires: Dict[str, int]
+
+class PlayerDataProfileUserMusicClearInfoMapEntire(TypedDict):
+    clearedMusicCount: int
+    fullComboMusicCount: int
+    allPerfectMusicCount: int
+
+class PlayerDataProfileUserMusicClearInfoMap(TypedDict):
+    entires: Dict[DifficultyName, PlayerDataProfileUserMusicClearInfoMapEntire]
+
+class PlayerDataProfileUserCharacterRankMapEntire(TypedDict):
+    rank: int
+    exp: str
+    addExp: str
+    nextExp: str
+    totalExp: str
+    releasedPotentialLevel: str
+
+class PlayerDataProfileUserCharacterRankMap(TypedDict):
+    entires: Dict[str, PlayerDataProfileUserCharacterRankMapEntire]
+
+class PlayerDataProfile(TypedDict):
+    userId: str
+    userName: str
+    rank: int
+    degree: int
+    introduction: str
+    publishTotalDeckPowerFlg: bool
+    publishBandRankFlg: bool
+    publishMusicClearedFlg: bool
+    publishMusicFullComboFlg: bool
+    publishHighScoreRatingFlg: bool
+    publishUserIdFlg: bool
+    searchableFlg: bool
+    publishUpdatedAtFlg: bool
+    friendApplicableFlg: bool
+    publishMusicAllPerfectFlg: bool
+    publishDeckRankFlg: bool
+    publishStageChallengeAchievementConditionsFlg: bool
+    publishStageChallengeFriendRankingFlg: bool
+    publishCharacterRankFlg: bool
+    mainDeckUserSituations: PlayerDataProfileMainDeckUserSituations
+    enabledUserAreaItems: PlayerDataProfileEnabledUserAreaItems
+    bandRankMap: PlayerDataProfileBandRankMap
+    userHighScoreRating: PlayerDataProfileUserHighScoreRating
+    mainUserDeck: PlayerDataProfileMainUserDeck
+    userProfileSituation: PlayerDataProfileUserProfileSituation
+    userProfileDegreeMap: PlayerDataProfileUserProfileDegreeMap
+    userTwitter: PlayerDataProfileUserTwitter
+    userDeckTotalRatingMap: PlayerDataProfileUserDeckTotalRatingMap
+    stageChallengeAchievementConditionsMap: PlayerDataProfileStageChallengeAchievementConditionsMap
+    userMusicClearInfoMap: PlayerDataProfileUserMusicClearInfoMap
+    userCharacterRankMap: PlayerDataProfileUserCharacterRankMap
+
+class PlayerData(TypedDict):
+    cache: bool
+    time: float
+    profile: Optional[PlayerDataProfile]
+
+class PlayerInfo(TypedDict):
+    '''玩家信息'''
+    result: Literal[True]
+    data: PlayerData
 
 class PostSongCustom(TypedDict):
     '''帖子自定义歌曲信息'''
