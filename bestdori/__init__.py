@@ -19,16 +19,6 @@ from .miracleticket import MiracleTicketExchange
 from .comics import Comic
 from .missions import Mission
 
-from .utils.utils import (
-    API,
-    RES,
-    ASSETS
-)
-from .utils.network import (
-    Api,
-    Res,
-    Assets
-)
 from .exceptions import (
     RequestInvalidError,
     LoginRequiredError,
@@ -36,21 +26,8 @@ from .exceptions import (
     UserInvalidError,
     PostHasNoChartError,
     PostHasNoSongError,
-    SongNotExistError,
-    DiffNotExistError,
-    EventHasNoStampError,
     ServerNotAvailableError,
     AssetsNotExistError,
-    CharacterNotExistError,
-    CardNotExistError,
-    CostumeNotExistError,
-    EventNotExistError,
-    GachaNotExistError,
-    SongNotExistError,
-    LoginCampaignNotExistError,
-    MiracleTicketExchangeNotExistError,
-    ComicNotExistError,
-    MissionNotExistError
 )
 
 from . import (
@@ -90,33 +67,14 @@ __all__ = [
     'MiracleTicketExchange',
     'Comic',
     'Mission',
-    'API',
-    'RES',
-    'ASSETS',
-    'Api',
-    'Res',
-    'Assets',
     'RequestInvalidError',
     'LoginRequiredError',
     'CredentialsInvalidError',
     'UserInvalidError',
     'PostHasNoChartError',
     'PostHasNoSongError',
-    'SongNotExistError',
-    'DiffNotExistError',
-    'EventHasNoStampError',
     'ServerNotAvailableError',
     'AssetsNotExistError',
-    'CharacterNotExistError',
-    'CardNotExistError',
-    'CostumeNotExistError',
-    'EventNotExistError',
-    'GachaNotExistError',
-    'SongNotExistError',
-    'LoginCampaignNotExistError',
-    'MiracleTicketExchangeNotExistError',
-    'ComicNotExistError',
-    'MissionNotExistError',
     'user',
     'post',
     'charts',
