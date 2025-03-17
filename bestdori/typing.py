@@ -891,6 +891,38 @@ class SongInfo(SongsAll8Info):
     description: List[Optional[str]]
     difficulty: Dict[_DifficultyString, SongDifficulty]
 
+class StampInfo(TypedDict):
+    imageName: str
+
+StampsAll2: TypeAlias = Dict[str, StampInfo]
+
+class SkillsAll2Info(TypedDict):
+    simpleDescription: List[Optional[str]]
+
+SkillsAll2: TypeAlias = Dict[str, SkillsAll2Info]
+
+class SkillsAll5Info(SkillsAll2Info):
+    description: List[Optional[str]]
+    duration: List[float]
+
+SkillsAll5: TypeAlias = Dict[str, SkillsAll5Info]
+
+class SkillsAll10ActivationEffectTypesScore(TypedDict):
+    activateEffectValue: List[int]
+    activateEffectValueType: str
+    activateCondition: str
+
+class SkillsAll10ActivationEffectTypes(TypedDict):
+    score: SkillsAll10ActivationEffectTypesScore
+
+class SkillsAll10ActivationEffect(TypedDict):
+    activateEffectTypes: SkillsAll10ActivationEffectTypes
+
+class SkillsAll10Info(SkillsAll5Info):
+    activationEffect: SkillsAll10ActivationEffect
+
+SkillsAll10: TypeAlias = Dict[str, SkillsAll10Info]
+
 class LLSifDifficulty(TypedDict):
     live_setting_id: int
     difficulty: int
@@ -957,8 +989,3 @@ class UserMeInfo(TypedDict):
     titles: List[Title]
     email: str
     messageCount: int
-
-class StampInfo(TypedDict):
-    imageName: str
-
-StampsAll2: TypeAlias = Dict[str, StampInfo]
