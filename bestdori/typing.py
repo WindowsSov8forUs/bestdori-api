@@ -1,6 +1,19 @@
 
 from typing_extensions import NotRequired
-from typing import Any, Dict, List, Union, Literal, Optional, TypeAlias, TypedDict
+from typing import (
+    Any,
+    Dict,
+    List,
+    Union,
+    Generic,
+    Literal,
+    TypeVar,
+    Optional,
+    TypeAlias,
+    TypedDict,
+)
+
+_T = TypeVar('_T')
 
 Server: TypeAlias = Literal[0, 1, 2, 3, 4]
 '''服务器 ID
@@ -32,6 +45,7 @@ Difficulty: TypeAlias = Literal[0, 1, 2, 3, 4]
 '''
 DifficultyName: TypeAlias = Literal['easy', 'normal', 'hard', 'expert', 'special']
 '''难度名称'''
+_DifficultyString: TypeAlias = Literal['0', '1', '2', '3', '4']
 
 class NoneDict(TypedDict):
     '''空字典'''
@@ -772,6 +786,66 @@ class PostTagGetResult(TypedDict):
     result: Literal[True]
     tags: List[PostTagGetResultTag]
 
+_SongsMetaAll: TypeAlias = Dict[
+    str,
+    Dict[
+        _DifficultyString,
+        Dict[
+            _T,
+            List[float]
+        ]
+    ]
+]
+
+SongsMetaAll2 = _SongsMetaAll[Literal['7']]
+
+_SongsMetaAll5Field: TypeAlias = Literal[
+    '3', '4', '5', '6', '7', '8',
+    '3.5', '4.5', '5.5', '5.6', '5.7', '6.2', '6.4', '6.5', '6.8', '7.2', '7.5',
+]
+
+SongsMetaAll5 = _SongsMetaAll[_SongsMetaAll5Field]
+
+class SongsAll1Info(TypedDict):
+    musicTitle: List[Optional[str]]
+
+SongsAll1: TypeAlias = Dict[str, SongsAll1Info]
+
+class SongsAll5Difficulty(TypedDict):
+    playLevel: int
+    publishedAt: NotRequired[List[Optional[str]]]
+
+class SongsAll5Info(SongsAll1Info):
+    tag: str
+    bandId: int
+    jacketImage: List[str]
+    publishedAt: List[Optional[str]]
+    closedAt: List[Optional[str]]
+    difficulty: Dict[_DifficultyString, SongsAll5Difficulty]
+
+SongsAll5: TypeAlias = Dict[str, SongsAll5Info]
+
+class SongBPM(TypedDict):
+    bpm: float
+    start: float
+    end: float
+
+class SongsAll7Info(SongsAll5Info):
+    length: float
+    notes: Dict[_DifficultyString, int]
+    bpm: Dict[_DifficultyString, List[SongBPM]]
+
+SongsAll7: TypeAlias = Dict[str, SongsAll7Info]
+
+class SongsAll8Info(SongsAll7Info):
+    ruby: List[Optional[str]]
+    phonetic: List[Optional[str]]
+    lyricist: List[Optional[str]]
+    composer: List[Optional[str]]
+    arranger: List[Optional[str]]
+
+SongsAll8: TypeAlias = Dict[str, SongsAll8Info]
+
 class SongAchievement(TypedDict):
     musicId: int
     achievenemtType: str
@@ -801,34 +875,15 @@ class SongDifficulty(TypedDict):
     scoreSS: int
     publishedAt: NotRequired[List[Optional[str]]]
 
-class SongBPM(TypedDict):
-    bpm: float
-    start: float
-    end: float
-
-class SongInfo(TypedDict):
+class SongInfo(SongsAll8Info):
     '''歌曲信息'''
     bgmId: str
     bgmFile: str
-    tag: str
-    bandId: int
     achievements: List[SongAchievement]
-    jacketImage: List[str]
     seq: int
-    musicTitle: List[Optional[str]]
-    ruby: List[Optional[str]]
-    phonetic: List[Optional[str]]
-    lyricist: List[Optional[str]]
-    composer: List[Optional[str]]
-    arranger: List[Optional[str]]
     howToGet: List[Optional[str]]
-    publishedAt: List[Optional[str]]
-    closedAt: List[Optional[str]]
     description: List[Optional[str]]
-    difficulty: Dict[str, SongDifficulty]
-    length: float
-    notes: Dict[str, int]
-    bpm: Dict[str, List[SongBPM]]
+    difficulty: Dict[_DifficultyString, SongDifficulty]
 
 class LLSifDifficulty(TypedDict):
     live_setting_id: int
