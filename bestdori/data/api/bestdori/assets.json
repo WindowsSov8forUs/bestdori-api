@@ -17,7 +17,7 @@
     "thumb": {
         "chara": "/assets/{server}/thumb/chara/card{id:>05d}_rip/{resource_set_name}_{type}.png",
         "degree": "/assets/{server}/thumb/degree_rip/{degree_name}.png",
-        "costume": "/assets/{server}/thumb/costume/group{id}_rip/{asset_bundle_name}.png"
+        "costume": "/assets/{server}/thumb/costume/group{id:d}_rip/{asset_bundle_name}.png"
     },
     "stamp": {
         "get": "/assets/{server}/stamp/01_rip/{image_name}.png"
