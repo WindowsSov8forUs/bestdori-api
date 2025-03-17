@@ -5,7 +5,6 @@ from typing import (
     Dict,
     List,
     Union,
-    Generic,
     Literal,
     TypeVar,
     Optional,
@@ -50,6 +49,13 @@ _DifficultyString: TypeAlias = Literal['0', '1', '2', '3', '4']
 class NoneDict(TypedDict):
     '''空字典'''
     pass
+
+class BandsAll1Info(TypedDict):
+    bandName: List[Optional[str]]
+
+BandsAll1: TypeAlias = Dict[str, BandsAll1Info]
+
+BandsMain1: TypeAlias = BandsAll1
 
 CardRarity: TypeAlias = Literal[1, 2, 3, 4, 5]
 '''卡牌稀有度'''
