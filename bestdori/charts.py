@@ -4,11 +4,15 @@
 from copy import deepcopy
 from json import dumps, loads
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
+from .user import Me
 from .utils import get_api
 from .models.note import *
 from .utils.network import Api
+
+if TYPE_CHECKING:
+    from .typing import DifficultyName
 
 API = get_api('bestdori.api')
 
@@ -129,7 +133,7 @@ class Chart(List[Note]):
                 note.move(-offset)
         return standard_chart
     
-    def _flatten(self) -> List[Note]:
+    def __flatten__(self) -> List[Note]:
         '''将谱面扁平化处理'''
         flattened_chart = Chart([])
         for note in self:
@@ -161,7 +165,7 @@ class Chart(List[Note]):
         _prev_bpm_beat: float = 0
         
         # 谱面扁平化处理
-        _flattened_chart = self._flatten()
+        _flattened_chart = self.__flatten__()
         # 遍历谱面
         for note in _flattened_chart:
             # 谱面时长计算仅处理一般情况下会遇到的情况
@@ -279,18 +283,22 @@ class Chart(List[Note]):
     def get_chart(
         cls,
         id: int,
-        diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert'
+        diff: 'DifficultyName' = 'expert',
+        *,
+        me: Optional[Me] = None
     ) -> 'Chart':
         '''获取官方谱面
 
         参数:
             id (int): 谱面 ID
-            diff (Literal[&#39;easy&#39;, &#39;normal&#39;, &#39;hard&#39;, &#39;expert&#39;, &#39;special&#39;], optional): 难度名称
+            diff (DifficultyName, optional): 难度名称
 
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = Api(API['charts']['info'].format(id=id, diff=diff)).get()
+        response = Api(API['charts']['info'].format(id=id, diff=diff)).get(
+            cookies=me.__get_cookies__() if me else None,
+        )
         return cls(response.json()).standardize()
     
     # 异步获取官方谱面
@@ -298,18 +306,22 @@ class Chart(List[Note]):
     async def get_chart_async(
         cls,
         id: int,
-        diff: Literal['easy', 'normal', 'hard', 'expert', 'special']='expert'
+        diff: 'DifficultyName' = 'expert',
+        *,
+        me: Optional[Me] = None
     ) -> 'Chart':
         '''获取官方谱面
 
         参数:
             id (int): 谱面 ID
-            diff (Literal[&#39;easy&#39;, &#39;normal&#39;, &#39;hard&#39;, &#39;expert&#39;, &#39;special&#39;], optional): 难度名称
+            diff (DifficultyName, optional): 难度名称
 
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = await Api(API['charts']['info'].format(id=id, diff=diff)).aget()
+        response = await Api(API['charts']['info'].format(id=id, diff=diff)).aget(
+            cookies=await me.__get_cookies_async__() if me else None,
+        )
         return cls(response.json()).standardize()
     
     def copy(self) -> 'Chart':
