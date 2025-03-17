@@ -3,18 +3,11 @@
 乐队信息获取模块'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
-from . import post
 from .user import Me
-from .charts import Chart
 from .utils import get_api
 from .utils.network import Api
-from .exceptions import (
-    HTTPStatusError,
-    NoDataException,
-    NotExistException,
-)
 
 if TYPE_CHECKING:
     from .typing import (
