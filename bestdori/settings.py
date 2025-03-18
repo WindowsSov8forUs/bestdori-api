@@ -1,9 +1,6 @@
 '''`bestdori.settings` 设置项'''
 
-from typing import TYPE_CHECKING, Optional
-
-if TYPE_CHECKING:
-    from .user import Me
+from typing import Optional
 
 class AyachanSettings:
     '''`bestdori.ayachan` 设置类'''
