@@ -2,6 +2,7 @@
 
 谱面音符相关模块'''
 
+from typing_extensions import override
 from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Literal, Optional
 
@@ -100,6 +101,19 @@ class Slide(Note):
     '''滑条节点音符列表'''
     beat: float = 0
     '''音符所在节拍值'''
+
+    @override
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(
+            type='Slide',
+            beat=0,
+        )
+
+        self.connections = [
+            Connection(**connection) for connection in kwargs.get('connections', [])
+        ]
+
+        self.__post_init__()
     
     def __post_init__(self) -> None:
         self.beat = self.connections[0].beat

@@ -50,20 +50,35 @@ class Chart(List[Note]):
         参数:
             chart (List[Dict[str, Any]]): 原始谱面代码'''
         super().__init__()
-        for note in chart:
-            # 遍历分类添加
+        self._construct(chart)
+        return
+    
+    def _construct(self, data: List[Dict[str, Any]]) -> None:
+        for note in data:
+            if note.get('beat', None) is None:
+                raise ValueError('Missing required field `beat`.')
             if note['type'] in ['Long', 'Slide']:
+                if note.get('connections', None) is None:
+                    raise ValueError('Missing required field `connections` for `Slide` note.')
                 self.append(Slide(**note))
-            elif note['type'] == 'BPM':
+            if note.get('beat', None) is None:
+                raise ValueError('Missing required field `beat`.')
+            if note['type'] == 'BPM':
+                if note.get('bpm', None) is None:
+                    raise ValueError('Missing required field `bpm` for `BPM` note.')
                 self.append(BPM(**note))
-            elif note['type'] == 'Single':
+            if note.get('lane', None) is None:
+                raise ValueError('Missing required field `lane`.')
+            if note['type'] == 'Single':
                 self.append(Single(**note))
             elif note['type'] == 'Directional':
+                if note.get('width', None) is None:
+                    raise ValueError('Missing required field `width` for `Directional` note.')
+                elif note.get('direction', None) is None:
+                    raise ValueError('Missing required field `direction` for `Directional` note.')
                 self.append(Directional(**note))
             else:
-                # 删除其他音符
                 continue
-        return
     
     # 检查是否为 SP 谱面
     @property
