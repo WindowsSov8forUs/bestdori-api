@@ -19,6 +19,7 @@ from .client import (
     Request as Request,
     Response as Response,
     AsyncClient as AsyncClient,
+    FilesContent as FilesContent,
 )
 
 PREFIX = {
@@ -132,7 +133,7 @@ class Api:
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
-        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
+        files: Optional[FilesContent]=None,
     ) -> Request:
         '''构建请求体'''
         
@@ -222,7 +223,7 @@ class Api:
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
-        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
+        files: Optional[FilesContent]=None,
     ) -> Response:
         '''发送请求'''
         request = self._build_request(method, cookies=cookies, params=params, data=data, files=files)
@@ -239,7 +240,7 @@ class Api:
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
-        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
+        files: Optional[FilesContent]=None,
     ) -> Response:
         '''异步发送请求'''
         request = self._build_request(method, cookies=cookies, params=params, data=data, files=files)
@@ -288,7 +289,7 @@ class Api:
         *,
         cookies: Optional[SimpleCookie]=None,
         data: Optional[Any]=None,
-        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
+        files: Optional[FilesContent]=None,
     ) -> Response:
         '''发送 POST 请求
 
@@ -307,7 +308,7 @@ class Api:
         *,
         cookies: Optional[SimpleCookie]=None,
         data: Optional[Any]=None,
-        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
+        files: Optional[FilesContent]=None,
     ) -> Response:
         '''异步发送 POST 请求
 

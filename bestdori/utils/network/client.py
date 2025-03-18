@@ -6,9 +6,11 @@ from io import BufferedReader
 from multidict import CIMultiDict
 from abc import ABC, abstractmethod
 from http.cookies import SimpleCookie
-from typing import Any, Dict, Self, Tuple, Union, Optional
+from typing import Any, Dict, Self, Tuple, Union, Optional, TypeAlias
 
 from bestdori.exceptions import HTTPStatusError
+
+FilesContent: TypeAlias = Dict[str, Tuple[str, BufferedReader, Optional[str]]]
 
 class Request:
     '''HTTP 请求类'''
@@ -22,7 +24,7 @@ class Request:
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
-        files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
+        files: Optional[FilesContent]=None,
         json: Optional[Any]=None,
     ) -> None:
         self.method = method
