@@ -8,6 +8,7 @@ from bestdori.settings import settings
 from bestdori.exceptions import (
     REQUEST_EXCEPTION,
     RequestException,
+    SonolusException,
     NoContentTypeError,
     AssetsNotExistError,
     AyachanResponseError,
@@ -130,7 +131,7 @@ class Api:
         *,
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
-        data: Optional[Dict[str, Any]]=None,
+        data: Optional[Any]=None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
     ) -> Request:
         '''构建请求体'''
@@ -159,12 +160,19 @@ class Api:
         try:
             response.raise_for_status()
         except Exception as e:
-            # 对于 Ayachan 的 500 响应码抛出特殊的异常
-            if PREFIX['ayachan'] in self.url and response.status_code == 500:
+            # 对于 Ayachan 的 400/500 响应码抛出特殊的异常
+            if PREFIX['ayachan'] in self.url and response.status_code in (400, 500):
                 response_data: Dict[str, Any] = response.json()
                 raise AyachanResponseError(response_data.get('error', 'None'))
-            else:
-                raise e
+            
+            # 对于 Sonolus 的非 200 响应码抛出特殊的异常
+            elif PREFIX['sonolus'] in self.url and response.status_code != 200:
+                response_data: Dict[str, Any] = response.json()
+                raise SonolusException(
+                    f"code: {response_data.get('code', None)}, "
+                    f"description: {response_data.get('description', None)}, "
+                    f"detail: {response_data.get('detail', None)}"
+                )
         
         content_type = response.headers.get('Content-Type', None)
         if not content_type:
@@ -213,7 +221,7 @@ class Api:
         *,
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
-        data: Optional[Dict[str, Any]]=None,
+        data: Optional[Any]=None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
     ) -> Response:
         '''发送请求'''
@@ -230,7 +238,7 @@ class Api:
         *,
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
-        data: Optional[Dict[str, Any]]=None,
+        data: Optional[Any]=None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
     ) -> Response:
         '''异步发送请求'''
@@ -279,14 +287,14 @@ class Api:
         self,
         *,
         cookies: Optional[SimpleCookie]=None,
-        data: Optional[Dict[str, Any]]=None,
+        data: Optional[Any]=None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
     ) -> Response:
         '''发送 POST 请求
 
         参数:
             cookies (Optional[SimpleCookie], optional): Cookies
-            data (Optional[Dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
+            data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
             files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
@@ -298,14 +306,14 @@ class Api:
         self,
         *,
         cookies: Optional[SimpleCookie]=None,
-        data: Optional[Dict[str, Any]]=None,
+        data: Optional[Any]=None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
     ) -> Response:
         '''异步发送 POST 请求
 
         参数:
             cookies (Optional[SimpleCookie], optional): Cookies
-            data (Optional[Dict[str, Any]], optional): 调用参数，将以 `json` 字符串形式发送
+            data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
             files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
         返回:
