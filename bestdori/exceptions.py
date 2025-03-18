@@ -236,22 +236,4 @@ REQUEST_EXCEPTION: Dict[str, Type[RequestException]] = {
 }
 '''请求错误集合'''
 
-# Sonolus 相关错误
-class SonolusException(Exception):
-    '''Sonolus 相关错误'''
-    # 初始化
-    def __init__(self, msg: str) -> None:
-        super().__init__(msg)
-
-# Ayachan 相关错误
-class AyachanException(Exception):
-    '''Ayachan 相关错误'''
-    # 初始化
-    def __init__(self, msg: str) -> None:
-        super().__init__(msg)
-
-class AyachanResponseError(AyachanException):
-    '''Ayachan API 响应错误'''
-    # 初始化
-    def __init__(self, error: str) -> None:
-        super().__init__(error)
+from .ayachan.exceptions import *
