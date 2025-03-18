@@ -21,7 +21,7 @@ class Request:
         headers: Optional[CIMultiDict[str]]=None,
         cookies: Optional[SimpleCookie]=None,
         params: Optional[Dict[str, Any]]=None,
-        data: Optional[Dict[str, Any]]=None,
+        data: Optional[Any]=None,
         files: Optional[Dict[str, Tuple[str, BufferedReader]]]=None,
         json: Optional[Any]=None,
     ) -> None:
