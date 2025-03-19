@@ -27,3 +27,6 @@ async def get_version_async() -> 'Version':
         Version: API 版本信息
     '''
     return (await Api(API['version']['get']).aget()).json()
+
+from . import sonolus as sonolus
+from . import chartmetrics as chartmetrics
