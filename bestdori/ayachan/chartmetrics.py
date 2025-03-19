@@ -2,7 +2,7 @@
 
 Ayachan 谱面信息分析获取模块'''
 
-from typing import TYPE_CHECKING, Any, Dict, List, Union, Literal
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 from bestdori.charts import Chart
 from bestdori.utils import get_api
