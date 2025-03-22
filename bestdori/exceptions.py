@@ -235,5 +235,3 @@ REQUEST_EXCEPTION: Dict[str, Type[RequestException]] = {
     'POST_INVALID': PostInvalidError
 }
 '''请求错误集合'''
-
-from .ayachan.exceptions import *
