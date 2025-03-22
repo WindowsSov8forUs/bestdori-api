@@ -4,8 +4,8 @@ BanG Dream! 自选券相关操作'''
 from typing import TYPE_CHECKING, List, Literal, Optional
 
 from .user import Me
-from .utils import get_api
 from .utils.network import Api
+from .utils import name, get_api
 from .exceptions import (
     NoDataException,
     NotExistException,
@@ -82,24 +82,18 @@ class MiracleTicketExchange:
             raise RuntimeError(f'Miracle ticket \'{self.id}\' info were not retrieved.')
         return self.__info
     
-    # 提取自选券标题
-    @staticmethod
-    def name(info: 'MiracleTicketEnchangeInfo') -> str:
-        '''提取自选券标题'''
-        # 获取 name 数据
-        name = info['name']
-        # 获取第一个非 None 自选券标题
-        try:
-            return next(x for x in name if x is not None)
-        except StopIteration:
-            raise NoDataException('miracle ticket name')
+    # 自选券标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
+        '''自选券标题'''
+        return self.info['name']
     
     # 提取自选券默认服务器
-    @staticmethod
-    def server(info: 'MiracleTicketEnchangeInfo') -> Literal['jp', 'en', 'tw', 'cn', 'kr']:
+    @property
+    def __server__(self) -> 'ServerName':
         '''提取自选券默认服务器'''
         # 获取 ids 数据
-        ids = info['ids']
+        ids = self.info['ids']
         # 根据 ids 数据判断服务器
         if ids[0] is not None: return 'jp'
         elif ids[1] is not None: return 'en'
@@ -163,7 +157,7 @@ class MiracleTicketExchange:
         index = SERVERS.index(server)
         id_list = ids[index]
         if id_list is None:
-            raise ServerNotAvailableError(f'Miracle ticket {self.name(info)}', server)
+            raise ServerNotAvailableError(f'Miracle ticket {name(self)}', server)
         return id_list
     
     # 异步获取自选券 ID 列表
@@ -184,5 +178,5 @@ class MiracleTicketExchange:
         index = SERVERS.index(server)
         id_list = ids[index]
         if id_list is None:
-            raise ServerNotAvailableError(f'Miracle ticket {self.name(info)}', server)
+            raise ServerNotAvailableError(f'Miracle ticket {name(self)}', server)
         return id_list

@@ -113,24 +113,18 @@ class Mission:
             raise RuntimeError(f'Mission \'{self.id}\' info were not retrieved.')
         return self.__info
 
-    # 提取任务标题
-    @staticmethod
-    def title(info: 'MissionInfo') -> str:
+    # 任务标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
         '''任务标题'''
-        # 获取 title 数据
-        title = info['title']
-        # 获取第一个非 None 任务标题
-        try:
-            return next(x for x in title if x is not None)
-        except StopIteration:
-            raise NoDataException('mission title')
+        return self.info['title']
     
     # 提取任务所在默认服务器
-    @staticmethod
-    def server(info: 'MissionInfo') -> 'ServerName':
+    @property
+    def __server__(self) -> 'ServerName':
         '''任务所在默认服务器'''
         # 获取 startAt 数据
-        start_at = info['startAt']
+        start_at = self.info['startAt']
         # 根据 startAt 数据判断服务器
         if start_at[0] is not None: return 'jp'
         elif start_at[1] is not None: return 'en'

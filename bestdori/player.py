@@ -33,12 +33,12 @@ class Player:
         self.__me = me
     
     @property
-    def profile(self) -> PlayerDataProfile:
+    def profile(self) -> 'PlayerDataProfile':
         if self.__profile is None:
             raise RuntimeError(f'Player {self.id}\'s profile in server \'{self.server}\' were not retrieved.')
         return self.__profile
     
-    def get_profile(self, mode: Literal[0, 1, 2, 3] = 2) -> PlayerDataProfile:
+    def get_profile(self, mode: Literal[0, 1, 2, 3] = 2) -> 'PlayerDataProfile':
         '''获取玩家信息
         
         参数:
@@ -70,7 +70,7 @@ class Player:
         
         return self.profile
     
-    async def get_profile_async(self, mode: Literal[0, 1, 2, 3] = 2) -> PlayerDataProfile:
+    async def get_profile_async(self, mode: Literal[0, 1, 2, 3] = 2) -> 'PlayerDataProfile':
         '''获取玩家信息
         
         参数:

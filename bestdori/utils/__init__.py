@@ -2,9 +2,15 @@
 
 杂项模块'''
 from json import load
-from typing import Dict, Tuple
 from functools import lru_cache
 from importlib import resources
+from typing import Dict, List, Tuple, Optional, Protocol
+
+class _NamedObject(Protocol):
+    '''可获取 `__name__` 属性方法的类型'''
+
+    @property
+    def __name__(self) -> List[Optional[str]]: ...
 
 @lru_cache(maxsize=128)
 def get_api(*paths: str) -> Dict[str, Dict[str, str]]:
@@ -43,3 +49,15 @@ def hex_to_rgb(hex: str) -> Tuple[int, int, int]:
     if len(rgb) != 3:
         raise ValueError('Invalid hex color code')
     return rgb
+
+# 提取名称列表中第一个非空元素
+def name(obj: _NamedObject) -> str:
+    '''提取名称列表中第一个非空元素
+
+    参数:
+        obj (_NamedObject): 可获取 `__name__` 属性方法的对象
+
+    返回:
+        str: 名称
+    '''
+    return next(filter(None, obj.__name__))

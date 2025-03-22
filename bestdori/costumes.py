@@ -3,7 +3,7 @@
 BanG Dream! 服装相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, Union, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
 from .user import Me
@@ -115,47 +115,6 @@ class Costume:
             raise ValueError(f'Costume \'{self.id}\' info were not retrieved.')
         return self.__info
 
-    # 提取角色 ID
-    @staticmethod
-    def character_id(info: 'CostumeInfo') -> int:
-        '''提取角色 ID'''
-        return info['characterId']
-    
-    # 提取卡牌 ID
-    @staticmethod
-    def card_id(info: 'CostumeInfo') -> int:
-        '''提取卡牌 ID'''
-        # 获取 cards 数据
-        cards = info['cards']
-        if len(cards) <= 0:
-            raise NoDataException('Card ID')
-        return cards[0]
-    
-    # 提取服装标题
-    @staticmethod
-    def description(info: 'CostumeInfo') -> str:
-        '''提取服装标题'''
-        # 获取第一个非 None 服装标题
-        try:
-            return next(x for x in info['description'] if x is not None)
-        except StopIteration:
-            raise NoDataException('costume description')
-    
-    # 提取服装所在默认服务器
-    @staticmethod
-    def server(info: 'CostumeInfo') -> 'ServerName':
-        '''提取服装所在默认服务器'''
-        # 获取 publishedAt 数据
-        published_at = info['publishedAt']
-        # 根据 publishedAt 数据判断服务器
-        if published_at[0] is not None: return 'jp'
-        elif published_at[1] is not None: return 'en'
-        elif published_at[2] is not None: return 'tw'
-        elif published_at[3] is not None: return 'cn'
-        elif published_at[4] is not None: return 'kr'
-        else:
-            raise NoDataException('costume server')
-    
     # 获取服装信息
     def get_info(self) -> 'CostumeInfo':
         '''获取服装信息
@@ -203,6 +162,43 @@ class Costume:
         if self.__info is None:
             await self.get_info_async()
         return self.info
+    
+    # 提取角色 ID
+    @property
+    def __character_id__(self) -> int:
+        '''提取角色 ID'''
+        return self.info['characterId']
+    
+    # 提取卡牌 ID
+    @property
+    def __card_id__(self) -> int:
+        '''提取卡牌 ID'''
+        # 获取 cards 数据
+        cards = self.info['cards']
+        if len(cards) <= 0:
+            raise NoDataException('Card ID')
+        return cards[0]
+    
+    # 服装标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
+        '''服装标题'''
+        return self.info['description']
+    
+    # 服装所在默认服务器
+    @property
+    def __server__(self) -> 'ServerName':
+        '''服装所在默认服务器'''
+        # 获取 publishedAt 数据
+        published_at = self.info['publishedAt']
+        # 根据 publishedAt 数据判断服务器
+        if published_at[0] is not None: return 'jp'
+        elif published_at[1] is not None: return 'en'
+        elif published_at[2] is not None: return 'tw'
+        elif published_at[3] is not None: return 'cn'
+        elif published_at[4] is not None: return 'kr'
+        else:
+            raise NoDataException('costume server')
     
     # 获取服装评论
     def get_comment(
@@ -280,7 +276,7 @@ class Costume:
         info = self.__get_info__()
         return Api(
             ASSETS['characters']['livesd'].format(
-                server=self.server(info), sd_resource_name=info['sdResourceName']
+                server=self.__server__, sd_resource_name=info['sdResourceName']
             )
         ).get(
             cookies=self.__me.__get_cookies__() if self.__me else None,
@@ -296,7 +292,7 @@ class Costume:
         info = await self.__get_info_async__()
         return (await Api(
             ASSETS['characters']['livesd'].format(
-                server=self.server(info), sd_resource_name=info['sdResourceName']
+                server=self.__server__, sd_resource_name=info['sdResourceName']
             )
         ).aget(
             cookies=await self.__me.__get_cookies_async__() if self.__me else None,
@@ -315,13 +311,13 @@ class Costume:
         try:
             return Api(
                 ASSETS['live2d']['buildData'].format(
-                    server=self.server(info), asset_bundle_name=asset_bundle_name
+                    server=self.__server__, asset_bundle_name=asset_bundle_name
                 )
             ).get(
                 cookies=self.__me.__get_cookies__() if self.__me else None,
             ).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.server(info)}')
+            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.__server__}')
     
     # 异步获取服装模型数据
     async def get_build_data_async(self) -> bytes:
@@ -336,13 +332,13 @@ class Costume:
         try:
             return (await Api(
                 ASSETS['live2d']['buildData'].format(
-                    server=self.server(info), asset_bundle_name=asset_bundle_name
+                    server=self.__server__, asset_bundle_name=asset_bundle_name
                 )
             ).aget(
                 cookies=await self.__me.__get_cookies_async__() if self.__me else None,
             )).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.server(info)}')
+            raise AssetsNotExistError(f'costume build data {asset_bundle_name}-{self.__server__}')
     
     # 获取服装图标
     def get_icon(self) -> bytes:
@@ -357,13 +353,13 @@ class Costume:
         try:
             return Api(
                 ASSETS['thumb']['costume'].format(
-                    server=self.server(info), id=str(self.id // 50), asset_bundle_name=asset_bundle_name
+                    server=self.__server__, id=str(self.id // 50), asset_bundle_name=asset_bundle_name
                 )
             ).get(
                 cookies=self.__me.__get_cookies__() if self.__me else None,
             ).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.server(info)}')
+            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.__server__}')
     
     # 异步获取服装图标
     async def get_icon_async(self) -> bytes:
@@ -378,10 +374,10 @@ class Costume:
         try:
             return (await Api(
                 ASSETS['thumb']['costume'].format(
-                    server=self.server(info), id=str(self.id // 50), asset_bundle_name=asset_bundle_name
+                    server=self.__server__, id=str(self.id // 50), asset_bundle_name=asset_bundle_name
                 )
             ).aget(
                 cookies=await self.__me.__get_cookies_async__() if self.__me else None,
             )).content
         except AssetsNotExistError:
-            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.server(info)}')
+            raise AssetsNotExistError(f'costume icon {asset_bundle_name}-{self.__server__}')

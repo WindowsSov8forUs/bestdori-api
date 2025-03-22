@@ -3,12 +3,12 @@
 BanG Dream! 登录奖励相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, Union, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
 from .user import Me
-from .utils import get_api
 from .utils.network import Api
+from .utils import name, get_api
 from .exceptions import (
     HTTPStatusError,
     NoDataException,
@@ -143,24 +143,18 @@ class LoginCampaign:
             raise RuntimeError(f'LoginCampaign \'{self.id}\' info were not retrieved.')
         return self.__info
 
-    # 登录奖励标题
-    @staticmethod
-    def name(info: 'LoginCampaignInfo') -> str:
-        '''提取登录奖励标题'''
-        # 获取 caption 数据
-        caption = info['caption']
-        # 获取第一个非 None 登录奖励标题
-        try:
-            return next(x for x in caption if x is not None)
-        except StopIteration:
-            raise NoDataException('logincampaign caption')
+    # 奖励标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
+        '''登录奖励标题'''
+        return self.info['caption']
     
     # 登录奖励默认服务器
-    @staticmethod
-    def server(info: 'LoginCampaignInfo') -> 'ServerName':
+    @property
+    def __server__(self) -> 'ServerName':
         '''登录奖励默认服务器'''
         # 获取 publishedAt 数据
-        published_at = info['publishedAt']
+        published_at = self.info['publishedAt']
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -305,7 +299,7 @@ class LoginCampaign:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if asset_bundle_name[index] is None:
-            raise ServerNotAvailableError(f'LoginCampaign \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'LoginCampaign \'{name(self)}\'', server)
         return Api(
             API['event']['loginbouns'].format(
                 server=server, asset_bundle_name=asset_bundle_name[index]
@@ -331,7 +325,7 @@ class LoginCampaign:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if asset_bundle_name[index] is None:
-            raise ServerNotAvailableError(f'LoginCampaign \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'LoginCampaign \'{name(self)}\'', server)
         return (await Api(
             API['event']['loginbouns'].format(
                 server=server, asset_bundle_name=asset_bundle_name[index]

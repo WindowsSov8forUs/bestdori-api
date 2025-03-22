@@ -3,7 +3,7 @@
 BanG Dream! 卡牌相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, Union, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from .user import Me
 from .utils import get_api
@@ -277,36 +277,9 @@ class Card:
     def info(self) -> 'CardInfo':
         '''卡牌信息'''
         if self.__info is None:
-            raise ValueError(f'Cardd \'{self.id}\' info were not retrieved.')
+            raise ValueError(f'Card \'{self.id}\' info were not retrieved.')
         return self.__info
 
-    # 提取卡牌标题
-    @staticmethod
-    def prefix(info: 'CardInfo') -> str:
-        '''提取卡牌标题'''
-        # 获取 prefix 数据
-        prefix = info['prefix']
-        # 获取第一个非 None 卡牌标题
-        try:
-            return next(x for x in prefix if x is not None)
-        except StopIteration:
-            raise NoDataException('card prefix')
-    
-    # 提取卡牌所在默认服务器
-    @staticmethod
-    def server(info: 'CardInfo') -> ServerName:
-        '''提取卡牌所在默认服务器'''
-        # 获取 releasedAt 数据
-        released_at = info['releasedAt']
-        # 根据 releasedAt 数据判断服务器
-        if released_at[0] is not None: return 'jp'
-        elif released_at[1] is not None: return 'en'
-        elif released_at[2] is not None: return 'tw'
-        elif released_at[3] is not None: return 'cn'
-        elif released_at[4] is not None: return 'kr'
-        else:
-            raise NoDataException('card server')
-    
     # 获取卡牌信息
     def get_info(self) -> 'CardInfo':
         '''获取卡牌信息
@@ -358,6 +331,27 @@ class Card:
         if self.__info is None:
             self.__info = await self.get_info_async()
         return self.__info
+    
+    # 提取卡牌标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
+        '''提取卡牌标题'''
+        return self.info['prefix']
+    
+    # 提取卡牌所在默认服务器
+    @property
+    def __server__(self) -> ServerName:
+        '''提取卡牌所在默认服务器'''
+        # 获取 releasedAt 数据
+        released_at = self.info['releasedAt']
+        # 根据 releasedAt 数据判断服务器
+        if released_at[0] is not None: return 'jp'
+        elif released_at[1] is not None: return 'en'
+        elif released_at[2] is not None: return 'tw'
+        elif released_at[3] is not None: return 'cn'
+        elif released_at[4] is not None: return 'kr'
+        else:
+            raise NoDataException('card server')
     
     # 获取卡牌评论
     def get_comment(
@@ -438,7 +432,7 @@ class Card:
         info = self.__get_info__()
         return Api(
             ASSETS['characters']['resourceset'].format(
-                server=self.server(info),
+                server=self.__server__,
                 resource_set_name=info['resourceSetName'],
                 name='card',
                 type=type,
@@ -461,7 +455,7 @@ class Card:
         # 获取卡牌数据包名称
         return (await Api(
             ASSETS['characters']['resourceset'].format(
-                server=self.server(info),
+                server=self.__server__,
                 resource_set_name=info['resourceSetName'],
                 name='card',
                 type=type,
@@ -483,7 +477,7 @@ class Card:
         info = self.__get_info__()
         return Api(
             ASSETS['characters']['resourceset'].format(
-                server=self.server(info),
+                server=self.__server__,
                 resource_set_name=info['resourceSetName'],
                 name='trim',
                 type=type,
@@ -505,7 +499,7 @@ class Card:
         info = await self.__get_info_async__()
         return (await Api(
             ASSETS['characters']['resourceset'].format(
-                server=self.server(info),
+                server=self.__server__,
                 resource_set_name=info['resourceSetName'],
                 name='trim',
                 type=type,
@@ -527,7 +521,7 @@ class Card:
         info = self.__get_info__()
         return Api(
             ASSETS['thumb']['chara'].format(
-                server=self.server(info),
+                server=self.__server__,
                 id=self.id // 50,
                 resource_set_name=info['resourceSetName'],
                 type=type,
@@ -549,7 +543,7 @@ class Card:
         info = await self.__get_info_async__()
         return (await Api(
             ASSETS['thumb']['chara'].format(
-                server=self.server(info),
+                server=self.__server__,
                 id=self.id // 50,
                 resource_set_name=info['resourceSetName'],
                 type=type,
@@ -568,7 +562,7 @@ class Card:
         info = self.__get_info__()
         return Api(
             ASSETS['characters']['livesd'].format(
-                server=self.server(info),
+                server=self.__server__,
                 sd_resource_name=info['sdResourceName'],
             )
         ).get(
@@ -585,7 +579,7 @@ class Card:
         info = await self.__get_info_async__()
         return (await Api(
             ASSETS['characters']['livesd'].format(
-                server=self.server(info),
+                server=self.__server__,
                 sd_resource_name=info['sdResourceName'],
             )
         ).aget(

@@ -3,7 +3,7 @@
 BanG Dream! 角色相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Dict, Tuple, Union, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Tuple, Union, Literal, Optional
 
 from . import post
 from .user import Me
@@ -221,23 +221,17 @@ class Character:
         return self.__info
 
     # 角色名称
-    @staticmethod
-    def name(info: 'CharacterInfo') -> str:
+    @property
+    def __name__(self) -> List[Optional[str]]:
         '''角色名称'''
-        # 获取 characterName 数据
-        character_name = info.get('characterName')
-        # 获取第一个非 None 角色名称
-        try:
-            return next(x for x in character_name if x is not None)
-        except StopIteration:
-            raise NoDataException('character name')
+        return self.info['characterName']
     
-    # 提取角色代表色
-    @staticmethod
-    def color(info: 'CharacterInfo') -> Tuple[int, int, int]:
+    # 角色代表色
+    @property
+    def __color__(self) -> Tuple[int, int, int]:
         '''角色代表色'''
         # 获取 colorCode 数据
-        if (color_code := info.get('colorCode', None)) is None:
+        if (color_code := self.info.get('colorCode', None)) is None:
             raise NoDataException('character color code')
         # 将 colorCode 转换为颜色元组
         try:

@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
 from .user import Me
-from .utils import get_api
 from .utils.network import Api
+from .utils import name, get_api
 from .exceptions import (
     NoDataException,
     HTTPStatusError,
@@ -164,28 +164,18 @@ class Gacha:
             raise RuntimeError(f'Gacha \'{self.id}\' info were not retrieved.')
         return self.__info
     
-    # 提取招募标题
-    @staticmethod
-    def name(info: 'GachaInfo') -> str:
-        '''获取招募标题'''
-        # 获取 eventName 数据
-        gacha_name = info['gachaName']
-        # 获取第一个非 None 招募标题
-        try:
-            return next(x for x in gacha_name if x is not None)
-        except StopIteration:
-            raise NoDataException('gacha name')
+    # 招募标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
+        '''招募标题'''
+        return self.info['gachaName']
     
-    #提取招募默认服务器
-    @staticmethod
-    def server(info: 'GachaInfo') -> 'ServerName':
-        '''提取招募默认服务器
-
-        返回:
-            ServerName: 歌曲所在服务器
-        '''
+    #招募默认服务器
+    @property
+    def __server__(self) -> 'ServerName':
+        '''招募默认服务器'''
         # 获取 publishedAt 数据
-        published_at = info['publishedAt']
+        published_at = self.info['publishedAt']
         # 根据 publishedAt 数据判断服务器
         if published_at[0] is not None: return 'jp'
         elif published_at[1] is not None: return 'en'
@@ -334,7 +324,7 @@ class Gacha:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if published_at[index] is None:
-            raise ServerNotAvailableError(f'Gacha \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Gacha \'{name(self)}\'', server)
         return Api(
             ASSETS['homebanner']['get'].format(
                 server=server, banner_asset_bundle_name=banner_asset_bundle_name
@@ -362,7 +352,7 @@ class Gacha:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if published_at[index] is None:
-            raise ServerNotAvailableError(f'Gacha \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Gacha \'{name(self)}\'', server)
         return (await Api(
             ASSETS['homebanner']['get'].format(
                 server=server, banner_asset_bundle_name=banner_asset_bundle_name

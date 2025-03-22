@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 from . import post
 from .user import Me
 from .stamps import Stamp
-from .utils import get_api
 from .utils.network import Api
+from .utils import name, get_api
 from .eventtracker import EventTracker
 from .eventarchives import EventArchive
 from .festival import (
@@ -237,28 +237,18 @@ class Event:
             raise RuntimeError(f'Event \'{self.id}\' info were not retrieved.')
         return self.__info
 
-    # 提取活动标题
-    @staticmethod
-    def name(info: 'EventInfo') -> str:
-        '''提取活动标题'''
-        # 获取 eventName 数据
-        event_name = info['eventName']
-        # 获取第一个非 None 活动标题
-        try:
-            return next(x for x in event_name if x is not None)
-        except StopIteration:
-            raise NoDataException('event name')
+    # 活动标题
+    @property
+    def __name__(self) -> List[Optional[str]]:
+        '''活动标题'''
+        return self.info['eventName']
     
-    # 提取活动默认服务器
-    @staticmethod
-    def server(info: 'EventInfo') -> 'ServerName':
-        '''提取活动默认服务器
-
-        返回:
-            ServerName: 歌曲所在服务器
-        '''
+    # 活动默认服务器
+    @property
+    def __server__(self) -> 'ServerName':
+        '''活动默认服务器'''
         # 获取 startAt 数据
-        start_at = info['startAt']
+        start_at = self.info['startAt']
         # 根据 startAt 数据判断服务器
         if start_at[0] is not None: return 'jp'
         elif start_at[1] is not None: return 'en'
@@ -418,7 +408,7 @@ class Event:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if start_at[index] is None:
-            raise ServerNotAvailableError(f'Event \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Event \'{name(self)}\'', server)
         return Api(
             ASSETS['event']['banner'].format(
                 server=server, asset_bundle_name=asset_bundle_name
@@ -445,7 +435,7 @@ class Event:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if start_at[index] is None:
-            raise ServerNotAvailableError(f'Event \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Event \'{name(self)}\'', server)
         return (await Api(
             ASSETS['event']['banner'].format(
                 server=server, asset_bundle_name=asset_bundle_name
@@ -472,7 +462,7 @@ class Event:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if start_at[index] is None:
-            raise ServerNotAvailableError(f'Event \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Event \'{name(self)}\'', server)
         return Api(
             ASSETS['event']['logo'].format(
                 server=server, asset_bundle_name=asset_bundle_name
@@ -499,7 +489,7 @@ class Event:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if start_at[index] is None:
-            raise ServerNotAvailableError(f'Event \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Event \'{name(self)}\'', server)
         return (await Api(
             ASSETS['event']['logo'].format(
                 server=server, asset_bundle_name=asset_bundle_name
@@ -529,7 +519,7 @@ class Event:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if start_at[index] is None:
-            raise ServerNotAvailableError(f'Event \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Event \'{name(self)}\'', server)
         return Api(
             ASSETS['event']['topscreen'].format(
                 server=server, asset_bundle_name=asset_bundle_name, type=type
@@ -559,7 +549,7 @@ class Event:
         SERVERS = ['jp', 'en', 'tw', 'cn', 'kr']
         index = SERVERS.index(server)
         if start_at[index] is None:
-            raise ServerNotAvailableError(f'Event \'{self.name(info)}\'', server)
+            raise ServerNotAvailableError(f'Event \'{name(self)}\'', server)
         return (await Api(
             ASSETS['event']['topscreen'].format(
                 server=server, asset_bundle_name=asset_bundle_name, type=type
@@ -593,7 +583,7 @@ class Event:
             raise ValueError(f'Event {self.id} has no stamp reward.')
         # 获取贴纸资源
         stamp = Stamp(stamp_id)
-        return stamp.get_stamp(self.server(info))
+        return stamp.get_stamp(self.__server__)
     
     # 异步获取活动奖励稀有表情
     async def get_stamp_async(self) -> bytes:
@@ -620,7 +610,7 @@ class Event:
             raise ValueError(f'Event {self.id} has no stamp reward.')
         # 获取贴纸资源
         stamp = Stamp(stamp_id)
-        return await stamp.get_stamp_async(self.server(info))
+        return await stamp.get_stamp_async(self.__server__)
 
     # 获取最新 T10 排名分数线
     @overload
