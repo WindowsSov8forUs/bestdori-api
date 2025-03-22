@@ -2,6 +2,7 @@
 
 杂项模块'''
 
+import sys
 from json import load
 from functools import lru_cache
 from importlib import resources
@@ -18,7 +19,7 @@ def get_api(*paths: str) -> Dict[str, Dict[str, str]]:
     '''获取 API 字典
 
     参数:
-        *path (str): API 文件路径
+        *paths (str): API 文件路径
 
     返回:
         Dict[str, Dict[str, str]]: API 字典
@@ -33,8 +34,13 @@ def get_api(*paths: str) -> Dict[str, Dict[str, str]]:
         _path = "bestdori.data.api." + '.'.join(_paths[:-1])
     filename = _paths[-1] + '.json'
     
-    with resources.open_text(_path, filename) as f:
-        return load(f)
+    if sys.version_info < (3, 11):
+        with resources.open_text(_path, filename) as f:
+            return load(f)
+    else:
+        path = resources.files(_path).joinpath(filename)
+        with path.open('r') as f:
+            return load(f)
 
 # 将十六进制颜色代码转换为 RGB 元组
 def hex_to_rgb(hex: str) -> Tuple[int, int, int]:
