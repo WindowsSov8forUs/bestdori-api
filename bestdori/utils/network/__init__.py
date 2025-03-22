@@ -1,8 +1,7 @@
 
-from io import BufferedReader
 from multidict import CIMultiDict
-from http.cookies import SimpleCookie
-from typing import Any, Dict, Type, Tuple, Union, Literal, Optional, overload
+from http.cookiejar import CookieJar
+from typing import Any, Dict, Type, Union, Literal, Optional, overload
 
 from bestdori.settings import settings
 from bestdori.exceptions import (
@@ -130,7 +129,7 @@ class Api:
         self,
         method: Literal['GET', 'POST'],
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
         files: Optional[FilesContent]=None,
@@ -220,7 +219,7 @@ class Api:
         self,
         method: Literal['GET', 'POST'],
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
         files: Optional[FilesContent]=None,
@@ -237,7 +236,7 @@ class Api:
         self,
         method: Literal['GET', 'POST'],
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
         files: Optional[FilesContent]=None,
@@ -253,13 +252,13 @@ class Api:
     def get(
         self,
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         params: Optional[Dict[str, Any]]=None,
     ) -> Response:
         '''发送 GET 请求
 
         参数:
-            cookies (Optional[SimpleCookie], optional): Cookies
+            cookies (Optional[CookieJar], optional): Cookies
             params (Optional[Dict[str, Any]], optional): URL 参数
 
         返回:
@@ -270,13 +269,13 @@ class Api:
     async def aget(
         self,
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         params: Optional[Dict[str, Any]]=None,
     ) -> Response:
         '''异步发送 GET 请求
 
         参数:
-            cookies (Optional[SimpleCookie], optional): Cookies
+            cookies (Optional[CookieJar], optional): Cookies
             params (Optional[Dict[str, Any]], optional): 调用参数
 
         返回:
@@ -287,14 +286,14 @@ class Api:
     def post(
         self,
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         data: Optional[Any]=None,
         files: Optional[FilesContent]=None,
     ) -> Response:
         '''发送 POST 请求
 
         参数:
-            cookies (Optional[SimpleCookie], optional): Cookies
+            cookies (Optional[CookieJar], optional): Cookies
             data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
             files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
@@ -306,14 +305,14 @@ class Api:
     async def apost(
         self,
         *,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         data: Optional[Any]=None,
         files: Optional[FilesContent]=None,
     ) -> Response:
         '''异步发送 POST 请求
 
         参数:
-            cookies (Optional[SimpleCookie], optional): Cookies
+            cookies (Optional[CookieJar], optional): Cookies
             data (Optional[Any], optional): 调用参数，将以 `json` 字符串形式发送
             files (Optional[Dict[str, Tuple[str, BufferedReader]]], optional): 发送文件参数
 
