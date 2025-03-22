@@ -67,6 +67,8 @@ class Directional(Note):
 @dataclass
 class Connection(Note):
     '''滑条节点音符'''
+    type: Literal['Connection']
+    '''音符类型'''
     lane: float
     '''音符所在轨道'''
     hidden: bool = False
@@ -75,12 +77,17 @@ class Connection(Note):
     '''是否为 flick'''
     skill: bool = False
     '''是否为技能音符'''
-    type: Literal['Connection'] = 'Connection'
-    '''音符类型'''
     prev: Optional['Connection'] = None
     '''上一个音符'''
     next: Optional['Connection'] = None
     '''下一个音符'''
+
+    @override
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(
+            type='Connection',
+            **kwargs,
+        )
     
     @property
     def __dict__(self) -> Dict[str, Any]:
