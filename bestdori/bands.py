@@ -2,7 +2,6 @@
 
 乐队信息获取模块'''
 
-from typing_extensions import overload
 from typing import TYPE_CHECKING, Literal, Optional
 
 from .user import Me

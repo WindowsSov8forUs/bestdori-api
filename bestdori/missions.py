@@ -3,7 +3,7 @@
 BanG Dream! 任务相关操作'''
 
 from typing_extensions import overload
-from typing import TYPE_CHECKING, Any, Dict, List, Union, Literal, Optional
+from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
 from .user import Me
