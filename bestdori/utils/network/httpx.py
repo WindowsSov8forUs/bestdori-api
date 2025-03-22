@@ -54,7 +54,7 @@ class Client(_Client):
             str(request.url),
             params=request.params,
             headers=request.headers,
-            cookies=dict(request.cookies) if request.cookies else None, # type: ignore
+            cookies=request.cookies,
             data=cast(dict, dumps(request.data)) if request.data else None,
             files=request.files,
             json=request.json,
@@ -119,7 +119,7 @@ class AsyncClient(_AsyncClient):
             str(request.url),
             params=request.params,
             headers=request.headers,
-            cookies=dict(request.cookies) if request.cookies else None, # type: ignore
+            cookies=request.cookies,
             data=cast(dict, dumps(request.data)) if request.data else None,
             files=request.files,
             json=request.json,
