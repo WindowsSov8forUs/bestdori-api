@@ -61,12 +61,14 @@ class Chart(List[Note]):
                 if note.get('connections', None) is None:
                     raise ValueError('Missing required field `connections` for `Slide` note.')
                 self.append(Slide(**note))
+                continue
             if note.get('beat', None) is None:
                 raise ValueError('Missing required field `beat`.')
             if note['type'] == 'BPM':
                 if note.get('bpm', None) is None:
                     raise ValueError('Missing required field `bpm` for `BPM` note.')
                 self.append(BPM(**note))
+                continue
             if note.get('lane', None) is None:
                 raise ValueError('Missing required field `lane`.')
             if note['type'] == 'Single':
