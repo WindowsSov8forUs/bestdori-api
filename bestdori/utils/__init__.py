@@ -1,6 +1,7 @@
 '''`bestdori.utils`
 
 杂项模块'''
+
 from json import load
 from functools import lru_cache
 from importlib import resources
@@ -22,11 +23,15 @@ def get_api(*paths: str) -> Dict[str, Dict[str, str]]:
     返回:
         Dict[str, Dict[str, str]]: API 字典
     '''
-    if len(paths) == 1:
+    _paths = []
+    for path in paths:
+        _paths.extend(path.split('.'))
+    
+    if len(_paths) == 1:
         _path = "bestdori.data.api"
     else:
-        _path = "bestdori.data.api." + '.'.join(paths[:-1])
-    filename = paths[-1] + '.json'
+        _path = "bestdori.data.api." + '.'.join(_paths[:-1])
+    filename = _paths[-1] + '.json'
     
     with resources.open_text(_path, filename) as f:
         return load(f)
