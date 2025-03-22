@@ -18,7 +18,7 @@ API = get_api('bestdori.api')
 
 # 获取总歌曲 Meta 信息
 @overload
-def get_all(index: Literal[2], *, me: Optional[Me] = None) -> SongsMetaAll2:
+def get_all(index: Literal[2], *, me: Optional[Me] = None) -> 'SongsMetaAll2':
     '''获取总歌曲 Meta 信息
 
     参数:
@@ -29,7 +29,7 @@ def get_all(index: Literal[2], *, me: Optional[Me] = None) -> SongsMetaAll2:
     '''
     ...
 @overload
-def get_all(index: Literal[5], *, me: Optional[Me] = None) -> SongsMetaAll5:
+def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'SongsMetaAll5':
     '''获取总歌曲 Meta 信息
 
     参数:
@@ -40,14 +40,14 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> SongsMetaAll5:
     '''
     ...
 
-def get_all(index: Literal[2, 5]=5, *, me: Optional[Me] = None) -> Union[SongsMetaAll2, SongsMetaAll5]:
+def get_all(index: Literal[2, 5]=5, *, me: Optional[Me] = None) -> Union['SongsMetaAll2', 'SongsMetaAll5']:
     return Api(API['all']['meta'].format(index=index)).get(
         cookies=me.__get_cookies__() if me else None,
     ).json()
 
 # 异步获取总歌曲 Meta 信息
 @overload
-async def get_all_async(index: Literal[2], *, me: Optional[Me] = None) -> SongsMetaAll2:
+async def get_all_async(index: Literal[2], *, me: Optional[Me] = None) -> 'SongsMetaAll2':
     '''异步获取总歌曲 Meta 信息
 
     参数:
@@ -58,7 +58,7 @@ async def get_all_async(index: Literal[2], *, me: Optional[Me] = None) -> SongsM
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> SongsMetaAll5:
+async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'SongsMetaAll5':
     '''异步获取总歌曲 Meta 信息
 
     参数:
@@ -69,7 +69,7 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> SongsM
     '''
     ...
 
-async def get_all_async(index: Literal[2, 5]=5, *, me: Optional[Me] = None) -> Union[SongsMetaAll2, SongsMetaAll5]:
+async def get_all_async(index: Literal[2, 5]=5, *, me: Optional[Me] = None) -> Union['SongsMetaAll2', 'SongsMetaAll5']:
     return await Api(API['all']['meta'].format(index=index)).get(
         cookies=await me.__get_cookies_async__() if me else None,
     ).json()

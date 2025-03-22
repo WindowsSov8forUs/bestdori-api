@@ -430,7 +430,7 @@ def post(
     content: List[Content],
     diff: Optional[Literal[0, 1, 2, 3, 4]]=None,
     level: Optional[int]=None,
-    song: Optional[Union[PostSongCustom, PostSongProvided]]=None,
+    song: Optional[Union['PostSongCustom', 'PostSongProvided']]=None,
     tags: Optional[List['PostTag']]=None,
     title: Optional[str]=None
 ) -> int:

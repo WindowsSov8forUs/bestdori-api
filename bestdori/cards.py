@@ -340,7 +340,7 @@ class Card:
     
     # 提取卡牌所在默认服务器
     @property
-    def __server__(self) -> ServerName:
+    def __server__(self) -> 'ServerName':
         '''提取卡牌所在默认服务器'''
         # 获取 releasedAt 数据
         released_at = self.info['releasedAt']
@@ -359,7 +359,7 @@ class Card:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> PostList:
+    ) -> 'PostList':
         '''获取卡牌评论
 
         参数:
@@ -392,7 +392,7 @@ class Card:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> PostList:
+    ) -> 'PostList':
         '''获取卡牌评论
 
         参数:

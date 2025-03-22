@@ -28,7 +28,7 @@ API = get_api('bestdori.api')
 
 # 获取总任务信息
 @overload
-def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, NoneDict]:
+def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总任务信息
 
     参数:
@@ -39,7 +39,7 @@ def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, NoneDict
     '''
     ...
 @overload
-def get_all(index: Literal[5], *, me: Optional[Me] = None) -> MissionsAll5:
+def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'MissionsAll5':
     '''获取总任务信息
 
     参数:
@@ -50,14 +50,14 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> MissionsAll5:
     '''
     ...
 
-def get_all(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, NoneDict], MissionsAll5]:
+def get_all(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'MissionsAll5']:
     return Api(API['missions']['all'].format(index=index)).get(
         cookies=me.__get_cookies__() if me else None,
     ).json()
 
 # 异步获取总任务信息
 @overload
-async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, NoneDict]:
+async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
     '''获取总任务信息
 
     参数:
@@ -68,7 +68,7 @@ async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[s
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> MissionsAll5:
+async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'MissionsAll5':
     '''获取总任务信息
 
     参数:
@@ -79,7 +79,7 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> Missio
     '''
     ...
 
-async def get_all_async(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, NoneDict], MissionsAll5]:
+async def get_all_async(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'MissionsAll5']:
     return (await Api(API['missions']['all'].format(index=index)).aget(
         cookies=await me.__get_cookies_async__() if me else None,
     )).json()

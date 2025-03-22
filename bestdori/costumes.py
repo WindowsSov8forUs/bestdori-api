@@ -206,7 +206,7 @@ class Costume:
         limit: int=20,
         offset: int=0,
         order: Literal['TIME_DESC', 'TIME_ASC']='TIME_ASC'
-    ) -> PostList:
+    ) -> 'PostList':
         '''获取服装评论
 
         参数:
