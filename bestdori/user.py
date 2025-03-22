@@ -1,7 +1,7 @@
 '''`bestdori.user`
 
 BanG Dream! 歌曲相关操作'''
-from http.cookies import SimpleCookie
+from http.cookiejar import CookieJar
 from typing import TYPE_CHECKING, Literal, Optional
 
 from . import post
@@ -358,7 +358,7 @@ class Me(User):
         super().__init__(username)
         self.password: str = password
         '''密码'''
-        self.__cookies: Optional[SimpleCookie] = None
+        self.__cookies: Optional[CookieJar] = None
         '''用户 Cookies'''
         self.__me: Optional['UserMeInfo'] = None
         '''用户自我信息'''
@@ -366,7 +366,7 @@ class Me(User):
     
     # 用户 Cookies
     @property
-    def cookies(self) -> SimpleCookie:
+    def cookies(self) -> CookieJar:
         '''用户 Cookies'''
         if self.__cookies is None:
             raise ValueError(f'User {self.username} has not logged in.')
@@ -400,12 +400,12 @@ class Me(User):
         response = await Api(API['user']['me']).aget(cookies=self.cookies)
         self.__me = response.json()
     
-    def __get_cookies__(self) -> SimpleCookie:
+    def __get_cookies__(self) -> CookieJar:
         if self.__cookies is None:
             self.login()
         return self.cookies
     
-    async def __get_cookies_async__(self) -> SimpleCookie:
+    async def __get_cookies_async__(self) -> CookieJar:
         if self.__cookies is None:
             await self.login_async()
         return self.cookies
