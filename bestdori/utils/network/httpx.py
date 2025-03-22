@@ -126,16 +126,28 @@ class AsyncClient(_AsyncClient):
     @override
     async def request(self, request: Request) -> Response:
         '''异步发送请求并获取响应'''
-        _request = httpx.Request(
-            request.method,
-            str(request.url),
-            params=request.params,
-            headers=request.headers,
-            cookies=request.cookies,
-            data=cast(dict, dumps(request.data)) if request.data else None,
-            files=request.files,
-            json=request.json,
-        )
+        if __HTTPX_ABOVE_0_28_0__:
+            _request = httpx.Request(
+                request.method,
+                str(request.url),
+                params=request.params,
+                headers=request.headers,
+                cookies=request.cookies,
+                content=cast(dict, dumps(request.data)) if request.data else None,
+                files=request.files,
+                json=request.json,
+            )
+        else:
+            _request = httpx.Request(
+                request.method,
+                str(request.url),
+                params=request.params,
+                headers=request.headers,
+                cookies=request.cookies,
+                data=cast(dict, dumps(request.data)) if request.data else None,
+                files=request.files,
+                json=request.json,
+            )
         
         response = await self._async_client.send(_request)
         
