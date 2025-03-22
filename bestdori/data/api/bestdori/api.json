@@ -65,15 +65,15 @@
         "status": "/api/upload/status/{hash}"
     },
     "misc": {
-        "llsif": "/api/misc/llsif.{index}.json",
-        "rates": "/api/misc/rates.json"
+        "llsif": "/api/misc/llsif.{index}.json"
     },
     "player": {
         "info": "/api/player/{server}/{id}"
     },
     "tracker": {
         "eventtop": "/api/eventtop/data",
-        "eventtracker": "/api/tracker/data"
+        "eventtracker": "/api/tracker/data",
+        "rates": "/api/tracker/rates.json"
     },
     "all": {
         "skills": "/api/skills/all.{index}.json",

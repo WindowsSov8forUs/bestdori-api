@@ -393,6 +393,13 @@ class EventTopData(TypedDict):
     points: List[EventTopPoint]
     users: List[EventTopUser]
 
+class EventTrackerRate(TypedDict):
+    '''各服务器各活动种类各排名比率'''
+    type: str
+    server: Server
+    tier: int
+    rate: Optional[float]
+
 class EventTrackerCutoff(TypedDict):
     time: float
     ep: int

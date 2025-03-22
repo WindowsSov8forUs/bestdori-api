@@ -1,7 +1,7 @@
 '''`bestdori.eventtracker`
 
 BanG Dream! 活动 PT 与排名追踪器'''
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, List, Literal, Optional
 
 from .user import Me
 from .utils import get_api
@@ -10,9 +10,37 @@ from .utils.network import Api
 from .exceptions import HTTPStatusError, NotExistException
 
 if TYPE_CHECKING:
-    from .typing import Server, PostList, EventTopData, EventTrackerData
+    from .typing import (
+        Server,
+        PostList,
+        EventTopData,
+        EventTrackerData,
+        EventTrackerRate,
+    )
 
 API = get_api('bestdori.api')
+
+# 获取活动追踪比率列表
+def get_rates(*, me: Optional[Me] = None) -> List['EventTrackerRate']:
+    '''获取活动追踪比率列表
+
+    返回:
+        List[EventTrackerRate]: 活动追踪比率列表
+    '''
+    return Api(API['tracker']['rates']).get(
+        cookies=me.__get_cookies__() if me else None,
+    ).json()
+
+# 异步获取活动追踪比率列表
+async def get_rates_async(*, me: Optional[Me] = None) -> List['EventTrackerRate']:
+    '''异步获取活动追踪比率列表
+
+    返回:
+        List[EventTrackerRate]: 活动追踪比率列表
+    '''
+    return (await Api(API['tracker']['rates']).aget(
+        cookies=await me.__get_cookies_async__() if me else None,
+    )).json()
 
 # 活动排名追踪器类
 class EventTracker:
