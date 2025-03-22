@@ -99,8 +99,6 @@ class Slide(Note):
     '''音符类型'''
     connections: List[Connection]
     '''滑条节点音符列表'''
-    beat: float = 0
-    '''音符所在节拍值'''
 
     @override
     def __init__(self, **kwargs: Any) -> None:
