@@ -130,7 +130,7 @@ class Upload:
         with self._reader:
             response = Api(API['upload']['upload']).post(
                 files={
-                    'file': (self._name, self._reader)
+                    'file': (self._name, self._reader, None)
                 },
                 cookies=self.__me.__get_cookies__(),
             )
@@ -178,7 +178,7 @@ class Upload:
         with self._reader:
             response = await Api(API['upload']['upload']).apost(
                 files={
-                    'file': (self._name, self._reader)
+                    'file': (self._name, self._reader, None)
                 },
                 cookies=await self.__me.__get_cookies_async__(),
             )
