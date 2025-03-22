@@ -77,7 +77,7 @@ class PostException(BestdoriException):
 class PostHasNoChartError(PostException):
     '''帖子不是社区谱面'''
     # 初始化
-    def __init__(self, post: PostInfo) -> None:
+    def __init__(self, post: 'PostInfo') -> None:
         name = post.get('categoryName', 'DEFAULT_POST')
         msg = f'Post \'{name}\' is not a chart post.'
         super().__init__(msg)
@@ -87,7 +87,7 @@ class PostHasNoChartError(PostException):
 class PostHasNoSongError(PostException):
     '''帖子没有音乐字段'''
     # 初始化
-    def __init__(self, post: PostInfo) -> None:
+    def __init__(self, post: 'PostInfo') -> None:
         name = post.get('categoryName', 'DEFAULT_POST')
         msg = f'Post \'{name}\' has no music assets.'
         super().__init__(msg)
