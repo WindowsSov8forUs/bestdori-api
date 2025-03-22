@@ -1,6 +1,8 @@
 from typing import Any
 from multidict import CIMultiDict
+from http.cookies import SimpleCookie
 from typing_extensions import override
+from http.cookiejar import Cookie, CookieJar
 
 from .client import Request, Response
 from .client import AsyncClient as _AsyncClient
@@ -11,6 +13,32 @@ except ModuleNotFoundError as exception:
     raise ImportError(
         'module \'aiohttp\' is not installed, please install it by running \'pip install aiohttp\''
     ) from exception
+
+def _simplecookie_to_cookiejar(simple_cookie: SimpleCookie) -> CookieJar:
+    jar = CookieJar()
+
+    for name, morsel in simple_cookie.items():
+        cookie = Cookie(
+            version=0,
+            name=name,
+            value=morsel.value,
+            port=None,
+            port_specified=False,
+            domain=morsel['domain'],
+            domain_specified=bool(morsel['domain']),
+            domain_initial_dot=morsel['domain'].startswith('.'),
+            path=morsel['path'],
+            path_specified=bool(morsel['path']),
+            secure=morsel['secure'],
+            expires=morsel['expires'],
+            discard=False,
+            comment=morsel['comment'],
+            comment_url=None,
+            rest={'HttpOnly': morsel['httponly']},
+            rfc2109=False,
+        )
+        jar.set_cookie(cookie)
+    return jar
 
 class AsyncClient(_AsyncClient):
     '''AIOHTTP 异步 HTTP 客户端'''
@@ -38,10 +66,19 @@ class AsyncClient(_AsyncClient):
             for name, file in request.files.items():
                 data.add_field(name, file[1].read(), filename=file[0])
         
+        # 转换 cookie
+        cookies = None
+        if request.cookies:
+            cookies = (
+                (cookie.name, cookie.value)
+                for cookie in request.cookies
+                if cookie.value is not None
+            )
+
         async with self._client_session.request(
             request.method,
             request.url,
-            cookies=request.cookies,
+            cookies=cookies,
             headers=request.headers,
             params=request.params,
             data=data,
@@ -54,7 +91,7 @@ class AsyncClient(_AsyncClient):
                 return Response(
                     request,
                     CIMultiDict(response.headers),
-                    response.cookies,
+                    _simplecookie_to_cookiejar(response.cookies),
                     await response.read(),
                     response.status,
                 )
@@ -62,7 +99,7 @@ class AsyncClient(_AsyncClient):
                 return Response(
                     request,
                     CIMultiDict(response.headers),
-                    response.cookies,
+                    _simplecookie_to_cookiejar(response.cookies),
                     await response.read(),
                     response.status,
                     exception,

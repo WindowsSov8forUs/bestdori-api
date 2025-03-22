@@ -5,7 +5,7 @@ from json import loads
 from io import BufferedReader
 from multidict import CIMultiDict
 from abc import ABC, abstractmethod
-from http.cookies import SimpleCookie
+from http.cookiejar import CookieJar
 from typing import Any, Dict, Self, Tuple, Union, Optional, TypeAlias
 
 from bestdori.exceptions import HTTPStatusError
@@ -21,7 +21,7 @@ class Request:
         url: str,
         *,
         headers: Optional[CIMultiDict[str]]=None,
-        cookies: Optional[SimpleCookie]=None,
+        cookies: Optional[CookieJar]=None,
         params: Optional[Dict[str, Any]]=None,
         data: Optional[Any]=None,
         files: Optional[FilesContent]=None,
@@ -51,7 +51,7 @@ class Response:
         self,
         request: Request,
         headers: CIMultiDict[str],
-        cookies: Union[Dict, SimpleCookie],
+        cookies: CookieJar,
         content: bytes,
         status_code: int,
         exception: Optional[Exception]=None,
@@ -61,8 +61,6 @@ class Response:
         self.headers = headers
         '''响应头'''
         
-        if not isinstance(cookies, SimpleCookie):
-            cookies = SimpleCookie(cookies)
         self.cookies = cookies
         '''响应 Cookie'''
         

@@ -67,7 +67,7 @@ class Client(_Client):
             return Response(
                 request,
                 CIMultiDict(response.headers),
-                {cookie.name: cookie.value for cookie in response.cookies.jar},
+                response.cookies.jar,
                 response.content,
                 response.status_code,
             )
@@ -75,7 +75,7 @@ class Client(_Client):
             return Response(
                 request,
                 CIMultiDict(response.headers),
-                {cookie.name: cookie.value for cookie in response.cookies.jar},
+                response.cookies.jar,
                 response.content,
                 response.status_code,
                 exception,
@@ -132,7 +132,7 @@ class AsyncClient(_AsyncClient):
             return Response(
                 request,
                 CIMultiDict(response.headers),
-                {cookie.name: cookie.value for cookie in response.cookies.jar},
+                response.cookies.jar,
                 response.content,
                 response.status_code,
             )
@@ -140,7 +140,7 @@ class AsyncClient(_AsyncClient):
             return Response(
                 request,
                 CIMultiDict(response.headers),
-                {cookie.name: cookie.value for cookie in response.cookies.jar},
+                response.cookies.jar,
                 response.content,
                 response.status_code,
                 exception,
