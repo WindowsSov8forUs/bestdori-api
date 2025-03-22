@@ -6,12 +6,12 @@ from json import dumps, loads
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from .user import Me
 from .utils import get_api
 from .models.note import *
 from .utils.network import Api
 
 if TYPE_CHECKING:
+    from .user import Me
     from .typing import DifficultyName
 
 API = get_api('bestdori.api')
@@ -300,7 +300,7 @@ class Chart(List[Note]):
         id: int,
         diff: 'DifficultyName' = 'expert',
         *,
-        me: Optional[Me] = None
+        me: Optional['Me'] = None
     ) -> 'Chart':
         '''获取官方谱面
 
@@ -323,7 +323,7 @@ class Chart(List[Note]):
         id: int,
         diff: 'DifficultyName' = 'expert',
         *,
-        me: Optional[Me] = None
+        me: Optional['Me'] = None
     ) -> 'Chart':
         '''获取官方谱面
 
