@@ -694,36 +694,6 @@ class Post:
             raise RuntimeError('Post basic were not retrieved.')
         return self.__basic
     
-    # 提取谱面对象
-    @staticmethod
-    def chart(post: 'PostInfo') -> Chart:
-        '''提取谱面对象'''
-        if (chart := post.get('chart', None)) is not None:
-            return Chart.from_python(chart)
-        else:
-            raise PostHasNoChartError(post)
-    
-    # 提取帖子标签
-    @staticmethod
-    def tags(post: 'PostInfo') -> List['PostTag']:
-        '''提取帖子标签'''
-        return post['tags']
-    
-    # 提取帖子内容
-    @staticmethod
-    def content(post: 'PostInfo') -> str:
-        '''提取帖子内容'''
-        result: str = ''
-        if (content := list(post['content'])) is not None:
-            for seg in content:
-                if seg.get('type', None) in ['text', 'link']:
-                    result += seg.get('data', '') + '\n'
-                elif seg.get('type', None) == 'emoji':
-                    result += f':{seg.get("data", "")}:'
-                elif seg.get('type', None) == 'br':
-                    result += '\n'
-        return result
-    
     # 获取帖子基础信息
     def get_basic(self) -> 'PostBasic':
         '''获取帖子，只会获取基础信息。
@@ -791,6 +761,62 @@ class Post:
         if not self.__post:
             return await self.get_details_async()
         return self.__post
+    
+    # 获取谱面对象
+    def get_chart(self) -> Chart:
+        '''获取谱面对象'''
+        detail = self.__get_details__()
+        if (chart := detail.get('chart', None)) is not None:
+            return Chart.from_python(chart)
+        else:
+            raise PostHasNoChartError(detail)
+    
+    # 异步获取谱面对象
+    async def get_chart_async(self) -> Chart:
+        '''获取谱面对象'''
+        detail = await self.__get_details_async__()
+        if (chart := detail.get('chart', None)) is not None:
+            return Chart.from_python(chart)
+        else:
+            raise PostHasNoChartError(detail)
+    
+    # 获取帖子标签
+    def get_tags(self) -> List['PostTag']:
+        '''提取帖子标签'''
+        return self.__get_details__()['tags']
+    
+    # 异步获取帖子标签
+    async def get_tags_async(self) -> List['PostTag']:
+        '''提取帖子标签'''
+        return (await self.__get_details_async__())['tags']
+    
+    # 获取帖子内容
+    def get_content(self) -> str:
+        '''获取帖子内容'''
+        result: str = ''
+        if (content := self.__get_details__().get('content')) is not None:
+            for seg in content:
+                if seg.get('type', None) in ['text', 'link']:
+                    result += seg.get('data', '') + '\n'
+                elif seg.get('type', None) == 'emoji':
+                    result += f':{seg.get("data", "")}:'
+                elif seg.get('type', None) == 'br':
+                    result += '\n'
+        return result
+    
+    # 异步获取帖子内容
+    async def get_content_async(self) -> str:
+        '''获取帖子内容'''
+        result: str = ''
+        if (content := (await self.__get_details_async__()).get('content')) is not None:
+            for seg in content:
+                if seg.get('type', None) in ['text', 'link']:
+                    result += seg.get('data', '') + '\n'
+                elif seg.get('type', None) == 'emoji':
+                    result += f':{seg.get("data", "")}:'
+                elif seg.get('type', None) == 'br':
+                    result += '\n'
+        return result
     
     # 获取歌曲信息对象
     def get_song(self) -> SongResource:
@@ -1070,7 +1096,7 @@ class Post:
         )
     
     # 异步评论帖子
-    async def acomment(self, content: List[Content], *, me: Optional['Me'] = None) -> int:
+    async def comment_async(self, content: List[Content], *, me: Optional['Me'] = None) -> int:
         '''评论帖子
 
         参数:
