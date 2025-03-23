@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from .typing import DifficultyName
 
 API = get_api('bestdori.api')
+__NOTE_TYPES__ = ['Long', 'Slide', 'BPM', 'Single', 'Directional']
 
 # 谱面数据类
 @dataclass
@@ -38,7 +39,7 @@ class Statistics:
     '''谱面主 BPM'''
 
 # 谱面类
-class Chart(List[Note]):
+class Chart(List[BasicNote]):
     '''谱面类，统合针对谱面的一层操作
 
     参数:
@@ -55,29 +56,15 @@ class Chart(List[Note]):
     
     def _construct(self, data: List[Dict[str, Any]]) -> None:
         for note in data:
-            if note.get('beat', None) is None:
-                raise ValueError('Missing required field `beat`.')
+            if note['type'] not in __NOTE_TYPES__:
+                continue
             if note['type'] in ['Long', 'Slide']:
-                if note.get('connections', None) is None:
-                    raise ValueError('Missing required field `connections` for `Slide` note.')
                 self.append(Slide(**note))
-                continue
-            if note.get('beat', None) is None:
-                raise ValueError('Missing required field `beat`.')
-            if note['type'] == 'BPM':
-                if note.get('bpm', None) is None:
-                    raise ValueError('Missing required field `bpm` for `BPM` note.')
+            elif note['type'] == 'BPM':
                 self.append(BPM(**note))
-                continue
-            if note.get('lane', None) is None:
-                raise ValueError('Missing required field `lane`.')
-            if note['type'] == 'Single':
+            elif note['type'] == 'Single':
                 self.append(Single(**note))
             elif note['type'] == 'Directional':
-                if note.get('width', None) is None:
-                    raise ValueError('Missing required field `width` for `Directional` note.')
-                elif note.get('direction', None) is None:
-                    raise ValueError('Missing required field `direction` for `Directional` note.')
                 self.append(Directional(**note))
             else:
                 continue
@@ -150,7 +137,7 @@ class Chart(List[Note]):
                 note.move(-offset)
         return standard_chart
     
-    def __flatten__(self) -> List[Note]:
+    def __flatten__(self) -> List[BasicNote]:
         '''将谱面扁平化处理'''
         flattened_chart = Chart([])
         for note in self:
@@ -262,7 +249,7 @@ class Chart(List[Note]):
         '''将 `Chart` 谱面转换为 `List[Dict[str, Any]]` 对象'''
         chart_data: List[Dict[str, Any]] = []
         for note in self:
-            chart_data.append(note.__dict__)
+            chart_data.append(note.to_dict())
         return chart_data
     
     # 转换为 json 字符串
