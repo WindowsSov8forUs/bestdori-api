@@ -6,3 +6,4 @@
 /.vscode/
 /.venv/
 test.py
+tests/
