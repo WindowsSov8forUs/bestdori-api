@@ -353,7 +353,7 @@ class Costume:
         try:
             return Api(
                 ASSETS['thumb']['costume'].format(
-                    server=self.__server__, id=str(self.id // 50), asset_bundle_name=asset_bundle_name
+                    server=self.__server__, id=self.id // 50, asset_bundle_name=asset_bundle_name
                 )
             ).get(
                 cookies=self.__me.__get_cookies__() if self.__me else None,
@@ -374,7 +374,7 @@ class Costume:
         try:
             return (await Api(
                 ASSETS['thumb']['costume'].format(
-                    server=self.__server__, id=str(self.id // 50), asset_bundle_name=asset_bundle_name
+                    server=self.__server__, id=self.id // 50, asset_bundle_name=asset_bundle_name
                 )
             ).aget(
                 cookies=await self.__me.__get_cookies_async__() if self.__me else None,
