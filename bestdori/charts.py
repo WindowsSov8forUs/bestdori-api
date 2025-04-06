@@ -329,4 +329,38 @@ class Chart(List[BasicNote]):
         return cls(response.json()).standardize()
     
     def copy(self) -> 'Chart':
-        return deepcopy(self)
+        new_chart = Chart([])
+
+        for note in self:
+            if isinstance(note, Slide):
+                _note = Slide(
+                    type='Slide',
+                    connections=[],
+                )
+
+                prev_connection: Optional[Connection] = None
+                for connection in note:
+                    _connection = Connection(
+                        beat=connection.beat,
+                        lane=connection.lane,
+                        flick=connection.flick,
+                        skill=connection.skill,
+                        hidden=connection.hidden,
+                    )
+                    if prev_connection is not None:
+                        prev_connection.next = _connection
+                        _connection.prev = prev_connection
+                    else:
+                        _note.head = _connection
+                    
+                    if connection.next is None:
+                        _note.tail = _connection
+                    else:
+                        prev_connection = _connection
+                
+                new_chart.append(_note)
+            else:
+                _note = deepcopy(note)
+                new_chart.append(_note)
+        
+        return new_chart
