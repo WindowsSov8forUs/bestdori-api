@@ -1,6 +1,6 @@
 <div align="center">
 
-![bestdori-api logo](https://github.com/WindowsSov8forUs/bestdori-api/blob/main/logo.png)
+![bestdori-api logo](https://raw.githubusercontent.com/WindowsSov8forUs/bestdori-api/refs/heads/main/logo.png)
 
 # Bestdori-api
 
