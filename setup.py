@@ -25,8 +25,6 @@ setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'httpx>=0.22.0',
-        'aiohttp>=3.8.1',
         'typing_extensions>=4.5.0',
         'multidict>=5.2.0',
         'yarl>=1.6.3',
