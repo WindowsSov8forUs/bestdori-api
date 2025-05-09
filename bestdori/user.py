@@ -1,6 +1,6 @@
 '''`bestdori.user`
 
-BanG Dream! 歌曲相关操作'''
+BanG Dream! 用户相关操作'''
 from http.cookiejar import CookieJar
 from typing import TYPE_CHECKING, Literal, Optional
 
