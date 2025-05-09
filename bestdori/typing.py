@@ -787,7 +787,7 @@ class PostListPost(TypedDict):
 class PostList(TypedDict):
     '''帖子列表'''
     result: Literal[True]
-    posts: List
+    posts: List[PostListPost]
     count: int
 
 class PostTagGetResultTag(TypedDict):
