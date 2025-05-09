@@ -974,7 +974,7 @@ class UserInfo(TypedDict):
     '''用户信息'''
     result: Literal[True]
     followingCount: int
-    followeddByCount: int
+    followedByCount: int
     followed: bool
     nickname: str
     titles: List[Title]
