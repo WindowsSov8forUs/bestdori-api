@@ -248,7 +248,7 @@ class CostumeInfo(CostumesAll5Info):
 class EventArchiveInfo(TypedDict):
     '''活动归档信息'''
     cutoff: List[Union[NoneDict, Dict[str, int]]]
-    board: List[int]
+    board: List[List[int]]
 
 EventArchiveAll5: TypeAlias = Dict[str, EventArchiveInfo]
 
