@@ -165,7 +165,7 @@ class CharacterSeasonCostumeListMapEntireSeasonEntire(TypedDict):
     costumeType: str
     seasonCostumeType: str
     sdAssetBundleName: str
-    live2AssetBundleName: str
+    live2dAssetBundleName: str
     seasonType: str
 
 class CharacterSeasonCostumeListMapEntireSeason(TypedDict):
