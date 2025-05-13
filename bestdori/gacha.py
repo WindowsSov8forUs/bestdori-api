@@ -31,8 +31,6 @@ if TYPE_CHECKING:
 API = get_api('bestdori.api')
 ASSETS = get_api('bestdori.assets')
 
-
-
 # 获取总招募信息
 @overload
 def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
