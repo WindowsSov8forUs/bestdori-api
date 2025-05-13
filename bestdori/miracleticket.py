@@ -15,21 +15,21 @@ from .exceptions import (
 if TYPE_CHECKING:
     from .typing import (
         ServerName,
-        MiracleTicketEnchangeInfo,
-        MiracleTicketEnchangesAll5,
+        MiracleTicketExchangeInfo,
+        MiracleTicketExchangesAll5,
     )
 
 API = get_api('bestdori.api')
 
 # 获取总自选券信息
-def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketEnchangesAll5':
+def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketExchangesAll5':
     '''获取总自选券信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
 
     返回:
-        MiracleTicketEnchangesAll5: 所有已有自选券信息 `all.5.json`
+        MiracleTicketExchangesAll5: 所有已有自选券信息 `all.5.json`
     '''
     return Api(
         API['all']['miracleTicketExchanges'].format(index=index)
@@ -38,14 +38,14 @@ def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketEn
     ).json()
 
 # 异步获取总自选券信息
-async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketEnchangesAll5':
+async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketExchangesAll5':
     '''获取总自选券信息
 
     参数:
         index (Literal[5], optional): 指定获取哪种 `all.json`
 
     返回:
-        MiracleTicketEnchangesAll5: 所有已有自选券信息 `all.5.json`
+        MiracleTicketExchangesAll5: 所有已有自选券信息 `all.5.json`
     '''
     return (await Api(
         API['all']['miracleTicketExchanges'].format(index=index)
@@ -69,14 +69,14 @@ class MiracleTicketExchange:
         '''
         self.id: int = id
         '''自选券 ID'''
-        self.__info: Optional[MiracleTicketEnchangeInfo] = None
+        self.__info: Optional[MiracleTicketExchangeInfo] = None
         '''自选券信息'''
 
         self.__me = me
         return
     
     @property
-    def info(self) -> 'MiracleTicketEnchangeInfo':
+    def info(self) -> 'MiracleTicketExchangeInfo':
         '''自选券信息'''
         if self.__info is None:
             raise RuntimeError(f'Miracle ticket \'{self.id}\' info were not retrieved.')
@@ -104,11 +104,11 @@ class MiracleTicketExchange:
             raise NoDataException('miracle ticket server')
     
     # 获取自选券信息
-    def get_info(self) -> 'MiracleTicketEnchangeInfo':
+    def get_info(self) -> 'MiracleTicketExchangeInfo':
         '''获取自选券信息
 
         返回:
-            MiracleTicketEnchangeInfo: 自选券详细信息
+            MiracleTicketExchangeInfo: 自选券详细信息
         '''
         _all = get_all(5, me=self.__me)
         if not self.id in _all.keys():
@@ -116,17 +116,17 @@ class MiracleTicketExchange:
         self.__info = _all[str(self.id)]
         return self.info
     
-    def __get_info__(self) -> 'MiracleTicketEnchangeInfo':
+    def __get_info__(self) -> 'MiracleTicketExchangeInfo':
         if self.__info is None:
             return self.get_info()
         return self.info
     
     # 异步获取自选券信息
-    async def get_info_async(self) -> 'MiracleTicketEnchangeInfo':
+    async def get_info_async(self) -> 'MiracleTicketExchangeInfo':
         '''获取自选券信息
 
         返回:
-            MiracleTicketEnchangeInfo: 自选券详细信息
+            MiracleTicketExchangeInfo: 自选券详细信息
         '''
         _all = await get_all_async(5, me=self.__me)
         if not self.id in _all.keys():
@@ -134,7 +134,7 @@ class MiracleTicketExchange:
         self.__info = _all[str(self.id)]
         return self.info
     
-    async def __get_info_async__(self) -> 'MiracleTicketEnchangeInfo':
+    async def __get_info_async__(self) -> 'MiracleTicketExchangeInfo':
         if self.__info is None:
             return await self.get_info_async()
         return self.info

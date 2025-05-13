@@ -505,14 +505,14 @@ class LoginCampaignInfo(LoginCampaignsAll5Info):
     assetMap: Dict[str, Any]
     details: List[Optional[List[LoginCampaignDetail]]]
 
-class MiracleTicketEnchangeInfo(TypedDict):
+class MiracleTicketExchangeInfo(TypedDict):
     '''自选券兑换信息'''
     name: List[Optional[str]]
     ids: List[Optional[List[int]]]
     exchangeStartAt: List[Optional[str]]
     exchangeEndAt: List[Optional[str]]
 
-MiracleTicketEnchangesAll5: TypeAlias = Dict[str, MiracleTicketEnchangeInfo]
+MiracleTicketExchangesAll5: TypeAlias = Dict[str, MiracleTicketExchangeInfo]
 
 class MissionsAll5Info(TypedDict):
     type: str
