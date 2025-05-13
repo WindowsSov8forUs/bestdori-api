@@ -272,7 +272,7 @@ class User:
         )
     
     # 获取用户故事
-    def get_storys(
+    def get_stories(
         self,
         limit: int=20,
         offset: int=0,
@@ -306,7 +306,7 @@ class User:
         )
     
     # 异步获取用户故事
-    async def get_storys_async(
+    async def get_stories_async(
         self,
         limit: int=20,
         offset: int=0,
