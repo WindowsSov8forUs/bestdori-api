@@ -475,7 +475,7 @@ class GachaInfo(GachaAll5Info):
     description: List[Optional[str]]
     annotation: List[Optional[str]]
     gachaPeriod: List[Optional[str]]
-    information: List[GachaInformation]
+    information: GachaInformation
 
 class LoginCampaignsAll1Info(TypedDict):
     caption: List[Optional[str]]
