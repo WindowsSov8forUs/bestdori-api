@@ -625,7 +625,7 @@ class PlayerDataProfileUserProfileDegreeMapEntry(TypedDict):
     degreeId: int
 
 class PlayerDataProfileUserProfileDegreeMap(TypedDict):
-    entries: Dict[str, PlayerDataProfileUserProfileDegreeMapEntry]
+    entries: Dict[Literal['first', 'second'], PlayerDataProfileUserProfileDegreeMapEntry]
 
 class PlayerDataProfileUserTwitter(TypedDict):
     twitterId: str
