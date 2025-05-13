@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 RES = get_api('bestdori.res')
 
 # 获取乐队图标
-def get_band(id: str, *, me: Optional[Me] = None) -> bytes:
+def get_band(id: int, *, me: Optional[Me] = None) -> bytes:
     '''获取乐队图标
 
     参数:
-        id (str): 乐队 ID
+        id (int): 乐队 ID
 
     返回:
         bytes: 乐队图标字节数据
@@ -28,11 +28,11 @@ def get_band(id: str, *, me: Optional[Me] = None) -> bytes:
     ).content
 
 # 异步获取乐队图标
-async def get_band_async(id: str, *, me: Optional[Me] = None) -> bytes:
+async def get_band_async(id: int, *, me: Optional[Me] = None) -> bytes:
     '''获取乐队图标
 
     参数:
-        id (str): 乐队 ID
+        id (int): 乐队 ID
 
     返回:
         bytes: 乐队图标字节数据
