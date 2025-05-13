@@ -28,7 +28,7 @@ def download(hash: str, *, me: Optional[Me] = None) -> bytes:
     ).content
 
 # 异步从 Bestdori 获取指定哈希文件字节
-async def adownload(hash: str, *, me: Optional[Me] = None) -> bytes:
+async def download_async(hash: str, *, me: Optional[Me] = None) -> bytes:
     '''从 Bestdori 获取指定哈希文件字节
 
     参数:
