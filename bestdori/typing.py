@@ -484,7 +484,7 @@ LoginCampaignsAll1: TypeAlias = Dict[str, LoginCampaignsAll1Info]
 
 class LoginCampaignsAll5Info(LoginCampaignsAll1Info):
     loginBonusType: str
-    assetBundleName: List[str]
+    assetBundleName: List[Optional[str]]
     publishedAt: List[Optional[str]]
     closedAt: List[Optional[str]]
 
