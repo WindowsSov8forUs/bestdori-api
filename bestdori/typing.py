@@ -502,7 +502,7 @@ class LoginCampaignDetail(TypedDict):
 
 class LoginCampaignInfo(LoginCampaignsAll5Info):
     '''登录奖励信息'''
-    assetMap: List[Any]
+    assetMap: Dict[str, Any]
     details: List[Optional[List[LoginCampaignDetail]]]
 
 class MiracleTicketEnchangeInfo(TypedDict):
