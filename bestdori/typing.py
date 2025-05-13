@@ -101,24 +101,24 @@ class CardAll5Info(CardAll3Info):
 
 CardAll5: TypeAlias = Dict[str, CardAll5Info]
 
-class CardEpisodesEntireCostsEntire(TypedDict):
+class CardEpisodesEntryCostsEntry(TypedDict):
     resourceId: int
     resourceType: str
     quantity: int
     lbBonus: int
 
-class CardEpisodesEntireCosts(TypedDict):
-    entires: List[CardEpisodesEntireCostsEntire]
+class CardEpisodesEntryCosts(TypedDict):
+    entries: List[CardEpisodesEntryCostsEntry]
 
-class CardEpisodesEntireRewardsEntire(TypedDict):
+class CardEpisodesEntryRewardsEntry(TypedDict):
     resourceType: str
     quantity: int
     lbBonus: int
 
-class CardEpisodesEntireRewards(TypedDict):
-    entires: List[CardEpisodesEntireRewardsEntire]
+class CardEpisodesEntryRewards(TypedDict):
+    entries: List[CardEpisodesEntryRewardsEntry]
 
-class CardEpisodesEntire(TypedDict):
+class CardEpisodesEntry(TypedDict):
     episodeId: int
     episodeType: str
     situationId: int
@@ -127,13 +127,13 @@ class CardEpisodesEntire(TypedDict):
     appendTechnique: int
     appendVisual: int
     releaseLevel: int
-    costs: CardEpisodesEntireCosts
-    rewards: CardEpisodesEntireRewards
+    costs: CardEpisodesEntryCosts
+    rewards: CardEpisodesEntryRewards
     title: List[Optional[str]]
     characterId: int
 
 class CardEpisodes(TypedDict):
-    entires: List[CardEpisodesEntire]
+    entries: List[CardEpisodesEntry]
 
 class CardSourceGacha(TypedDict):
     probability: float
@@ -159,7 +159,7 @@ class CharacterAll2Info(TypedDict):
 
 CharacterAll2: TypeAlias = Dict[str, CharacterAll2Info]
 
-class CharacterSeasonCostumeListMapEntireSeasonEntire(TypedDict):
+class CharacterSeasonCostumeListMapEntrySeasonEntry(TypedDict):
     characterId: int
     basicSeasonId: int
     costumeType: str
@@ -168,11 +168,11 @@ class CharacterSeasonCostumeListMapEntireSeasonEntire(TypedDict):
     live2dAssetBundleName: str
     seasonType: str
 
-class CharacterSeasonCostumeListMapEntireSeason(TypedDict):
-    entires: List[CharacterSeasonCostumeListMapEntireSeasonEntire]
+class CharacterSeasonCostumeListMapEntrySeason(TypedDict):
+    entries: List[CharacterSeasonCostumeListMapEntrySeasonEntry]
 
 class CharacterSeasonCostumeListMap(TypedDict):
-    entires: Dict[str, CharacterSeasonCostumeListMapEntireSeason]
+    entries: Dict[str, CharacterSeasonCostumeListMapEntrySeason]
 
 class CharacterAll5Info(CharacterAll2Info):
     firstName: List[Optional[str]]
@@ -541,7 +541,7 @@ class MissionInfo(MissionsAll5Info):
     '''任务信息'''
     details: List[Optional[List[MissionDetail]]]
 
-class PlayerDataProfileMainDeckUserSituationsEntireUserAppendParameter(TypedDict):
+class PlayerDataProfileMainDeckUserSituationsEntryUserAppendParameter(TypedDict):
     userId: str
     situationId: int
     performance: int
@@ -554,7 +554,7 @@ class PlayerDataProfileMainDeckUserSituationsEntireUserAppendParameter(TypedDict
     characterBonusTechnique: int
     characterBonusVisual: int
 
-class PlayerDataProfileMainDeckUserSituationsEntire(TypedDict):
+class PlayerDataProfileMainDeckUserSituationsEntry(TypedDict):
     userId: str
     situationId: int
     level: int
@@ -566,31 +566,31 @@ class PlayerDataProfileMainDeckUserSituationsEntire(TypedDict):
     illust: str
     skillExp: int
     skillLevel: int
-    userAppendParameter: PlayerDataProfileMainDeckUserSituationsEntireUserAppendParameter
+    userAppendParameter: PlayerDataProfileMainDeckUserSituationsEntryUserAppendParameter
     limitBreakRank: int
 
 class PlayerDataProfileMainDeckUserSituations(TypedDict):
-    entires: List[PlayerDataProfileMainDeckUserSituationsEntire]
+    entries: List[PlayerDataProfileMainDeckUserSituationsEntry]
 
-class PlayerDataProfileEnabledUserAreaItemsEntire(TypedDict):
+class PlayerDataProfileEnabledUserAreaItemsEntry(TypedDict):
     userId: str
     areaItemId: int
     areaItemCategory: int
     level: int
 
 class PlayerDataProfileEnabledUserAreaItems(TypedDict):
-    entires: List[PlayerDataProfileEnabledUserAreaItemsEntire]
+    entries: List[PlayerDataProfileEnabledUserAreaItemsEntry]
 
 class PlayerDataProfileBandRankMap(TypedDict):
-    entires: Dict[str, int]
+    entries: Dict[str, int]
 
-class PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicListEntire(TypedDict):
+class PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicListEntry(TypedDict):
     musicId: int
     difficulty: DifficultyName
     rating: int
 
 class PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList(TypedDict):
-    entires: List[PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicListEntire]
+    entries: List[PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicListEntry]
 
 class PlayerDataProfileUserHighScoreRating(TypedDict, total=False):
     userPoppinPartyHighScoreMusicList: PlayerDataProfileUserHighScoreRatingUserBandHighScoreMusicList
@@ -619,13 +619,13 @@ class PlayerDataProfileUserProfileSituation(TypedDict):
     illust: str
     viewProfileSituationStatus: str
 
-class PlayerDataProfileUserProfileDegreeMapEntire(TypedDict):
+class PlayerDataProfileUserProfileDegreeMapEntry(TypedDict):
     userId: str
     profileDegreeType: str
     degreeId: int
 
 class PlayerDataProfileUserProfileDegreeMap(TypedDict):
-    entires: Dict[str, PlayerDataProfileUserProfileDegreeMapEntire]
+    entries: Dict[str, PlayerDataProfileUserProfileDegreeMapEntry]
 
 class PlayerDataProfileUserTwitter(TypedDict):
     twitterId: str
@@ -634,7 +634,7 @@ class PlayerDataProfileUserTwitter(TypedDict):
     url: str
     profileImageUrl: str
 
-class PlayerDataProfileUserDeckTotalRatingMapEntire(TypedDict):
+class PlayerDataProfileUserDeckTotalRatingMapEntry(TypedDict):
     rank: str
     score: int
     level: int
@@ -642,20 +642,20 @@ class PlayerDataProfileUserDeckTotalRatingMapEntire(TypedDict):
     upperRating: int
 
 class PlayerDataProfileUserDeckTotalRatingMap(TypedDict):
-    entires: Dict[str, PlayerDataProfileUserDeckTotalRatingMapEntire]
+    entries: Dict[str, PlayerDataProfileUserDeckTotalRatingMapEntry]
 
 class PlayerDataProfileStageChallengeAchievementConditionsMap(TypedDict):
-    entires: Dict[str, int]
+    entries: Dict[str, int]
 
-class PlayerDataProfileUserMusicClearInfoMapEntire(TypedDict):
+class PlayerDataProfileUserMusicClearInfoMapEntry(TypedDict):
     clearedMusicCount: int
     fullComboMusicCount: int
     allPerfectMusicCount: int
 
 class PlayerDataProfileUserMusicClearInfoMap(TypedDict):
-    entires: Dict[DifficultyName, PlayerDataProfileUserMusicClearInfoMapEntire]
+    entries: Dict[DifficultyName, PlayerDataProfileUserMusicClearInfoMapEntry]
 
-class PlayerDataProfileUserCharacterRankMapEntire(TypedDict):
+class PlayerDataProfileUserCharacterRankMapEntry(TypedDict):
     rank: int
     exp: str
     addExp: str
@@ -664,7 +664,7 @@ class PlayerDataProfileUserCharacterRankMapEntire(TypedDict):
     releasedPotentialLevel: str
 
 class PlayerDataProfileUserCharacterRankMap(TypedDict):
-    entires: Dict[str, PlayerDataProfileUserCharacterRankMapEntire]
+    entries: Dict[str, PlayerDataProfileUserCharacterRankMapEntry]
 
 class PlayerDataProfile(TypedDict):
     userId: str
