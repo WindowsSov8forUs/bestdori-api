@@ -310,7 +310,7 @@ from ayachan import sonolus
 
 获取测试服关卡谱面。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./chart#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](/api/charts#chart)
 
 ### def levels() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 

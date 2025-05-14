@@ -14,8 +14,8 @@ from bestdori import eventtop
 
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
-| points | List[[Point](./eventtop#point)] | 活动排名分数列表 |
-| users | List[[User](./eventtop/user)] | 活动排名玩家列表 |
+| points | List[[Point](#point)] | 活动排名分数列表 |
+| users | List[[User](#user)] | 活动排名玩家列表 |
 
 ### Point
 

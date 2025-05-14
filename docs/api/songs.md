@@ -172,7 +172,7 @@ from bestdori import songs
 
 获取歌曲指定难度的谱面对象。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./chart#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./charts#chart)
 
 ### def get_bgm() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 

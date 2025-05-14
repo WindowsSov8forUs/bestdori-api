@@ -237,7 +237,7 @@ from models import content
 
 ### note 音符 {#note}
 
-音符数据模型模块。谱面构成的基本元素， [`Chart`](/api/chart#chart) 的基础构成即为 `List[Note]` 。
+音符数据模型模块。谱面构成的基本元素， [`Chart`](/api/charts#chart) 的基础构成即为 `List[Note]` 。
 
 ```python
 from models import note

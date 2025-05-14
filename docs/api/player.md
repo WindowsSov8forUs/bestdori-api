@@ -150,7 +150,7 @@ from bestdori import player
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
 | musicId | int | 歌曲 ID |
-| difficulty | [DifficultyName](./typing#difficulty-name) | 难度名称 |
+| difficulty | [DifficultyName](/typing#difficulty-name) | 难度名称 |
 | rating | int | 排名 |
 
 ### UserProfileSituation
@@ -206,7 +206,7 @@ from bestdori import player
 
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
-| entries | Dict[[DifficultyName](./typing#difficulty-name), [UserMusicClearInfoMapEntry](#usermusicclearinfomapentry)] | 难度名称与通关信息映射 |
+| entries | Dict[[DifficultyName](/typing#difficulty-name), [UserMusicClearInfoMapEntry](#usermusicclearinfomapentry)] | 难度名称与通关信息映射 |
 
 ### UserMusicClearInfoMapEntry
 
