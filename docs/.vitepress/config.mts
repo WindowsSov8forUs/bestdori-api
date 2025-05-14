@@ -7,7 +7,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: 'favicon.ico' }],
   ],
-  base: 'bestdori-api/',
+  base: '/bestdori-api/',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: {
