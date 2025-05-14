@@ -150,7 +150,7 @@ from bestdori import player
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
 | musicId | int | 歌曲 ID |
-| difficulty | [DifficultyName](./typing/#difficulty-name) | 难度名称 |
+| difficulty | [DifficultyName](./typing#difficulty-name) | 难度名称 |
 | rating | int | 排名 |
 
 ### UserProfileSituation
@@ -206,7 +206,7 @@ from bestdori import player
 
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
-| entries | Dict[[DifficultyName](./typing/#difficulty-name), [UserMusicClearInfoMapEntry](#usermusicclearinfomapentry)] | 难度名称与通关信息映射 |
+| entries | Dict[[DifficultyName](./typing#difficulty-name), [UserMusicClearInfoMapEntry](#usermusicclearinfomapentry)] | 难度名称与通关信息映射 |
 
 ### UserMusicClearInfoMapEntry
 
@@ -242,10 +242,10 @@ from bestdori import player
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | id | int | - | 玩家 ID |
-| server | [Server](/typing/#server-id) | - | 服务器 ID |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| server | [Server](/typing#server-id) | - | 服务器 ID |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
-### def get_profile() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_profile() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|

@@ -235,7 +235,7 @@ from bestdori import ayachan
 |:------|:----:|:-----|
 | useDefault | bool | 是否使用默认项 |
 
-## def get_version() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+## def get_version() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 获取 Ayachan API 版本信息。
 
@@ -249,18 +249,18 @@ Ayachan 谱面信息分析获取模块。
 from ayachan import chartmetrics
 ```
 
-### def chart_metrics_bandori() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def chart_metrics_bandori() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | chart_id | int | - | 谱面 ID |
-| diff_str | [DifficultyName](/typing/#difficulty-name) | - | 难度名称 |
+| diff_str | [DifficultyName](/typing#difficulty-name) | - | 难度名称 |
 
 分析 BanG Dream! 游戏内谱面。
 
 <Badge type="info">返回值:</Badge> [`ChartMetrics`](#chart-metrics)
 
-### def chart_metrics_bestdori() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def chart_metrics_bestdori() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
@@ -270,11 +270,11 @@ from ayachan import chartmetrics
 
 <Badge type="info">返回值:</Badge> [`ChartMetrics`](#chart-metrics)
 
-### def chart_metrics_custom() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def chart_metrics_custom() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
-| diff_str | [DifficultyName](/typing/#difficulty-name) | - | 难度名称 |
+| diff_str | [DifficultyName](/typing#difficulty-name) | - | 难度名称 |
 | chart | [Chart](#chart) \| List[Dict[str, Any]] | - | 谱面对象或原始谱面结构 |
 
 分析自定义谱面。
@@ -287,7 +287,7 @@ from ayachan import chartmetrics
 from ayachan import sonolus
 ```
 
-### def levels_post() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def levels_post() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
@@ -302,7 +302,7 @@ from ayachan import sonolus
 
 <Badge type="info">返回值:</Badge> `int`
 
-### def levels_get() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def levels_get() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
@@ -310,9 +310,9 @@ from ayachan import sonolus
 
 获取测试服关卡谱面。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./chart/#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./chart#chart)
 
-### def levels() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def levels() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|

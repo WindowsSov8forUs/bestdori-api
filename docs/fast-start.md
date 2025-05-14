@@ -88,7 +88,7 @@ await {method_name}_async(...)
 ```
 :::
 
-文档将以**同步方法**为主，若方法带有 <Badge type="tip">[async](/fast-start/#async-sync)</Badge> 标识，即代表可通过
+文档将以**同步方法**为主，若方法带有 <Badge type="tip">[async](/fast-start#async-sync)</Badge> 标识，即代表可通过
 
 ```python
 await {method_name}_async(...)

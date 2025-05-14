@@ -77,7 +77,7 @@ from bestdori import typing
 
 类型: `List[T | None]` / `List[T | NoneDict]`
 
-从 Bestdori 获取到的信息中会出现的列表类型。列表的长度固定为 5 ，依次对应 5 个服务器中所使用的数据内容。列表中非空元素在绝大多数情况下总是一致的，若对应的服务器不存在相对应的数据，则该项元素值为 `None` 、 [`NoneDict`](./typing/#nonedict) 或空列表。
+从 Bestdori 获取到的信息中会出现的列表类型。列表的长度固定为 5 ，依次对应 5 个服务器中所使用的数据内容。列表中非空元素在绝大多数情况下总是一致的，若对应的服务器不存在相对应的数据，则该项元素值为 `None` 、 [`NoneDict`](./typing#nonedict) 或空列表。
 
 | 下标 | 对应服务器 |
 |:-----|:----------|
@@ -105,7 +105,7 @@ from bestdori import typing
 |:------|:----:|:-----|
 | id | int | 称号 ID |
 | type | str | 称号类型 |
-| server | [Server](./typing/#server-id) | 称号所在服务器 |
+| server | [Server](./typing#server-id) | 称号所在服务器 |
 
 ## models 数据模型
 
@@ -237,7 +237,7 @@ from models import content
 
 ### note 音符 {#note}
 
-音符数据模型模块。谱面构成的基本元素， [`Chart`](/api/chart/#chart) 的基础构成即为 `List[Note]` 。
+音符数据模型模块。谱面构成的基本元素， [`Chart`](/api/chart#chart) 的基础构成即为 `List[Note]` 。
 
 ```python
 from models import note

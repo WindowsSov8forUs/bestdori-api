@@ -16,14 +16,14 @@ from bestdori import songmeta
 
 `Dict[SongId, Dict[DifficultyString, Dict[Field, List[float]]]]`
 
-其中 `SongId` 为对应歌曲 ID 的字符串， [`DifficultyString`](/typing/#difficulty-string) 区分同一歌曲不同难度下的不同数值 (仅记录歌曲存在的难度) 。对于内层具体数值字典，字段名 `Field` 值根据 [`get_all()`](#get-all) 方法传入参数不同有不同的可取值，对应的字段值则为对应的数值列表。
+其中 `SongId` 为对应歌曲 ID 的字符串， [`DifficultyString`](/typing#difficulty-string) 区分同一歌曲不同难度下的不同数值 (仅记录歌曲存在的难度) 。对于内层具体数值字典，字段名 `Field` 值根据 [`get_all()`](#get-all) 方法传入参数不同有不同的可取值，对应的字段值则为对应的数值列表。
 
-## def get_all() <Badge type="tip">[async](/fast-start/#async-sync)</Badge> {#get-all}
+## def get_all() <Badge type="tip">[async](/fast-start#async-sync)</Badge> {#get-all}
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | index | int | `5` | 指定获取的 `JSON` 信息 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
 获取歌曲 Meta 信息，返回 [`SongMetaInfo`](#info) 信息字典。
 

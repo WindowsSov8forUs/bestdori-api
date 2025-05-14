@@ -14,38 +14,38 @@ from bestdori import bands
 
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
-| bandName | List[str \| None] | 乐队名称[定长列表](/typing/#fixed-list) |
+| bandName | List[str \| None] | 乐队名称[定长列表](/typing#fixed-list) |
 
-## def get_all() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
-
-| 参数名 | 类型 | 默认值 | 描述 |
-|:------|:----:|:-----:|:-----|
-| index | Literal[1] | `1` | 指定获取的 `JSON` 信息 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
-
-获取总乐队信息，返回以乐队 ID 为字段名、[BandsInfo](./bands/#info)为字段值的信息字典。
-
-<Badge type="info">返回值:</Badge> `Dict[str, BandsInfo]`
-
-## def get_main() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+## def get_all() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | index | Literal[1] | `1` | 指定获取的 `JSON` 信息 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
-获取主要乐队信息，返回以乐队 ID 为字段名、[BandsInfo](./bands/#info)为字段值的信息字典。
+获取总乐队信息，返回以乐队 ID 为字段名、[BandsInfo](./bands#info)为字段值的信息字典。
 
 <Badge type="info">返回值:</Badge> `Dict[str, BandsInfo]`
 
-## def get_logo() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+## def get_main() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
+
+| 参数名 | 类型 | 默认值 | 描述 |
+|:------|:----:|:-----:|:-----|
+| index | Literal[1] | `1` | 指定获取的 `JSON` 信息 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
+
+获取主要乐队信息，返回以乐队 ID 为字段名、[BandsInfo](./bands#info)为字段值的信息字典。
+
+<Badge type="info">返回值:</Badge> `Dict[str, BandsInfo]`
+
+## def get_logo() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | id | int | - | 获取的乐队 ID |
 | type | str | - | 指定获取的 Logo 类型 |
-| server | [ServerName](/typing/#server-name) | - | 指定获取来源服务器 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| server | [ServerName](/typing#server-name) | - | 指定获取来源服务器 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
 ::: details type 可用参数值
 | 值 | 描述 |

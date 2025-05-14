@@ -13,7 +13,7 @@
 :::
 
 ::: info bestdori-api 全面支持同步与异步
-异步使用方法与同步类似，可几乎[**无缝切换**](/fast-start/#async-sync)
+异步使用方法与同步类似，可几乎[**无缝切换**](/fast-start#async-sync)
 :::
 
 ## 目前已有的 API 与功能

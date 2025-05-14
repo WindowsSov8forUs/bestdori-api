@@ -31,13 +31,13 @@ from bestdori import charts
 
 谱面规范化处理。返回进行规范化处理后的谱面。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./charts/#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./charts#chart)
 
 ### def count()
 
 谱面数据统计。返回统计后的详细数据。
 
-<Badge type="info">返回值:</Badge> [`Statistics`](./charts/#statistics)
+<Badge type="info">返回值:</Badge> [`Statistics`](./charts#statistics)
 
 ### def to_list()
 
@@ -59,7 +59,7 @@ from bestdori import charts
 
 将原始谱面数据转换为谱面类，并进行规范化处理。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./charts/#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./charts#chart)
 
 ### def from_json() <Badge type="info">classmethod</Badge>
 
@@ -69,16 +69,16 @@ from bestdori import charts
 
 将谱面原始代码转换为谱面类，并进行规范化处理。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./charts/#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./charts#chart)
 
-### def get_chart() <Badge type="info">classmethod</Badge> <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_chart() <Badge type="info">classmethod</Badge> <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | id | int | - | 歌曲 ID |
-| diff | [DifficultyName](/typing/#difficulty-name) | `'expert'` | 获取的谱面难度 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| diff | [DifficultyName](/typing#difficulty-name) | `'expert'` | 获取的谱面难度 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
 获取 BanG Dream! 游戏内谱面。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./charts/#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./charts#chart)

@@ -14,27 +14,27 @@ from bestdori import songs
 
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
-| musicTitle | List[str \| None] | 歌曲名[定长列表](/typing/#fixed-list) |
+| musicTitle | List[str \| None] | 歌曲名[定长列表](/typing#fixed-list) |
 | tag | str | 歌曲种类 |
 | bandId | int | 歌曲乐队 ID |
 | jacketImage | List[str] | 歌曲封面链接列表。某些歌曲会有多个封面 |
-| publishedAt | List[str \| None] | 歌曲发布时间戳[定长列表](/typing/#fixed-list) |
-| closedAt | List[str \| None] | 歌曲下架时间戳[定长列表](/typing/#fixed-list) |
-| difficulty | Dict[[DifficultyString](/typing/#difficulty-string), [Difficulty](#difficulty)] | 歌曲难度信息字典 |
+| publishedAt | List[str \| None] | 歌曲发布时间戳[定长列表](/typing#fixed-list) |
+| closedAt | List[str \| None] | 歌曲下架时间戳[定长列表](/typing#fixed-list) |
+| difficulty | Dict[[DifficultyString](/typing#difficulty-string), [Difficulty](#difficulty)] | 歌曲难度信息字典 |
 | length | float | 歌曲时长 |
-| notes | Dict[[DifficultyString](/typing/#difficulty-string), int] | 各难度谱面音符数字典 |
-| bpm | Dict[[DifficultyString](/typing/#difficulty-string), List[[BPM](#bpm)]] | 各难度谱面 BPM 信息字典 |
-| ruby | List[str \| None] | 歌曲名拼写 (平假) [定长列表](/typing/#fixed-list) |
-| phonetic | List[str \| None] | 歌曲名拼写 (片假) [定长列表](/typing/#fixed-list) |
-| lyricist | List[str \| None] | 作词者名[定长列表](/typing/#fixed-list) |
-| composer | List[str \| None] | 作曲者名[定长列表](/typing/#fixed-list) |
-| arranger | List[str \| None] | 编曲者名[定长列表](/typing/#fixed-list) |
+| notes | Dict[[DifficultyString](/typing#difficulty-string), int] | 各难度谱面音符数字典 |
+| bpm | Dict[[DifficultyString](/typing#difficulty-string), List[[BPM](#bpm)]] | 各难度谱面 BPM 信息字典 |
+| ruby | List[str \| None] | 歌曲名拼写 (平假) [定长列表](/typing#fixed-list) |
+| phonetic | List[str \| None] | 歌曲名拼写 (片假) [定长列表](/typing#fixed-list) |
+| lyricist | List[str \| None] | 作词者名[定长列表](/typing#fixed-list) |
+| composer | List[str \| None] | 作曲者名[定长列表](/typing#fixed-list) |
+| arranger | List[str \| None] | 编曲者名[定长列表](/typing#fixed-list) |
 | bgmId | int | 歌曲资源文件 ID |
 | bgmFile | str | 歌曲资源文件名 |
 | achievements | List[[Achievement](#achievement)] | 歌曲成就信息 |
 | seq | int | 歌曲序列号 |
-| howToGet | List[str \| None] | 获取方式[定长列表](/typing/#fixed-list) |
-| description | List[str \| None] | 歌曲描述[定长列表](/typing/#fixed-list) |
+| howToGet | List[str \| None] | 获取方式[定长列表](/typing#fixed-list) |
+| description | List[str \| None] | 歌曲描述[定长列表](/typing#fixed-list) |
 
 ### Difficulty 歌曲难度 {#difficulty}
 
@@ -43,7 +43,7 @@ from bestdori import songs
 | 字段名 | 类型 | 描述 |
 |:------|:----:|:-----|
 | playLevel | int | 难度等级 |
-| publishedAt <Badge type="info">NotRequired</Badge> | List[str \| None] | 难度发布时间戳[定长列表](/typing/#fixed-list) ，仅对额外添加的 SPECIAL 难度存在 |
+| publishedAt <Badge type="info">NotRequired</Badge> | List[str \| None] | 难度发布时间戳[定长列表](/typing#fixed-list) ，仅对额外添加的 SPECIAL 难度存在 |
 | notesQuantity <Badge type="info">NotRequired</Badge> | int | 音符数 |
 | scoreC <Badge type="info">NotRequired</Badge> | int | C 判定分数线 |
 | scoreB <Badge type="info">NotRequired</Badge> | int | B 判定分数线 |
@@ -96,16 +96,16 @@ from bestdori import songs
 | rewardType | str | 奖励类型 |
 | quantity | int | 奖励数量 |
 
-## def get_all() <Badge type="tip">[async](/fast-start/#async-sync)</Badge> {#get-all}
+## def get_all() <Badge type="tip">[async](/fast-start#async-sync)</Badge> {#get-all}
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | index | int | `0` | 指定获取的 `JSON` 信息 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
 获取总歌曲信息，返回以歌曲 ID 为字段名、 `SongsAllInfo` 为字段值的信息字典， `SongsAllInfo` 为从 [`SongInfo`](#info) 中截取出的部分信息。根据 `index` 参数值不同，获取到的 `SongsAllInfo` 所包含的信息也不同。
 
-特别地，当 `index` 值为 `0` 时，返回值为以歌曲 ID 为字段名、 [`NoneDict`](/typing/#nonedict) 为字段值的字典
+特别地，当 `index` 值为 `0` 时，返回值为以歌曲 ID 为字段名、 [`NoneDict`](/typing#nonedict) 为字段值的字典
 
 ::: details index 可用参数值
 | 参数值 | 获取字段值末项字段名 |
@@ -133,9 +133,9 @@ from bestdori import songs
 |:------|:----:|:-----:|:-----|
 | index | int | - | 数据包序列号 |
 | jacket_image | str | - | 封面图片文件名 |
-| server | [ServerName](/typing/#server-name) | - | 封面所在服务器名称 |
+| server | [ServerName](/typing#server-name) | - | 封面所在服务器名称 |
 
-### def get_bytes() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_bytes() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 获取封面字节数据。
 
@@ -150,44 +150,44 @@ from bestdori import songs
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | id | int | - | 歌曲 ID |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user/#me)] | `None` | 登录用户类 |
+| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
-### def get_info() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_info() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 获取歌曲信息。
 
 <Badge type="info">返回值:</Badge> [`SongInfo`](#info)
 
-### def get_jacket() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_jacket() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 获取歌曲封面对象列表 [`Jacket`](#jacket) 。
 
 <Badge type="info">返回值:</Badge> `List[Jacket]`
 
-### def get_chart() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_chart() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
-| diff | [DifficultyName](/typing/#difficulty-name) | `'expert'` | 难度名称 |
+| diff | [DifficultyName](/typing#difficulty-name) | `'expert'` | 难度名称 |
 
 获取歌曲指定难度的谱面对象。
 
-<Badge type="info">返回值:</Badge> [`Chart`](./chart/#chart)
+<Badge type="info">返回值:</Badge> [`Chart`](./chart#chart)
 
-### def get_bgm() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_bgm() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 获取歌曲音频资源文件字节数据。
 
 <Badge type="info">返回值:</Badge> `bytes`
 
-### def get_comment() <Badge type="tip">[async](/fast-start/#async-sync)</Badge>
+### def get_comment() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
 | 参数名 | 类型 | 默认值 | 描述 |
 |:------|:----:|:-----:|:-----|
 | limit | int | 20 | 获取到的帖子数量上限 |
 | offset | int | 0 | 获取帖子时的偏移量 |
-| order | [Order](/typing/#order) | `'TIME_DESC'` | 帖子排序方式 |
+| order | [Order](/typing#order) | `'TIME_DESC'` | 帖子排序方式 |
 
 获取歌曲的社区评论列表。
 
-<Badge type="info">返回值:</Badge> [`PostList`](./post/#list)
+<Badge type="info">返回值:</Badge> [`PostList`](./post#list)
