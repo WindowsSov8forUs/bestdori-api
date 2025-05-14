@@ -69,7 +69,27 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/WindowsSov8forUs/bestdori-api' }
     ],
     search: {
-      provider: 'local'
+      provider: 'local',
+      options: {
+        locales: {
+          zh: {
+            translations: {
+              button: {
+                buttonText: '搜索',
+                buttonAriaLabel: '搜索'
+              },
+              modal: {
+                noResultsText: '无法找到相关结果',
+                resetButtonTitle: '清除搜索',
+                footer: {
+                  selectText: '选择',
+                  navigateText: '切换'
+                }
+              }
+            }
+          }
+        }
+      }
     },
     lastUpdated: {
       text: '最后一次更新于 ',
