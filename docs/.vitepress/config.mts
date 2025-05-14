@@ -7,15 +7,17 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: 'favicon.ico' }],
   ],
-  base: '/bestdori-api/',
+  lang: 'zh-CN',
+  base: '/',
+  cleanUrls: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: {
       src: '/logo.png',
     },
     nav: [
-      { text: 'Bestdori API', link: '/' },
-      { text: '开始', link: '/brief' }
+      { text: '简介', link: '/brief' },
+      { text: 'API 文档', link: '/api/bands' }
     ],
     sidebar: [
       {
