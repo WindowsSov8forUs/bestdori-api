@@ -1,0 +1,20 @@
+:root {
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: -webkit-linear-gradient(290deg, #b8c3de, #2e51a3)
+}
+
+.text-icon {
+    display: inline-block;
+    width: auto;
+    height: 1.2em;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.text-icon-l {
+    width: 1.5em;
+}
+
+.text-icon-s {
+    width: 1em;
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="208px" height="208px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 2080000 2080000"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:#FF6600}
+    .fil2 {fill:white}
+    .fil1 {fill:white}
+   ]]>
+  </style>
+ </defs>
+ <g id="happy">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <circle class="fil0" cx="1040000" cy="1040000" r="1004211"/>
+  <path class="fil1" d="M1040000 0c574374,0 1040000,465626 1040000,1040000 0,574374 -465626,1040000 -1040000,1040000 -574374,0 -1040000,-465626 -1040000,-1040000 0,-574374 465626,-1040000 1040000,-1040000zm678923 361077c-173734,-173735 -413788,-281209 -678923,-281209 -265135,0 -505189,107474 -678923,281209 -173735,173734 -281209,413788 -281209,678923 0,265135 107474,505189 281209,678923 173734,173735 413788,281209 678923,281209 265135,0 505189,-107474 678923,-281209 173735,-173734 281209,-413788 281209,-678923 0,-265135 -107474,-505189 -281209,-678923z"/>
+  <ellipse class="fil2" cx="625328" cy="836573" rx="168487" ry="254275"/>
+  <ellipse class="fil2" cx="1454672" cy="836573" rx="168487" ry="254275"/>
+  <path class="fil2" d="M1454672 1287365c0,220561 -185656,399366 -414672,399366 -229016,0 -414672,-178805 -414672,-399366l829344 0z"/>
+ </g>
+</svg>
