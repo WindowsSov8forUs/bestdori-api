@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     )
 
 API = get_api('bestdori.api')
+ASSETS = get_api('bestdori.assets')
 
 # 获取总登录奖励信息
 @overload
@@ -301,7 +302,7 @@ class LoginCampaign:
         if asset_bundle_name[index] is None:
             raise ServerNotAvailableError(f'LoginCampaign \'{name(self)}\'', server)
         return Api(
-            API['event']['loginbouns'].format(
+            ASSETS['event']['loginbouns'].format(
                 server=server, asset_bundle_name=asset_bundle_name[index]
             )
         ).get(
@@ -327,7 +328,7 @@ class LoginCampaign:
         if asset_bundle_name[index] is None:
             raise ServerNotAvailableError(f'LoginCampaign \'{name(self)}\'', server)
         return (await Api(
-            API['event']['loginbouns'].format(
+            ASSETS['event']['loginbouns'].format(
                 server=server, asset_bundle_name=asset_bundle_name[index]
             )
         ).aget(
