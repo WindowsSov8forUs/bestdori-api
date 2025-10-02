@@ -5,7 +5,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='bestdori-api',
-    version='2.0.1',
+    version='2.1.0',
     author='WindowsSov8',
     author_email='qwertyuiop2333@hotmail.com',
     description='Bestdori 的各种 API 调用整合，另外附带部分功能',
@@ -28,5 +28,13 @@ setup(
         'typing_extensions>=4.5.0',
         'multidict>=5.2.0',
         'yarl>=1.6.3',
-    ]
+    ],
+    extras_require={
+        'httpx': [
+            'httpx>=0.22.0',
+        ],
+        'aiohttp': [
+            'aiohttp>=3.8.1',
+        ],
+    },
 )
