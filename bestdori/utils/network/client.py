@@ -85,14 +85,25 @@ class Response:
         if self.status_code >= 400:
             raise HTTPStatusError(self)
 
-class Client(ABC):
-    '''同步 HTTP 客户端类型基类'''
+class _BaseClient(ABC):
+    '''HTTP 客户端类型基类'''
     
     def __init__(self, proxy: Optional[str], timeout: int) -> None:
         self.proxy = proxy
         '''代理服务器地址'''
         self.timeout = timeout
         '''超时时间'''
+    
+    @abstractmethod
+    def set_cookies(self, cookies: CookieJar) -> None:
+        '''设置 Cookie'''
+        raise NotImplementedError
+
+class Client(_BaseClient):
+    '''同步 HTTP 客户端类型基类'''
+    
+    def __init__(self, proxy: Optional[str], timeout: int) -> None:
+        super().__init__(proxy, timeout)
     
     @abstractmethod
     def __enter__(self) -> Self:
@@ -107,14 +118,11 @@ class Client(ABC):
         '''发送请求并获取响应'''
         raise NotImplementedError
 
-class AsyncClient(ABC):
+class AsyncClient(_BaseClient):
     '''异步 HTTP 客户端类型基类'''
     
     def __init__(self, proxy: Optional[str], timeout: int) -> None:
-        self.proxy = proxy
-        '''代理服务器地址'''
-        self.timeout = timeout
-        '''超时时间'''
+        super().__init__(proxy, timeout)
     
     @abstractmethod
     async def __aenter__(self) -> Self:

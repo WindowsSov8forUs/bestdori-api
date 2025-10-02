@@ -1,6 +1,8 @@
 from json import dumps
 from typing import Any, cast
+
 from multidict import CIMultiDict
+from http.cookiejar import CookieJar
 from typing_extensions import override
 
 from .client import Request, Response
@@ -19,6 +21,11 @@ __HTTPX_ABOVE_0_28_0__ : bool = tuple(httpx.__version__.split('.')) >= ('0', '28
 class Client(_Client):
     '''HTTPX 同步 HTTP 客户端类型'''
     _client: httpx.Client
+
+    @override
+    def set_cookies(self, cookies: CookieJar) -> None:
+        '''设置 Cookie'''
+        self._client.cookies = cookies
     
     @override
     def __enter__(self) -> "Client":
@@ -96,7 +103,12 @@ class Client(_Client):
 class AsyncClient(_AsyncClient):
     '''HTTPX 异步 HTTP 客户端类型'''
     _async_client: httpx.AsyncClient
-    
+
+    @override
+    async def set_cookies(self, cookies: CookieJar) -> None:
+        '''设置 Cookie'''
+        self._async_client.cookies = cookies
+
     @override
     async def __aenter__(self) -> "AsyncClient":
         if __HTTPX_ABOVE_0_28_0__:

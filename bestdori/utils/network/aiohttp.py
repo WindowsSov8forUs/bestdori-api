@@ -1,4 +1,6 @@
 from typing import Any
+
+from yarl import URL
 from multidict import CIMultiDict
 from http.cookies import SimpleCookie
 from typing_extensions import override
@@ -16,20 +18,21 @@ except ModuleNotFoundError as exception:
 
 def _simplecookie_to_cookiejar(simple_cookie: SimpleCookie) -> CookieJar:
     jar = CookieJar()
-
     for name, morsel in simple_cookie.items():
+        domain: str = morsel['domain'] or ''
+        path: str = morsel['path'] or '/'
         cookie = Cookie(
             version=0,
             name=name,
             value=morsel.value,
             port=None,
             port_specified=False,
-            domain=morsel['domain'],
-            domain_specified=bool(morsel['domain']),
-            domain_initial_dot=morsel['domain'].startswith('.'),
-            path=morsel['path'],
-            path_specified=bool(morsel['path']),
-            secure=morsel['secure'],
+            domain=domain,
+            domain_specified=bool(domain),
+            domain_initial_dot=domain.startswith('.') if domain else False,
+            path=path,
+            path_specified=bool(path),
+            secure=bool(morsel['secure']),
             expires=morsel['expires'],
             discard=False,
             comment=morsel['comment'],
@@ -43,6 +46,23 @@ def _simplecookie_to_cookiejar(simple_cookie: SimpleCookie) -> CookieJar:
 class AsyncClient(_AsyncClient):
     '''AIOHTTP 异步 HTTP 客户端'''
     _client_session: aiohttp.ClientSession
+
+    @override
+    async def set_cookies(self, cookies: CookieJar) -> None:
+        # 用新的 CookieJar 替换现有的，并保持后续自动管理
+        jar = aiohttp.CookieJar()
+        for cookie in cookies:
+            if cookie.value is None:
+                continue
+            
+            # 需要一个 response_url 来让 aiohttp 记录 domain/path
+            scheme = 'https' if cookie.secure else 'http'
+            domain = cookie.domain or 'localhost'
+            path = cookie.path or '/'
+            url = URL.build(scheme=scheme, host=domain.lstrip('.'), path=path)
+            jar.update_cookies({cookie.name: cookie.value}, response_url=url)
+        # 直接替换内部 cookie_jar
+        self._client_session._cookie_jar = jar  # 类型: aiohttp.CookieJar
     
     @override
     async def __aenter__(self) -> 'AsyncClient':
