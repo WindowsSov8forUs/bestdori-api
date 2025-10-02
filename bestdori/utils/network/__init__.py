@@ -71,7 +71,7 @@ def _import_client(name: str, _async: bool = False) -> Union[Type[Client], Type[
     else:
         raise ImportError(f'cannot find builtin {name} client.')
 
-def get_client(*, proxy: Optional[str], timeout: int) -> Client:
+def get_client(*, proxy: Optional[str], timeout: int, cookies: Optional[CookieJar]) -> Client:
     '''获取一个当前可用的同步客户端'''
     global __Client__
     
@@ -87,10 +87,12 @@ def get_client(*, proxy: Optional[str], timeout: int) -> Client:
             raise ImportError('no available client.')
     
     client = __Client__(proxy, timeout)
+    if cookies is not None:
+        client.set_cookies(cookies)
     
     return client
 
-def get_async_client(*, proxy: Optional[str], timeout: int) -> AsyncClient:
+def get_async_client(*, proxy: Optional[str], timeout: int, cookies: Optional[CookieJar]) -> AsyncClient:
     '''获取一个当前可用的异步客户端'''
     global __AsyncClient__
     
@@ -106,6 +108,8 @@ def get_async_client(*, proxy: Optional[str], timeout: int) -> AsyncClient:
             raise ImportError('no available client.')
     
     client = __AsyncClient__(proxy, timeout)
+    if cookies is not None:
+        client.set_cookies(cookies)
     
     return client
 
@@ -114,6 +118,7 @@ class Api:
     '''API 请求发送类'''
     
     _url: str
+    _cookies: Optional[CookieJar] = None
     
     def __init__(self, url: str) -> None:
         self._url = url
@@ -124,6 +129,16 @@ class Api:
         if self._url.startswith('http'):
             return self._url
         return f'{PREFIX["bestdori"]}{self._url}'
+    
+    @classmethod
+    def set_cookies(cls, cookies: CookieJar) -> None:
+        '''设置全局 Cookies'''
+        cls._cookies = cookies
+    
+    @classmethod
+    def get_cookies(cls) -> Optional[CookieJar]:
+        '''获取全局 Cookies'''
+        return cls._cookies
     
     def _build_request(
         self,
@@ -226,8 +241,12 @@ class Api:
     ) -> Response:
         '''发送请求'''
         request = self._build_request(method, cookies=cookies, params=params, data=data, files=files)
-        
-        with get_client(proxy=settings.proxy, timeout=settings.timeout) as client:
+
+        with get_client(
+            proxy=settings.proxy,
+            timeout=settings.timeout,
+            cookies=self.get_cookies(),
+        ) as client:
             response = client.request(request)
         
         return self._handle_response(response)
@@ -244,7 +263,11 @@ class Api:
         '''异步发送请求'''
         request = self._build_request(method, cookies=cookies, params=params, data=data, files=files)
         
-        async with get_async_client(proxy=settings.proxy, timeout=settings.timeout) as client:
+        async with get_async_client(
+            proxy=settings.proxy,
+            timeout=settings.timeout,
+            cookies=self.get_cookies(),
+        ) as client:
             response = await client.request(request)
         
         return self._handle_response(response)

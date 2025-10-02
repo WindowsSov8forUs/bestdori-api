@@ -339,9 +339,9 @@ class User:
             me=self.__me,
         )
 
-# 自身用户类
-class Me(User):
-    '''自身用户类
+# 当前用户类
+class Me:
+    '''当前用户类
 
     参数:
         username (str): 用户名
@@ -355,7 +355,8 @@ class Me(User):
             username (str): 用户名
             password (str): 密码
         '''
-        super().__init__(username)
+        self.username: str = username
+        '''用户名'''
         self.password: str = password
         '''密码'''
         self.__cookies: Optional[CookieJar] = None
@@ -386,6 +387,7 @@ class Me(User):
             API['user']['login']
         ).post(data={'username': self.username, 'password': self.password})
         self.__cookies = response.cookies
+        Api.set_cookies(response.cookies)
 
         response = Api(API['user']['me']).get(cookies=self.cookies)
         self.__me = response.json()
@@ -396,6 +398,7 @@ class Me(User):
             API['user']['login']
         ).apost(data={'username': self.username, 'password': self.password})
         self.__cookies = response.cookies
+        Api.set_cookies(response.cookies)
         
         response = await Api(API['user']['me']).aget(cookies=self.cookies)
         self.__me = response.json()
@@ -410,6 +413,14 @@ class Me(User):
             await self.login_async()
         return self.cookies
     
+    def user(self) -> 'User':
+        '''当前用户的用户类实例
+
+        返回:
+            User: 当前用户的用户类实例
+        '''
+        return User(self.username, me=self)
+    
     def update_info(self, info: 'UserInfo') -> 'UserInfo':
         '''更新用户信息
 
@@ -423,7 +434,7 @@ class Me(User):
             API['user']['info']
         ).post(data=dict(info), cookies=self.cookies)
         
-        return self.get_info()
+        return self.user().get_info()
     
     async def update_info_async(self, info: 'UserInfo') -> 'UserInfo':
         '''更新用户信息
@@ -437,5 +448,5 @@ class Me(User):
         await Api(
             API['user']['info']
         ).apost(data=dict(info), cookies=self.cookies)
-        
-        return await self.get_info_async()
+
+        return await self.user().get_info_async()
