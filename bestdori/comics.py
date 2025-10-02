@@ -4,7 +4,7 @@ BanG Dream! 漫画相关操作'''
 from typing import TYPE_CHECKING, List, Literal, Optional
 
 from . import post
-from .user import Me
+from .user import Me  # 仅用于类型兼容，可后续移除
 from .utils.network import Api
 from .utils import name, get_api
 from .exceptions import (
@@ -20,7 +20,7 @@ API = get_api('bestdori.api')
 ASSETS = get_api('bestdori.assets')
 
 # 获取总漫画信息
-def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'ComicsAll5':
+def get_all(index: Literal[5]=5) -> 'ComicsAll5':
     '''获取总漫画信息
 
     参数:
@@ -31,12 +31,10 @@ def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'ComicsAll5':
     返回:
         ComicsAll5: 获取到的总漫画信息
     '''
-    return Api(API['all']['comics'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).json()
+    return Api(API['all']['comics'].format(index=index)).get().json()
 
 # 异步获取总漫画信息
-async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'ComicsAll5':
+async def get_all_async(index: Literal[5]=5) -> 'ComicsAll5':
     '''获取总漫画信息
 
     参数:
@@ -47,9 +45,7 @@ async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'Com
     返回:
         ComicsAll5: 获取到的总漫画信息
     '''
-    return (await Api(API['all']['comics'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).json()
+    return (await Api(API['all']['comics'].format(index=index)).aget()).json()
 
 # 漫画类
 class Comic:
@@ -59,7 +55,7 @@ class Comic:
         id (int): 漫画 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''漫画类
 
         参数:
@@ -70,8 +66,7 @@ class Comic:
         self.__info: Optional['ComicInfo'] = None
         '''漫画信息'''
 
-        self.__me: Optional[Me] = me
-        return
+    # me 参数已移除
     
     @property
     def info(self) -> 'ComicInfo':
@@ -87,7 +82,7 @@ class Comic:
         返回:
             ComicInfo: 漫画详细信息
         '''
-        _all = get_all(me=self.__me)
+        _all = get_all()
         if str(self.id) not in _all:
             raise NotExistException(f'Comic {self.id}')
         self.__info = _all[str(self.id)]
@@ -105,7 +100,7 @@ class Comic:
         返回:
             ComicInfo: 漫画详细信息
         '''
-        _all = await get_all_async(me=self.__me)
+        _all = await get_all_async()
         if str(self.id) not in _all:
             raise NotExistException(f'Comic {self.id}')
         self.__info = _all[str(self.id)]
@@ -185,7 +180,6 @@ class Comic:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取漫画评论
@@ -218,7 +212,6 @@ class Comic:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 获取漫画缩略图图像
@@ -244,9 +237,7 @@ class Comic:
             ASSETS['comic']['thumbnail'].format(
                 server=server, type=self.__type__, asset_bundle_name=asset_bundle_name
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
-        ).content
+        ).get().content
     
     # 异步获取漫画缩略图图像
     async def get_thumbnail_async(self, server: 'ServerName') -> bytes:
@@ -271,9 +262,7 @@ class Comic:
             ASSETS['comic']['thumbnail'].format(
                 server=server, type=self.__type__, asset_bundle_name=asset_bundle_name
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me is not None else None,
-        )).content
+        ).aget()).content
     
     # 获取漫画图像
     def get_asset(self, server: 'ServerName') -> bytes:
@@ -298,9 +287,7 @@ class Comic:
             ASSETS['comic']['comic'].format(
                 server=server, type=self.__type__, asset_bundle_name=asset_bundle_name
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
-        ).content
+        ).get().content
     
     # 异步获取漫画图像
     async def get_asset_async(self, server: 'ServerName') -> bytes:
@@ -325,6 +312,4 @@ class Comic:
             ASSETS['comic']['comic'].format(
                 server=server, type=self.__type__, asset_bundle_name=asset_bundle_name
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me is not None else None,
-        )).content
+        ).aget()).content

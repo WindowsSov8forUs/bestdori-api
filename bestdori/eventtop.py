@@ -5,7 +5,6 @@ BanG Dream! 活动 T10 排名数据'''
 from typing_extensions import overload
 from typing import TYPE_CHECKING, Literal, Optional
 
-from .user import Me
 from .utils import get_api
 from .utils.network import Api
 from .exceptions import HTTPStatusError, NotExistException
@@ -17,7 +16,7 @@ API = get_api('bestdori.api')
 
 # 获取活动最新 T10 排名分数线
 @overload
-def get_data(server: 'Server', event: int, mid: int = 0, *, interval: int, me: Optional[Me] = None) -> 'EventTopData':
+def get_data(server: 'Server', event: int, mid: int = 0, *, interval: int) -> 'EventTopData':
     '''获取活动最新 T10 排名分数线
 
     参数:
@@ -33,7 +32,7 @@ def get_data(server: 'Server', event: int, mid: int = 0, *, interval: int, me: O
     ...
 # 获取活动最终 T10 排名分数线
 @overload
-def get_data(server: 'Server', event: int, mid: int = 0, *, latest: Literal[1], me: Optional[Me] = None) -> 'EventTopData':
+def get_data(server: 'Server', event: int, mid: int = 0, *, latest: Literal[1]) -> 'EventTopData':
     '''获取活动最终 T10 排名分数线
 
     参数:
@@ -56,7 +55,6 @@ def get_data(
     *,
     interval: Optional[int] = None,
     latest: Optional[Literal[1]] = None,
-    me: Optional[Me] = None,
 ) -> 'EventTopData':
     params = {
         'server': server,
@@ -70,7 +68,6 @@ def get_data(
     
     try:
         response = Api(API['tracker']['eventtop']).get(
-            cookies=me.__get_cookies__() if me else None,
             params=params,
         )
     except HTTPStatusError as exception:
@@ -83,7 +80,7 @@ def get_data(
 
 # 异步获取活动最新 T10 排名分数线
 @overload
-async def get_data_async(server: 'Server', event: int, mid: int = 0, *, interval: int, me: Optional[Me] = None) -> 'EventTopData':
+async def get_data_async(server: 'Server', event: int, mid: int = 0, *, interval: int) -> 'EventTopData':
     '''异步获取活动最新 T10 排名分数线
 
     参数:
@@ -99,7 +96,7 @@ async def get_data_async(server: 'Server', event: int, mid: int = 0, *, interval
     ...
 # 异步获取活动最终 T10 排名分数线
 @overload
-async def get_data_async(server: 'Server', event: int, mid: int = 0, *, latest: Literal[1], me: Optional[Me] = None) -> 'EventTopData':
+async def get_data_async(server: 'Server', event: int, mid: int = 0, *, latest: Literal[1]) -> 'EventTopData':
     '''异步获取活动最终 T10 排名分数线
 
     参数:
@@ -122,7 +119,6 @@ async def get_data_async(
     *,
     interval: Optional[int] = None,
     latest: Optional[Literal[1]] = None,
-    me: Optional[Me] = None,
 ) -> 'EventTopData':
     params = {
         'server': server,
@@ -136,7 +132,6 @@ async def get_data_async(
     
     try:
         response = await Api(API['tracker']['eventtop']).aget(
-            cookies=me.__get_cookies__() if me else None,
             params=params,
         )
     except HTTPStatusError as exception:

@@ -6,7 +6,6 @@ from hashlib import sha1
 from io import BufferedReader
 from typing import Union, Optional
 
-from .user import Me
 from .utils import get_api
 from .utils.network import Api
 from .exceptions import AlreadyUploadedError
@@ -14,7 +13,7 @@ from .exceptions import AlreadyUploadedError
 API = get_api('bestdori.api')
 
 # 从 Bestdori 获取指定哈希文件字节
-def download(hash: str, *, me: Optional[Me] = None) -> bytes:
+def download(hash: str) -> bytes:
     '''从 Bestdori 获取指定哈希文件字节
 
     参数:
@@ -23,12 +22,10 @@ def download(hash: str, *, me: Optional[Me] = None) -> bytes:
     返回:
         bytes: 文件字节 `bytes`
     '''
-    return Api(API['upload']['file'].format(hash=hash)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).content
+    return Api(API['upload']['file'].format(hash=hash)).get().content
 
 # 异步从 Bestdori 获取指定哈希文件字节
-async def download_async(hash: str, *, me: Optional[Me] = None) -> bytes:
+async def download_async(hash: str) -> bytes:
     '''从 Bestdori 获取指定哈希文件字节
 
     参数:
@@ -37,9 +34,7 @@ async def download_async(hash: str, *, me: Optional[Me] = None) -> bytes:
     返回:
         bytes: 文件字节 `bytes`
     '''
-    return (await Api(API['upload']['file'].format(hash=hash)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).content
+    return (await Api(API['upload']['file'].format(hash=hash)).aget()).content
 
 # 通过哈希值构建 Bestdori 文件 URL
 def hash_to_url(hash: str) -> str:
@@ -63,7 +58,7 @@ class Upload:
         reader (BufferedReader): 文件字节流
     '''
     # 初始化
-    def __init__(self, file_bytes: bytes, name: str, reader: BufferedReader, *, me: Me) -> None:
+    def __init__(self, file_bytes: bytes, name: str, reader: BufferedReader) -> None:
         # 处理文件字节
         hash = sha1(file_bytes).hexdigest() # 计算 SHA-1 哈希
         size = len(file_bytes) # 计算文件大小
@@ -78,13 +73,11 @@ class Upload:
         '''文件名'''
         self._reader: BufferedReader = reader
         '''文件字节流'''
-
-        self.__me = me
-        return
+        
     
     # 从路径中获取文件
     @classmethod
-    def from_path(cls, path: Union[str, Path], *, me: Me) -> 'Upload':
+    def from_path(cls, path: Union[str, Path]) -> 'Upload':
         '''从路径中获取文件
 
         参数:
@@ -100,7 +93,7 @@ class Upload:
         file = open(path, 'rb')
         file_bytes = file.read()
         # 返回上传文件对象
-        return cls(file_bytes, file_name, file, me=me)
+        return cls(file_bytes, file_name, file)
     
     # 上传文件
     def upload(self) -> str:
@@ -121,7 +114,7 @@ class Upload:
         # 发送预上传请求
         try:
             Api(API['upload']['prepare']).post(
-                cookies=self.__me.__get_cookies__(), data=payload,
+                data=payload,
             )
         except AlreadyUploadedError:
             self._reader.close()
@@ -132,16 +125,13 @@ class Upload:
                 files={
                     'file': (self._name, self._reader, None)
                 },
-                cookies=self.__me.__get_cookies__(),
             )
         # 获取文件的哈希值
         hash_get = response.json()['hash']
         #重复查询至多 5 次上传状态
         for _ in range(5):
             # 发送上传状态查询请求
-            response = Api(API['upload']['status'].format(hash=hash_get)).get(
-                cookies=self.__me.__get_cookies__(),
-            )
+            response = Api(API['upload']['status'].format(hash=hash_get)).get()
             # 获取上传状态
             status = response.json()['status']
             # 若上传成功则返回
@@ -169,7 +159,7 @@ class Upload:
         # 发送预上传请求
         try:
             await Api(API['upload']['prepare']).apost(
-                cookies=await self.__me.__get_cookies_async__(), data=payload,
+                data=payload,
             )
         except AlreadyUploadedError:
             self._reader.close()
@@ -180,16 +170,13 @@ class Upload:
                 files={
                     'file': (self._name, self._reader, None)
                 },
-                cookies=await self.__me.__get_cookies_async__(),
             )
         # 获取文件的哈希值
         hash_get = response.json()['hash']
         #重复查询至多 5 次上传状态
         for _ in range(5):
             # 发送上传状态查询请求
-            response = await Api(API['upload']['status'].format(hash=hash_get)).aget(
-                cookies=await self.__me.__get_cookies_async__(),
-            )
+            response = await Api(API['upload']['status'].format(hash=hash_get)).aget()
             # 获取上传状态
             status = response.json()['status']
             # 若上传成功则返回

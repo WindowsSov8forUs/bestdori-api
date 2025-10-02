@@ -37,6 +37,33 @@ _✨ [Bestdori](https://bestdori.com/) 的各种 API 调用整合，另外附带
 > bestdori-api 现已全面支持同步与异步
 > 异步使用方法与同步类似，可几乎无缝切换
 
+## :boom: 破坏性变更（近期版本）
+
+自本次重构起，所有公开 API 接口已移除 `me` 参数（例如 `get_all(..., me=...)`、`Upload.from_path(..., me=...)`、`EventTracker(..., me=...)` 等）。
+
+调整原因：
+1. 统一鉴权：改为通过一次登录后设置全局 `Api.set_cookies(...)` 维持会话，避免每次调用显式传参。
+2. 简化接口：绝大多数只读接口与资源获取与用户状态无关，移除多余可选参数降低心智负担。
+3. 规避误用：此前传入不同 `Me` 实例造成的状态不一致/缓存混乱问题被彻底消除。
+
+迁移指南：
+1. 删除所有函数/方法调用里的 `me=...` 关键字参数。
+2. 若需要登录态（发表帖子 / 上传等），在程序启动阶段：
+  ```python
+  from bestdori.user import Me
+  me = Me(username, password)
+  me.login()          # 或 await me.login_async()
+  # 之后直接调用其它 API，不再传递 me
+  ```
+3. 原 `User(..., me=...)`、`EventTracker(..., me=...)`、`Upload(..., me=...)` 构造签名均已精简为不含 `me` 版本。
+4. 若你维护文档 / 代码片段，请移除所有 `me=` 示例。
+
+影响范围（非完整列表）：`characters`, `cards`, `costumes`, `events`, `eventarchives`, `eventtracker`, `eventtop`, `gacha`, `logincampaigns`, `missions`, `songmeta`, `songs`, `skills`, `festival`, `miracleticket`, `stamps`, `upload`, `bands`, `post` 相关查询/评论接口，以及对应异步版本。
+
+旧版本兼容：不再提供回退层；若需要过渡，请锁定升级前版本号。
+
+如在迁移过程中遇到问题，欢迎提交 Issue。
+
 ## 简介
 
 这是一个用 Python 编写的调用 [Bestdori](https://bestdori.com/) 各种 API 与资源下载的库，大致包括了社区帖子的处理以及各种 [BanG Dream！少女乐团派对](https://zh.moegirl.org.cn/BanG_Dream!_%E5%B0%91%E5%A5%B3%E4%B9%90%E5%9B%A2%E6%B4%BE%E5%AF%B9%EF%BC%81) 游戏内资源的获取。

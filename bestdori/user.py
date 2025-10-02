@@ -21,14 +21,12 @@ class User:
         username (str): 用户名
     '''
     # 初始化
-    def __init__(self, username: str, *, me: Optional['Me'] = None) -> None:     
+    def __init__(self, username: str) -> None:     
         self.username: str = username
         '''用户名'''
         self.__info: Optional['UserInfo'] = None
         '''用户信息'''
         
-        self.__me: Optional['Me'] = me
-        return
     
     @property
     def info(self) -> 'UserInfo':
@@ -43,10 +41,10 @@ class User:
         返回:
             UserInfo: 用户信息
         '''
+        # 不再使用 me.cookies，统一依赖全局 Api Cookies
         response = Api(
             API['user']['info']
         ).get(
-            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
             params={'username': self.username},
         )
         self.__info = response.json()
@@ -64,10 +62,10 @@ class User:
         返回:
             UserInfo: 用户信息
         '''
+        # 不再使用 me.cookies，统一依赖全局 Api Cookies
         response = await Api(
             API['user']['info']
         ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me is not None else None,
             params={'username': self.username},
         )
         self.__info = response.json()
@@ -104,7 +102,7 @@ class User:
                 ```
         '''
         return post.get_list(
-            username=self.username, limit=limit, offset=offset, order=order, me=self.__me,
+            username=self.username, limit=limit, offset=offset, order=order,
         )
     
     # 异步获取用户帖子
@@ -132,7 +130,7 @@ class User:
                 ```
         '''
         return await post.get_list_async(
-            username=self.username, limit=limit, offset=offset, order=order, me=self.__me,
+            username=self.username, limit=limit, offset=offset, order=order,
         )
     
     # 获取用户谱面
@@ -166,7 +164,6 @@ class User:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 异步获取用户谱面
@@ -200,7 +197,6 @@ class User:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 获取用户文本帖子
@@ -234,7 +230,6 @@ class User:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 异步获取用户文本帖子
@@ -268,7 +263,6 @@ class User:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 获取用户故事
@@ -302,7 +296,6 @@ class User:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 异步获取用户故事
@@ -336,7 +329,6 @@ class User:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
 
 # 当前用户类
@@ -403,23 +395,13 @@ class Me:
         response = await Api(API['user']['me']).aget(cookies=self.cookies)
         self.__me = response.json()
     
-    def __get_cookies__(self) -> CookieJar:
-        if self.__cookies is None:
-            self.login()
-        return self.cookies
-    
-    async def __get_cookies_async__(self) -> CookieJar:
-        if self.__cookies is None:
-            await self.login_async()
-        return self.cookies
-    
     def user(self) -> 'User':
         '''当前用户的用户类实例
 
         返回:
             User: 当前用户的用户类实例
         '''
-        return User(self.username, me=self)
+        return User(self.username)
     
     def update_info(self, info: 'UserInfo') -> 'UserInfo':
         '''更新用户信息
@@ -432,7 +414,7 @@ class Me:
         '''
         Api(
             API['user']['info']
-        ).post(data=dict(info), cookies=self.cookies)
+        ).post(data=dict(info))
         
         return self.user().get_info()
     
@@ -447,6 +429,6 @@ class Me:
         '''
         await Api(
             API['user']['info']
-        ).apost(data=dict(info), cookies=self.cookies)
+        ).apost(data=dict(info))
 
         return await self.user().get_info_async()

@@ -91,9 +91,7 @@ def get_all(index: Literal[8], *, me: Optional[Me] = None) -> 'SongsAll8':
 def get_all(
         index: Literal[0, 1, 5, 7, 8]=5, *, me: Optional[Me] = None
     ) -> Union[Dict[str, 'NoneDict'], 'SongsAll1', 'SongsAll5', 'SongsAll7', 'SongsAll8']:
-    return Api(API['songs']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None
-    ).json()
+    return Api(API['songs']['all'].format(index=index)).get().json()
 
 # 异步获取总歌曲信息
 @overload
@@ -155,9 +153,7 @@ async def get_all_async(index: Literal[8], *, me: Optional[Me] = None) -> 'Songs
 async def get_all_async(
     index: Literal[0, 1, 5, 7, 8]=5, *, me: Optional[Me] = None
 ) -> Union[Dict[str, 'NoneDict'], 'SongsAll1', 'SongsAll5', 'SongsAll7', 'SongsAll8']:
-    return (await Api(API['songs']['all'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None
-    )).json()
+    return (await Api(API['songs']['all'].format(index=index)).aget()).json()
 
 # 歌曲封面内部类
 class Jacket:
@@ -230,8 +226,8 @@ class Song:
         '''歌曲 ID'''
         self.__info: Optional['SongInfo'] = None
         '''歌曲信息'''
-
-        self.__me = me
+        # me 参数已弃用
+        self.__me = None
         return
     
     @property
@@ -251,9 +247,7 @@ class Song:
         try:
             response = Api(
                 API['songs']['info'].format(id=self.id)
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None
-            )
+            ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Song {self.id}')
@@ -278,9 +272,7 @@ class Song:
         try:
             response = await Api(
                 API['songs']['info'].format(id=self.id)
-            ).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None
-            )
+            ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Song {self.id}')
@@ -364,7 +356,7 @@ class Song:
             Chart: 获取到的谱面对象
         '''
         try:
-            chart = Chart.get_chart(self.id, diff, me=self.__me)
+            chart = Chart.get_chart(self.id, diff)
             return chart
         except HTTPStatusError as e:
             if e.response.status_code == 404:
@@ -387,7 +379,7 @@ class Song:
             Chart: 获取到的谱面对象
         '''
         try:
-            chart = await Chart.get_chart_async(self.id, diff, me=self.__me)
+            chart = await Chart.get_chart_async(self.id, diff)
             return chart
         except HTTPStatusError as e:
             if e.response.status_code == 404:
@@ -450,7 +442,6 @@ class Song:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取歌曲评论
@@ -483,5 +474,4 @@ class Song:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )

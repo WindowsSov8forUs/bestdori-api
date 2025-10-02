@@ -5,7 +5,6 @@ BanG Dream! 卡牌相关操作'''
 from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
-from .user import Me
 from .utils import get_api
 from .post import get_list, get_list_async
 from .utils.network import Api
@@ -32,7 +31,7 @@ ASSETS = get_api('bestdori.assets')
 
 # 获取总卡牌信息
 @overload
-def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总卡牌信息
 
     参数:
@@ -43,7 +42,7 @@ def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDic
     '''
     ...
 @overload
-def get_all(index: Literal[2], *, me: Optional[Me] = None) -> 'CardAll2':
+def get_all(index: Literal[2]) -> 'CardAll2':
     '''获取总卡牌信息
 
     参数:
@@ -54,7 +53,7 @@ def get_all(index: Literal[2], *, me: Optional[Me] = None) -> 'CardAll2':
     '''
     ...
 @overload
-def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'CardAll3':
+def get_all(index: Literal[3]) -> 'CardAll3':
     '''获取总卡牌信息
 
     参数:
@@ -65,7 +64,7 @@ def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'CardAll3':
     '''
     ...
 @overload
-def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'CardAll5':
+def get_all(index: Literal[5]) -> 'CardAll5':
     '''获取总卡牌信息
 
     参数:
@@ -76,14 +75,12 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'CardAll5':
     '''
     ...
 
-def get_all(index: Literal[0, 2, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'CardAll2', 'CardAll3', 'CardAll5']:
-    return Api(API['cards']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).json()
+def get_all(index: Literal[0, 2, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CardAll2', 'CardAll3', 'CardAll5']:
+    return Api(API['cards']['all'].format(index=index)).get().json()
 
 # 异步获取总卡牌信息
 @overload
-async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总卡牌信息
 
     参数:
@@ -94,7 +91,7 @@ async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[s
     '''
     ...
 @overload
-async def get_all_async(index: Literal[2], *, me: Optional[Me] = None) -> 'CardAll2':
+async def get_all_async(index: Literal[2]) -> 'CardAll2':
     '''获取总卡牌信息
 
     参数:
@@ -105,7 +102,7 @@ async def get_all_async(index: Literal[2], *, me: Optional[Me] = None) -> 'CardA
     '''
     ...
 @overload
-async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'CardAll3':
+async def get_all_async(index: Literal[3]) -> 'CardAll3':
     '''获取总卡牌信息
 
     参数:
@@ -116,7 +113,7 @@ async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'CardA
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'CardAll5':
+async def get_all_async(index: Literal[5]) -> 'CardAll5':
     '''获取总卡牌信息
 
     参数:
@@ -127,13 +124,11 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'CardA
     '''
     ...
 
-async def get_all_async(index: Literal[0, 2, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'CardAll2', 'CardAll3', 'CardAll5']:
-    return (await Api(API['cards']['all'].format(index=index)).aget(
-        cookies=(await me.__get_cookies_async__()) if me is not None else None,
-    )).json()
+async def get_all_async(index: Literal[0, 2, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'CardAll2', 'CardAll3', 'CardAll5']:
+    return (await Api(API['cards']['all'].format(index=index)).aget()).json()
 
 # 获取属性图标
-def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy'], *, me: Optional[Me] = None) -> bytes:
+def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy']) -> bytes:
     '''获取属性图标
 
     参数:
@@ -146,12 +141,10 @@ def get_attribute_icon(attribute: Literal['powerful', 'pure', 'cool', 'happy'], 
     返回:
         bytes: 属性图标字节数据
     '''
-    return Api(RES['icon']['svg'].format(name=f'{attribute}')).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    return Api(RES['icon']['svg'].format(name=f'{attribute}')).get().content
 
 # 异步获取属性图标
-async def get_attribute_icon_async(attribute: Literal['powerful', 'pure', 'cool', 'happy'], *, me: Optional[Me] = None) -> bytes:
+async def get_attribute_icon_async(attribute: Literal['powerful', 'pure', 'cool', 'happy']) -> bytes:
     '''获取属性图标
 
     参数:
@@ -164,12 +157,10 @@ async def get_attribute_icon_async(attribute: Literal['powerful', 'pure', 'cool'
     返回:
         bytes: 属性图标字节数据
     '''
-    return (await Api(RES['icon']['svg'].format(name=f'{attribute}')).aget(
-        cookies=(await me.__get_cookies_async__()) if me is not None else None,
-    )).content
+    return (await Api(RES['icon']['svg'].format(name=f'{attribute}')).aget()).content
 
 # 获取星星图标
-def get_star_icon(star: Literal['star', 'star_trained'], *, me: Optional[Me] = None) -> bytes:
+def get_star_icon(star: Literal['star', 'star_trained']) -> bytes:
     '''获取星星图标
 
     参数:
@@ -180,12 +171,10 @@ def get_star_icon(star: Literal['star', 'star_trained'], *, me: Optional[Me] = N
     返回:
         bytes: 星星图标字节数据
     '''
-    return Api(RES['icon']['png'].format(name=f'{star}')).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    return Api(RES['icon']['png'].format(name=f'{star}')).get().content
 
 # 异步获取星星图标
-async def get_star_icon_async(star: Literal['star', 'star_trained'], *, me: Optional[Me] = None) -> bytes:
+async def get_star_icon_async(star: Literal['star', 'star_trained']) -> bytes:
     '''获取星星图标
 
     参数:
@@ -196,12 +185,10 @@ async def get_star_icon_async(star: Literal['star', 'star_trained'], *, me: Opti
     返回:
         bytes: 星星图标字节数据
     '''
-    return (await Api(RES['icon']['png'].format(name=f'{star}')).aget(
-        cookies=(await me.__get_cookies_async__()) if me is not None else None,
-    )).content
+    return (await Api(RES['icon']['png'].format(name=f'{star}')).aget()).content
 
 # 获取卡牌完整边框
-def get_frame(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = None) -> bytes:
+def get_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     '''获取卡牌完整边框
 
     参数:
@@ -210,12 +197,10 @@ def get_frame(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = None) -> byte
     返回:
         bytes: 卡牌完整边框字节数据
     '''
-    return Api(RES['image']['png'].format(name=f'frame-{level}')).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    return Api(RES['image']['png'].format(name=f'frame-{level}')).get().content
 
 # 异步获取卡牌完整边框
-async def get_frame_async(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = None) -> bytes:
+async def get_frame_async(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     '''获取卡牌完整边框
 
     参数:
@@ -224,12 +209,10 @@ async def get_frame_async(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = N
     返回:
         bytes: 卡牌完整边框字节数据
     '''
-    return (await Api(RES['image']['png'].format(name=f'frame-{level}')).aget(
-        cookies=(await me.__get_cookies_async__()) if me is not None else None,
-    )).content
+    return (await Api(RES['image']['png'].format(name=f'frame-{level}')).aget()).content
 
 # 获取卡牌缩略图边框
-def get_card_frame(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = None) -> bytes:
+def get_card_frame(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     '''获取卡牌缩略图边框
 
     参数:
@@ -238,12 +221,10 @@ def get_card_frame(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = None) ->
     返回:
         bytes: 卡牌缩略图边框字节数据
     '''
-    return Api(RES['image']['png'].format(name=f'card-{level}')).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    return Api(RES['image']['png'].format(name=f'card-{level}')).get().content
 
 # 异步获取卡牌缩略图边框
-async def get_card_frame_async(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me] = None) -> bytes:
+async def get_card_frame_async(level: Literal[1, 2, 3, 4, 5]) -> bytes:
     '''获取卡牌缩略图边框
 
     参数:
@@ -252,9 +233,7 @@ async def get_card_frame_async(level: Literal[1, 2, 3, 4, 5], *, me: Optional[Me
     返回:
         bytes: 卡牌缩略图边框字节数据
     '''
-    return (await Api(RES['image']['png'].format(name=f'card-{level}')).aget(
-        cookies=(await me.__get_cookies_async__()) if me is not None else None,
-    )).content
+    return (await Api(RES['image']['png'].format(name=f'card-{level}')).aget()).content
 
 # 卡牌类
 class Card:
@@ -264,14 +243,12 @@ class Card:
         id (int): 卡牌 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         self.id: int = id
         '''卡牌 ID'''
         self.__info: Optional['CardInfo'] = None
         '''卡牌信息'''
         
-        self.__me: Optional[Me] = me
-        return
     
     @property
     def info(self) -> 'CardInfo':
@@ -290,9 +267,7 @@ class Card:
         try:
             response = Api(
                 API['cards']['info'].format(id=self.id)
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me is not None else None,
-            )
+            ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Card {self.id}')
@@ -316,9 +291,7 @@ class Card:
         try:
             response = await Api(
                 API['cards']['info'].format(id=self.id)
-            ).aget(
-                cookies=(await self.__me.__get_cookies_async__()) if self.__me is not None else None,
-            )
+            ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Card {self.id}')
@@ -383,7 +356,6 @@ class Card:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取卡牌评论
@@ -416,7 +388,6 @@ class Card:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 获取卡牌完整图片
@@ -437,9 +408,7 @@ class Card:
                 name='card',
                 type=type,
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
-        ).content
+        ).get().content
     
     # 异步获取卡牌完整图片
     async def get_card_async(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -460,9 +429,7 @@ class Card:
                 name='card',
                 type=type,
             )
-        ).aget(
-            cookies=(await self.__me.__get_cookies_async__()) if self.__me is not None else None,
-        )).content
+        ).aget()).content
     
     # 获取卡牌无背景图片
     def get_trim(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -482,9 +449,7 @@ class Card:
                 name='trim',
                 type=type,
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
-        ).content
+        ).get().content
     
     # 异步获取卡牌无背景图片
     async def get_trim_async(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -504,9 +469,7 @@ class Card:
                 name='trim',
                 type=type,
             )
-        ).aget(
-            cookies=(await self.__me.__get_cookies_async__()) if self.__me is not None else None,
-        )).content
+        ).aget()).content
     
     # 获取卡牌缩略图图片
     def get_thumb(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -526,9 +489,7 @@ class Card:
                 resource_set_name=info['resourceSetName'],
                 type=type,
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self .__me is not None else None,
-        ).content
+        ).get().content
     
     # 异步获取卡牌缩略图图片
     async def get_thumb_async(self, type: Literal['normal', 'after_training']) -> bytes:
@@ -548,9 +509,7 @@ class Card:
                 resource_set_name=info['resourceSetName'],
                 type=type,
             )
-        ).aget(
-            cookies=(await self.__me.__get_cookies_async__()) if self.__me is not None else None,
-        )).content
+        ).aget()).content
     
     # 获取 LIVE 服装图片
     def get_livesd(self) -> bytes:
@@ -565,9 +524,7 @@ class Card:
                 server=self.__server__,
                 sd_resource_name=info['sdResourceName'],
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me is not None else None,
-        ).content
+        ).get().content
     
     # 异步获取 LIVE 服装图片
     async def get_livesd_async(self) -> bytes:
@@ -582,6 +539,4 @@ class Card:
                 server=self.__server__,
                 sd_resource_name=info['sdResourceName'],
             )
-        ).aget(
-            cookies=(await self.__me.__get_cookies_async__()) if self.__me is not None else None,
-        )).content
+        ).aget()).content

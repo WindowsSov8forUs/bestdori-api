@@ -51,9 +51,7 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'MissionsAll5':
     ...
 
 def get_all(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'MissionsAll5']:
-    return Api(API['missions']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+    return Api(API['missions']['all'].format(index=index)).get().json()
 
 # 异步获取总任务信息
 @overload
@@ -80,9 +78,7 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'Missi
     ...
 
 async def get_all_async(index: Literal[0, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'MissionsAll5']:
-    return (await Api(API['missions']['all'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+    return (await Api(API['missions']['all'].format(index=index)).aget()).json()
 
 # 任务类
 class Mission:
@@ -102,8 +98,8 @@ class Mission:
         '''任务 ID'''
         self.__info: Optional['MissionInfo'] = None
         '''任务信息'''
-
-        self.__me = me
+        # me 参数已弃用
+        self.__me = None
         return
     
     @property
@@ -144,9 +140,7 @@ class Mission:
         try:
             response = Api(
                 API['missions']['info'].format(id=self.id)
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None,
-            )
+            ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Mission {self.id}') from exception
@@ -165,9 +159,7 @@ class Mission:
         try:
             response = await Api(
                 API['missions']['info'].format(id=self.id)
-            ).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-            )
+            ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Mission {self.id}') from exception
@@ -206,7 +198,6 @@ class Mission:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取任务评论
@@ -239,6 +230,5 @@ class Mission:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     

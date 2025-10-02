@@ -3,7 +3,6 @@
 BanG Dream! 活动 PT 与排名追踪器'''
 from typing import TYPE_CHECKING, List, Literal, Optional
 
-from .user import Me
 from .utils import get_api
 from . import post, eventtop
 from .utils.network import Api
@@ -21,26 +20,22 @@ if TYPE_CHECKING:
 API = get_api('bestdori.api')
 
 # 获取活动追踪比率列表
-def get_rates(*, me: Optional[Me] = None) -> List['EventTrackerRate']:
+def get_rates() -> List['EventTrackerRate']:
     '''获取活动追踪比率列表
 
     返回:
         List[EventTrackerRate]: 活动追踪比率列表
     '''
-    return Api(API['tracker']['rates']).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+    return Api(API['tracker']['rates']).get().json()
 
 # 异步获取活动追踪比率列表
-async def get_rates_async(*, me: Optional[Me] = None) -> List['EventTrackerRate']:
+async def get_rates_async() -> List['EventTrackerRate']:
     '''异步获取活动追踪比率列表
 
     返回:
         List[EventTrackerRate]: 活动追踪比率列表
     '''
-    return (await Api(API['tracker']['rates']).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+    return (await Api(API['tracker']['rates']).aget()).json()
 
 # 活动排名追踪器类
 class EventTracker:
@@ -51,7 +46,7 @@ class EventTracker:
         event (int): 活动 ID
     '''
     # 初始化
-    def __init__(self, server: 'Server', event: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, server: 'Server', event: int) -> None:
         '''活动排名追踪器类
 
         参数:
@@ -63,9 +58,7 @@ class EventTracker:
         '''指定服务器'''
         self.event: int = event
         '''活动 ID'''
-
-        self.__me = me
-        return
+        
     
     # 获取 T10 实时排名追踪信息
     def get_top(self, mid: int=0, *, interval: int) -> 'EventTopData':
@@ -83,7 +76,6 @@ class EventTracker:
             event=self.event,
             mid=mid,
             interval=interval,
-            me=self.__me,
         )
     
     # 异步获取 T10 实时排名追踪信息
@@ -102,7 +94,6 @@ class EventTracker:
             event=self.event,
             mid=mid,
             interval=interval,
-            me=self.__me,
         )
 
     # 获取分数线追踪信息
@@ -123,7 +114,6 @@ class EventTracker:
         
         try:
             response = Api(API['tracker']['eventtracker']).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None,
                 params=params,
             )
         except HTTPStatusError as exception:
@@ -152,7 +142,6 @@ class EventTracker:
         
         try:
             response = await Api(API['tracker']['eventtracker']).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
                 params=params,
             )
         except HTTPStatusError as exception:
@@ -181,7 +170,7 @@ class EventTracker:
             PostList: 搜索结果
                 ```python
                 {
-                    "result": ... # bool 是否有响应
+        
                     "count": ... # int 搜索到的评论总数
                     "posts": ... # List[PostListPost] 列举出的评论
                 }
@@ -193,7 +182,6 @@ class EventTracker:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 异步获取活动排名追踪评论
@@ -226,5 +214,4 @@ class EventTracker:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )

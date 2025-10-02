@@ -54,9 +54,7 @@ def get_all(index: Literal[10], *, me: Optional[Me] = None) -> 'SkillsAll10':
     ...
 
 def get_all(index: Literal[2, 5, 10]=10, *, me: Optional[Me] = None) -> Union['SkillsAll2', 'SkillsAll5', 'SkillsAll10']:
-    return Api(API['all']['skills'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+    return Api(API['all']['skills'].format(index=index)).get().json()
 
 # 异步获取总技能信息
 @overload
@@ -94,6 +92,4 @@ async def get_all_async(index: Literal[10], *, me: Optional[Me] = None) -> 'Skil
     ...
 
 async def get_all_async(index: Literal[2, 5, 10]=10, *, me: Optional[Me] = None) -> Union['SkillsAll2', 'SkillsAll5', 'SkillsAll10']:
-    return (await Api(API['all']['skills'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+    return (await Api(API['all']['skills'].format(index=index)).aget()).json()

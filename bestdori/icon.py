@@ -23,9 +23,8 @@ def get_band(id: int, *, me: Optional[Me] = None) -> bytes:
     返回:
         bytes: 乐队图标字节数据
     '''
-    return Api(RES['icon']['svg'].format(name=f'band_{id}')).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    # 统一使用全局 Cookies，不再读取 me
+    return Api(RES['icon']['svg'].format(name=f'band_{id}')).get().content
 
 # 异步获取乐队图标
 async def get_band_async(id: int, *, me: Optional[Me] = None) -> bytes:
@@ -37,9 +36,7 @@ async def get_band_async(id: int, *, me: Optional[Me] = None) -> bytes:
     返回:
         bytes: 乐队图标字节数据
     '''
-    return (await Api(RES['icon']['svg'].format(name=f'band_{id}')).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).content
+    return (await Api(RES['icon']['svg'].format(name=f'band_{id}')).aget()).content
 
 # 获取服务器图标
 def get_server(server: 'ServerName', *, me: Optional[Me] = None) -> bytes:
@@ -56,9 +53,7 @@ def get_server(server: 'ServerName', *, me: Optional[Me] = None) -> bytes:
     返回:
         bytes: 服务器图标字节数据
     '''
-    return Api(RES['icon']['svg'].format(name=server)).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    return Api(RES['icon']['svg'].format(name=server)).get().content
 
 # 异步获取服务器图标
 async def get_server_async(server: 'ServerName', *, me: Optional[Me] = None) -> bytes:
@@ -75,6 +70,4 @@ async def get_server_async(server: 'ServerName', *, me: Optional[Me] = None) -> 
     返回:
         bytes: 服务器图标字节数据
     '''
-    return (await Api(RES['icon']['svg'].format(name=server)).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).content
+    return (await Api(RES['icon']['svg'].format(name=server)).aget()).content

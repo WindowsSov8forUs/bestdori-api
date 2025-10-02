@@ -6,7 +6,7 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
-from .user import Me
+from .user import Me  # 保留以兼容类型，稍后可移除
 from .utils.network import Api
 from .utils import name, get_api
 from .exceptions import (
@@ -31,7 +31,7 @@ ASSETS = get_api('bestdori.assets')
 
 # 获取总登录奖励信息
 @overload
-def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总登录奖励信息
 
     参数:
@@ -43,7 +43,7 @@ def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDic
     '''
     ...
 @overload
-def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'LoginCampaignsAll1':
+def get_all(index: Literal[1]) -> 'LoginCampaignsAll1':
     '''获取总登录奖励信息
 
     参数:
@@ -55,7 +55,7 @@ def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'LoginCampaignsAll
     '''
     ...
 @overload
-def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'LoginCampaignsAll5':
+def get_all(index: Literal[5]) -> 'LoginCampaignsAll5':
     '''获取总登录奖励信息
 
     参数:
@@ -67,14 +67,12 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'LoginCampaignsAll
     '''
     ...
 
-def get_all(index: Literal[0, 1, 5], *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'LoginCampaignsAll1', 'LoginCampaignsAll5']:
-    return Api(API['loginCampaigns']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+def get_all(index: Literal[0, 1, 5]) -> Union[Dict[str, 'NoneDict'], 'LoginCampaignsAll1', 'LoginCampaignsAll5']:
+    return Api(API['loginCampaigns']['all'].format(index=index)).get().json()
 
 # 异步获取总登录奖励信息
 @overload
-async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总登录奖励信息
 
     参数:
@@ -86,7 +84,7 @@ async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[s
     '''
     ...
 @overload
-async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'LoginCampaignsAll1':
+async def get_all_async(index: Literal[1]) -> 'LoginCampaignsAll1':
     '''获取总登录奖励信息
 
     参数:
@@ -98,7 +96,7 @@ async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'Login
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'LoginCampaignsAll5':
+async def get_all_async(index: Literal[5]) -> 'LoginCampaignsAll5':
     '''获取总登录奖励信息
 
     参数:
@@ -110,10 +108,8 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'Login
     '''
     ...
 
-async def get_all_async(index: Literal[0, 1, 5], *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'LoginCampaignsAll1', 'LoginCampaignsAll5']:
-    return (await Api(API['loginCampaigns']['all'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+async def get_all_async(index: Literal[0, 1, 5]) -> Union[Dict[str, 'NoneDict'], 'LoginCampaignsAll1', 'LoginCampaignsAll5']:
+    return (await Api(API['loginCampaigns']['all'].format(index=index)).aget()).json()
 
 # 登录奖励类
 class LoginCampaign:
@@ -123,7 +119,7 @@ class LoginCampaign:
         id (int): 登录奖励 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''登录奖励类
 
         参数:
@@ -134,8 +130,7 @@ class LoginCampaign:
         self.__info: Optional['LoginCampaignInfo'] = None
         '''登录奖励信息'''
 
-        self.__me = me
-        return
+    # me 参数已移除
     
     @property
     def info(self) -> 'LoginCampaignInfo':
@@ -175,9 +170,7 @@ class LoginCampaign:
         try:
             response = Api(
                 API['loginCampaigns']['info'].format(id=self.id)
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None,
-            )
+            ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'LoginCampaign {self.id}')
@@ -201,9 +194,7 @@ class LoginCampaign:
         try:
             response = await Api(
                 API['loginCampaigns']['info'].format(id=self.id)
-            ).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-            )
+            ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'LoginCampaign {self.id}')
@@ -247,7 +238,6 @@ class LoginCampaign:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取登录奖励评论
@@ -280,7 +270,6 @@ class LoginCampaign:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 获取登录奖励背景图图像
@@ -305,9 +294,7 @@ class LoginCampaign:
             ASSETS['event']['loginbouns'].format(
                 server=server, asset_bundle_name=asset_bundle_name[index]
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
-        ).content
+        ).get().content
     
     # 异步获取登录奖励背景图图像
     async def get_background_async(self, server: 'ServerName') -> bytes:
@@ -331,6 +318,4 @@ class LoginCampaign:
             ASSETS['event']['loginbouns'].format(
                 server=server, asset_bundle_name=asset_bundle_name[index]
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-        )).content
+        ).aget()).content

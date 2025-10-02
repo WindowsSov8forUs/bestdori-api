@@ -45,9 +45,7 @@ def get_chara(
             resource_set_name=resource_set_name,
             type=type,
         )
-    ).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    ).get().content
 
 # 异步获取卡牌缩略图
 async def get_chara_async(
@@ -81,9 +79,7 @@ async def get_chara_async(
             resource_set_name=resource_set_name,
             type=type,
         )
-    ).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).content
+    ).aget()).content
 
 # 获取称号资源
 def get_degree(
@@ -106,9 +102,7 @@ def get_degree(
     返回:
         bytes: 称号资源字节数据 `bytes`
     '''
-    return Api(ASSETS['thumb']['degree'].format(server=server, degree_name=degree_name)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).content
+    return Api(ASSETS['thumb']['degree'].format(server=server, degree_name=degree_name)).get().content
 
 # 异步获取称号资源
 async def get_degree_async(
@@ -131,9 +125,7 @@ async def get_degree_async(
     返回:
         bytes: 称号资源字节数据 `bytes`
     '''
-    return (await Api(ASSETS['thumb']['degree'].format(server=server, degree_name=degree_name)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).content
+    return (await Api(ASSETS['thumb']['degree'].format(server=server, degree_name=degree_name)).aget()).content
 
 # 获取服装图标
 def get_costume(
@@ -162,9 +154,7 @@ def get_costume(
         ASSETS['thumb']['costume'].format(
             server=server, id=id // 50, asset_bundle_name=asset_bundle_name
         )
-    ).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).content
+    ).get().content
 
 # 异步获取服装图标
 async def get_costume_async(
@@ -193,6 +183,4 @@ async def get_costume_async(
         ASSETS['thumb']['costume'].format(
             server=server, id=id // 50, asset_bundle_name=asset_bundle_name
         )
-    ).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).content
+    ).aget()).content

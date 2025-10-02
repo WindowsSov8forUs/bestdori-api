@@ -5,7 +5,7 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
-from .user import Me
+from .user import Me  # 仅用于类型兼容，可后续移除
 from .stamps import Stamp
 from .utils.network import Api
 from .utils import name, get_api
@@ -46,7 +46,7 @@ ASSETS = get_api('bestdori.assets')
 
 # 获取总活动信息
 @overload
-def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总活动信息
 
     参数:
@@ -58,7 +58,7 @@ def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDic
     '''
     ...
 @overload
-def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'EventsAll1':
+def get_all(index: Literal[1]) -> 'EventsAll1':
     '''获取总活动信息
 
     参数:
@@ -70,7 +70,7 @@ def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'EventsAll1':
     '''
     ...
 @overload
-def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'EventsAll3':
+def get_all(index: Literal[3]) -> 'EventsAll3':
     '''获取总活动信息
 
     参数:
@@ -82,7 +82,7 @@ def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'EventsAll3':
     '''
     ...
 @overload
-def get_all(index: Literal[4], *, me: Optional[Me] = None) -> 'EventsAll4':
+def get_all(index: Literal[4]) -> 'EventsAll4':
     '''获取总活动信息
 
     参数:
@@ -94,7 +94,7 @@ def get_all(index: Literal[4], *, me: Optional[Me] = None) -> 'EventsAll4':
     '''
     ...
 @overload
-def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'EventsAll5':
+def get_all(index: Literal[5]) -> 'EventsAll5':
     '''获取总活动信息
 
     参数:
@@ -106,7 +106,7 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'EventsAll5':
     '''
     ...
 @overload
-def get_all(index: Literal[6], *, me: Optional[Me] = None) -> 'EventsAll6':
+def get_all(index: Literal[6]) -> 'EventsAll6':
     '''获取总活动信息
 
     参数:
@@ -119,15 +119,13 @@ def get_all(index: Literal[6], *, me: Optional[Me] = None) -> 'EventsAll6':
     ...
 
 def get_all(
-    index: Literal[0, 1, 3, 4, 5, 6]=5, *, me: Optional[Me] = None,
+    index: Literal[0, 1, 3, 4, 5, 6]=5,
 ) -> Union[Dict[str, 'NoneDict'], 'EventsAll1', 'EventsAll3', 'EventsAll4', 'EventsAll5', 'EventsAll6']:
-    return Api(API['events']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None
-    ).json()
+    return Api(API['events']['all'].format(index=index)).get().json()
 
 # 异步获取总活动信息
 @overload
-async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总活动信息
 
     参数:
@@ -139,7 +137,7 @@ async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[s
     '''
     ...
 @overload
-async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'EventsAll1':
+async def get_all_async(index: Literal[1]) -> 'EventsAll1':
     '''获取总活动信息
 
     参数:
@@ -151,7 +149,7 @@ async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'Event
     '''
     ...
 @overload
-async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'EventsAll3':
+async def get_all_async(index: Literal[3]) -> 'EventsAll3':
     '''获取总活动信息
 
     参数:
@@ -163,7 +161,7 @@ async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'Event
     '''
     ...
 @overload
-async def get_all_async(index: Literal[4], *, me: Optional[Me] = None) -> 'EventsAll4':
+async def get_all_async(index: Literal[4]) -> 'EventsAll4':
     '''获取总活动信息
 
     参数:
@@ -175,7 +173,7 @@ async def get_all_async(index: Literal[4], *, me: Optional[Me] = None) -> 'Event
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'EventsAll5':
+async def get_all_async(index: Literal[5]) -> 'EventsAll5':
     '''获取总活动信息
 
     参数:
@@ -187,7 +185,7 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'Event
     '''
     ...
 @overload
-async def get_all_async(index: Literal[6], *, me: Optional[Me] = None) -> 'EventsAll6':
+async def get_all_async(index: Literal[6]) -> 'EventsAll6':
     '''获取总活动信息
 
     参数:
@@ -200,11 +198,9 @@ async def get_all_async(index: Literal[6], *, me: Optional[Me] = None) -> 'Event
     ...
 
 async def get_all_async(
-    index: Literal[0, 1, 3, 4, 5, 6]=5, *, me: Optional[Me] = None,
+    index: Literal[0, 1, 3, 4, 5, 6]=5,
 ) -> Union[Dict[str, 'NoneDict'], 'EventsAll1', 'EventsAll3', 'EventsAll4', 'EventsAll5', 'EventsAll6']:
-    return (await Api(API['events']['all'].format(index=index)).aget(
-        cookies=me.__get_cookies__() if me else None
-    )).json()
+    return (await Api(API['events']['all'].format(index=index)).aget()).json()
 
 # 活动类
 class Event:
@@ -214,7 +210,7 @@ class Event:
         id (int): 活动 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''活动类
 
         参数:
@@ -227,8 +223,7 @@ class Event:
         self.__info: Optional['EventInfo'] = None
         '''活动信息'''
 
-        self.__me = me
-        return
+    # me 参数已移除
     
     @property
     def info(self) -> 'EventInfo':
@@ -268,7 +263,7 @@ class Event:
         返回:
             EventTracker: 活动追踪器
         '''
-        return EventTracker(server, self.id, me=self.__me)
+        return EventTracker(server, self.id)
 
     # 获取活动信息
     def get_info(self) -> 'EventInfo':
@@ -280,9 +275,7 @@ class Event:
         try:
             response = Api(
                 API['events']['info'].format(id=self.id)
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None
-            )
+            ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Event {self.id}')
@@ -307,9 +300,7 @@ class Event:
         try:
             response = await Api(
                 API['events']['info'].format(id=self.id)
-            ).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None
-            )
+            ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Event {self.id}')
@@ -354,7 +345,6 @@ class Event:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取活动评论
@@ -387,7 +377,6 @@ class Event:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 获取活动缩略图图像
@@ -413,9 +402,7 @@ class Event:
             ASSETS['event']['banner'].format(
                 server=server, asset_bundle_name=asset_bundle_name
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None
-        ).content
+        ).get().content
     
     # 异步获取活动缩略图图像
     async def get_banner_async(self, server: 'ServerName') -> bytes:
@@ -440,9 +427,7 @@ class Event:
             ASSETS['event']['banner'].format(
                 server=server, asset_bundle_name=asset_bundle_name
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None
-        )).content
+        ).aget()).content
     
     # 获取活动 logo 图像
     def get_logo(self, server: 'ServerName') -> bytes:
@@ -467,9 +452,7 @@ class Event:
             ASSETS['event']['logo'].format(
                 server=server, asset_bundle_name=asset_bundle_name
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
-        ).content
+        ).get().content
     
     # 异步获取活动 logo 图像
     async def get_logo_async(self, server: 'ServerName') -> bytes:
@@ -494,9 +477,7 @@ class Event:
             ASSETS['event']['logo'].format(
                 server=server, asset_bundle_name=asset_bundle_name
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-        )).content
+        ).aget()).content
 
     # 获取活动主界面图像
     def get_topscreen(self, server: 'ServerName', type: Literal['bg', 'trim']) -> bytes:
@@ -524,9 +505,7 @@ class Event:
             ASSETS['event']['topscreen'].format(
                 server=server, asset_bundle_name=asset_bundle_name, type=type
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
-        ).content
+        ).get().content
     
     # 异步获取活动主界面图像
     async def get_topscreen_async(self, server: 'ServerName', type: Literal['bg', 'trim']) -> bytes:
@@ -554,9 +533,7 @@ class Event:
             ASSETS['event']['topscreen'].format(
                 server=server, asset_bundle_name=asset_bundle_name, type=type
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-        )).content
+        ).aget()).content
     
     # 获取活动奖励稀有表情
     def get_stamp(self) -> bytes:

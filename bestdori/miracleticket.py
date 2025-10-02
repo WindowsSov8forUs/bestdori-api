@@ -3,7 +3,6 @@
 BanG Dream! 自选券相关操作'''
 from typing import TYPE_CHECKING, List, Literal, Optional
 
-from .user import Me
 from .utils.network import Api
 from .utils import name, get_api
 from .exceptions import (
@@ -22,7 +21,7 @@ if TYPE_CHECKING:
 API = get_api('bestdori.api')
 
 # 获取总自选券信息
-def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketExchangesAll5':
+def get_all(index: Literal[5]=5) -> 'MiracleTicketExchangesAll5':
     '''获取总自选券信息
 
     参数:
@@ -33,12 +32,10 @@ def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketEx
     '''
     return Api(
         API['all']['miracleTicketExchanges'].format(index=index)
-    ).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+    ).get().json()
 
 # 异步获取总自选券信息
-async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'MiracleTicketExchangesAll5':
+async def get_all_async(index: Literal[5]=5) -> 'MiracleTicketExchangesAll5':
     '''获取总自选券信息
 
     参数:
@@ -49,9 +46,7 @@ async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'Mir
     '''
     return (await Api(
         API['all']['miracleTicketExchanges'].format(index=index)
-    ).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+    ).aget()).json()
 
 # 自选券类
 class MiracleTicketExchange:
@@ -61,7 +56,7 @@ class MiracleTicketExchange:
         id (int): 自选券 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''自选券类
 
         参数:
@@ -71,9 +66,7 @@ class MiracleTicketExchange:
         '''自选券 ID'''
         self.__info: Optional[MiracleTicketExchangeInfo] = None
         '''自选券信息'''
-
-        self.__me = me
-        return
+        
     
     @property
     def info(self) -> 'MiracleTicketExchangeInfo':
@@ -110,8 +103,8 @@ class MiracleTicketExchange:
         返回:
             MiracleTicketExchangeInfo: 自选券详细信息
         '''
-        _all = get_all(5, me=self.__me)
-        if not self.id in _all.keys():
+        _all = get_all(5)
+        if self.id not in _all.keys():
             raise NotExistException(f'Miracle ticket {self.id}')
         self.__info = _all[str(self.id)]
         return self.info
@@ -128,8 +121,8 @@ class MiracleTicketExchange:
         返回:
             MiracleTicketExchangeInfo: 自选券详细信息
         '''
-        _all = await get_all_async(5, me=self.__me)
-        if not self.id in _all.keys():
+        _all = await get_all_async(5)
+        if self.id not in _all.keys():
             raise NotExistException(f'Miracle ticket {self.id}')
         self.__info = _all[str(self.id)]
         return self.info

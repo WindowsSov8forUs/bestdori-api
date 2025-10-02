@@ -29,8 +29,8 @@ class Player:
         self.id: int = id
         self.server: str = server
         self.__profile: Optional[PlayerDataProfile] = None
-
-        self.__me = me
+        # me 参数已弃用
+        self.__me = None
     
     @property
     def profile(self) -> 'PlayerDataProfile':
@@ -57,7 +57,6 @@ class Player:
         info: 'PlayerInfo' = Api(
             API['player']['info'].format(server=self.server, id=self.id)
         ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
             params=params,
         ).json()
         if not info['result']:
@@ -89,7 +88,6 @@ class Player:
         info: 'PlayerInfo' = (await Api(
             API['player']['info'].format(server=self.server, id=self.id)
         ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
             params=params,
         )).json()
         if not info['result']:

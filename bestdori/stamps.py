@@ -3,7 +3,6 @@
 BanG Dream! 贴纸资源相关操作'''
 from typing import TYPE_CHECKING, Literal, Optional
 
-from .user import Me
 from .utils import get_api
 from .utils.network import Api
 from .exceptions import AssetsNotExistError
@@ -19,7 +18,7 @@ API = get_api('bestdori.api')
 ASSETS = get_api('bestdori.assets')
 
 # 获取总贴纸资源信息
-def get_all(index: Literal[2]=2, *, me: Optional[Me] = None) -> 'StampsAll2':
+def get_all(index: Literal[2]=2) -> 'StampsAll2':
     '''获取总活动信息
 
     参数:
@@ -30,12 +29,10 @@ def get_all(index: Literal[2]=2, *, me: Optional[Me] = None) -> 'StampsAll2':
     返回:
         StampsAll2: 获取到的总贴纸信息
     '''
-    return Api(API['all']['stamps'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+    return Api(API['all']['stamps'].format(index=index)).get().json()
 
 # 异步获取总贴纸资源信息
-async def get_all_async(index: Literal[2]=2, *, me: Optional[Me] = None) -> 'StampsAll2':
+async def get_all_async(index: Literal[2]=2) -> 'StampsAll2':
     '''获取总活动信息
 
     参数:
@@ -46,9 +43,7 @@ async def get_all_async(index: Literal[2]=2, *, me: Optional[Me] = None) -> 'Sta
     返回:
         StampsAll2: 获取到的总贴纸信息
     '''
-    return (await Api(API['all']['stamps'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+    return (await Api(API['all']['stamps'].format(index=index)).aget()).json()
 
 # 贴纸类
 class Stamp:
@@ -58,7 +53,7 @@ class Stamp:
         id (int): 贴纸 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''贴纸类
 
         参数:
@@ -68,9 +63,7 @@ class Stamp:
         '''贴纸 ID'''
         self.__info: Optional['StampInfo'] = None
         '''贴纸资源信息'''
-
-        self.__me = me
-        return
+        
     
     # 获取贴纸资源信息
     def get_info(self) -> 'StampInfo':
@@ -79,11 +72,10 @@ class Stamp:
         返回:
             StampInfo: 贴纸资源信息
         '''
-        _all = get_all(me=self.__me)
+        _all = get_all()
         if str(self.id) not in _all:
             raise AssetsNotExistError(f'stamp {self.id}')
         self.__info = _all[str(self.id)]
-        
         return self.__info
     
     def __get_info__(self) -> 'StampInfo':
@@ -98,11 +90,10 @@ class Stamp:
         返回:
             StampInfo: 贴纸资源信息
         '''
-        _all = await get_all_async(me=self.__me)
+        _all = await get_all_async()
         if str(self.id) not in _all:
             raise AssetsNotExistError(f'stamp {self.id}')
         self.__info = _all[str(self.id)]
-        
         return self.__info
     
     async def __get_info_async__(self) -> 'StampInfo':
@@ -126,9 +117,7 @@ class Stamp:
         info = self.__get_info__()
         return Api(
             ASSETS['stamp']['get'].format(server=server, image_name=info['imageName'])
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
-        ).content
+        ).get().content
     
     # 异步获取贴纸资源
     async def get_stamp_async(
@@ -146,6 +135,4 @@ class Stamp:
         info = await self.__get_info_async__()
         return (await Api(
             ASSETS['stamp']['get'].format(server=server, image_name=info['imageName'])
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-        )).content
+        ).aget()).content

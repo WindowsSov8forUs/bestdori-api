@@ -49,9 +49,9 @@ from bestdori import eventtop
 | event | int | - | 活动 ID |
 | mid | int | 0 | 歌曲 ID 。仅在查询歌曲分数排名时为非 `0` 值 |
 | latest <Badge type="info">keyword</Badge> | Literal[1] | - | 表示获取最终排名分数线 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
+| latest <Badge type="info">keyword</Badge> | Literal[1] | - | 表示获取最终排名分数线 |
 
-获取活动最终 T10 排名分数线。
+获取活动最终 T10 排名分数线（已不再支持 `me` 参数，登录态自动生效）。
 
 :::
 
@@ -63,9 +63,9 @@ from bestdori import eventtop
 | event | int | - | 活动 ID |
 | mid | int | 0 | 歌曲 ID 。仅在查询歌曲分数排名时为非 `0` 值 |
 | interval <Badge type="info">keyword</Badge> | int | - | 获取最新分数线间隔 |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
+| interval <Badge type="info">keyword</Badge> | int | - | 获取最新分数线间隔 |
 
-获取活动最新 T10 排名分数线。
+获取活动最新 T10 排名分数线（已不再支持 `me` 参数，登录态自动生效）。
 
 :::
 

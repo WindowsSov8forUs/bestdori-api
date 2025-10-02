@@ -6,7 +6,7 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
-from .user import Me
+from .user import Me  # Me 引用保留仅用于类型检查（可后续移除）
 from .utils.network import Api
 from .utils import name, get_api
 from .exceptions import (
@@ -33,7 +33,7 @@ ASSETS = get_api('bestdori.assets')
 
 # 获取总招募信息
 @overload
-def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+def get_all(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总招募信息
 
     参数:
@@ -44,7 +44,7 @@ def get_all(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDic
     '''
     ...
 @overload
-def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'GachaAll1':
+def get_all(index: Literal[1]) -> 'GachaAll1':
     '''获取总招募信息
 
     参数:
@@ -55,7 +55,7 @@ def get_all(index: Literal[1], *, me: Optional[Me] = None) -> 'GachaAll1':
     '''
     ...
 @overload
-def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'GachaAll3':
+def get_all(index: Literal[3]) -> 'GachaAll3':
     '''获取总招募信息
 
     参数:
@@ -66,7 +66,7 @@ def get_all(index: Literal[3], *, me: Optional[Me] = None) -> 'GachaAll3':
     '''
     ...
 @overload
-def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'GachaAll5':
+def get_all(index: Literal[5]) -> 'GachaAll5':
     '''获取总招募信息
 
     参数:
@@ -77,14 +77,12 @@ def get_all(index: Literal[5], *, me: Optional[Me] = None) -> 'GachaAll5':
     '''
     ...
 
-def get_all(index: Literal[0, 1, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'GachaAll1', 'GachaAll3', 'GachaAll5']:
-    return Api(API['gacha']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+def get_all(index: Literal[0, 1, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'GachaAll1', 'GachaAll3', 'GachaAll5']:
+    return Api(API['gacha']['all'].format(index=index)).get().json()
 
 # 异步获取总招募信息
 @overload
-async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[str, 'NoneDict']:
+async def get_all_async(index: Literal[0]) -> Dict[str, 'NoneDict']:
     '''获取总招募信息
 
     参数:
@@ -95,7 +93,7 @@ async def get_all_async(index: Literal[0], *, me: Optional[Me] = None) -> Dict[s
     '''
     ...
 @overload
-async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'GachaAll1':
+async def get_all_async(index: Literal[1]) -> 'GachaAll1':
     '''获取总招募信息
 
     参数:
@@ -106,7 +104,7 @@ async def get_all_async(index: Literal[1], *, me: Optional[Me] = None) -> 'Gacha
     '''
     ...
 @overload
-async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'GachaAll3':
+async def get_all_async(index: Literal[3]) -> 'GachaAll3':
     '''获取总招募信息
 
     参数:
@@ -117,7 +115,7 @@ async def get_all_async(index: Literal[3], *, me: Optional[Me] = None) -> 'Gacha
     '''
     ...
 @overload
-async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'GachaAll5':
+async def get_all_async(index: Literal[5]) -> 'GachaAll5':
     '''获取总招募信息
 
     参数:
@@ -128,10 +126,8 @@ async def get_all_async(index: Literal[5], *, me: Optional[Me] = None) -> 'Gacha
     '''
     ...
 
-async def get_all_async(index: Literal[0, 1, 3, 5]=5, *, me: Optional[Me] = None) -> Union[Dict[str, 'NoneDict'], 'GachaAll1', 'GachaAll3', 'GachaAll5']:
-    return (await Api(API['gacha']['all'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+async def get_all_async(index: Literal[0, 1, 3, 5]=5) -> Union[Dict[str, 'NoneDict'], 'GachaAll1', 'GachaAll3', 'GachaAll5']:
+    return (await Api(API['gacha']['all'].format(index=index)).aget()).json()
 
 # 招募类
 class Gacha:
@@ -141,7 +137,7 @@ class Gacha:
         id (int): 招募 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''招募类
 
         参数:
@@ -152,8 +148,7 @@ class Gacha:
         self.__info: Optional['GachaInfo'] = None
         '''招募信息'''
 
-        self.__me = me
-        return
+    # me 参数已移除
     
     @property
     def info(self) -> 'GachaInfo':
@@ -193,9 +188,7 @@ class Gacha:
         try:
             response = Api(
                 API['gacha']['info'].format(id=self.id)
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None,
-            )
+            ).get()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Gacha {self.id}')
@@ -220,9 +213,7 @@ class Gacha:
         try:
             response = await Api(
                 API['gacha']['info'].format(id=self.id)
-            ).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-            )
+            ).aget()
         except HTTPStatusError as exception:
             if exception.response.status_code == 404:
                 raise NotExistException(f'Gacha {self.id}')
@@ -267,7 +258,6 @@ class Gacha:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 异步获取招募评论
@@ -300,7 +290,6 @@ class Gacha:
             order=order,
             limit=limit,
             offset=offset,
-            me=self.__me,
         )
     
     # 获取招募缩略图图片
@@ -327,9 +316,7 @@ class Gacha:
             ASSETS['homebanner']['get'].format(
                 server=server, banner_asset_bundle_name=banner_asset_bundle_name
             )
-        ).get(
-            cookies=self.__me.__get_cookies__() if self.__me else None,
-        ).content
+        ).get().content
     
     # 异步获取招募缩略图图片
     async def get_banner_async(self, server: 'ServerName') -> bytes:
@@ -355,9 +342,7 @@ class Gacha:
             ASSETS['homebanner']['get'].format(
                 server=server, banner_asset_bundle_name=banner_asset_bundle_name
             )
-        ).aget(
-            cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-        )).content
+        ).aget()).content
     
     # 获取招募 pickup 图像
     def get_pickups(self, server: 'ServerName') -> List[bytes]:
@@ -379,9 +364,7 @@ class Gacha:
                         ASSETS['gacha']['screen'].format(
                             server=server, id=self.id, asset_name=pickup,
                         )
-                    ).get(
-                        cookies=self.__me.__get_cookies__() if self.__me else None,
-                    ).content
+                    ).get().content
                 )
             except:
                 continue
@@ -409,9 +392,7 @@ class Gacha:
                     ASSETS['gacha']['screen'].format(
                     server=server, id=self.id, asset_name=pickup,
                     )
-                ).aget(
-                    cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-                )).content
+                ).aget()).content
             except:
                 return None
 
@@ -438,9 +419,7 @@ class Gacha:
                 ASSETS['gacha']['screen'].format(
                     server=server, id=self.id, asset_name='logo',
                 )
-            ).get(
-                cookies=self.__me.__get_cookies__() if self.__me else None,
-            ).content
+            ).get().content
         except:
             raise AssetsNotExistError('gacha logo')
     
@@ -459,8 +438,6 @@ class Gacha:
                 ASSETS['gacha']['screen'].format(
                     server=server, id=self.id, asset_name='logo',
                 )
-            ).aget(
-                cookies=await self.__me.__get_cookies_async__() if self.__me else None,
-            )).content
+            ).aget()).content
         except:
             raise AssetsNotExistError('gacha logo')

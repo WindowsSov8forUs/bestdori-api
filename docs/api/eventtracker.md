@@ -35,11 +35,7 @@ from bestdori import eventtracker
 
 ## def get_rates() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
-| 参数名 | 类型 | 默认值 | 描述 |
-|:------|:----:|:-----:|:-----|
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
-
-获取活动追踪比率列表。
+获取活动追踪比率列表（已不再接受 `me` 参数，登录态通过全局会话生效）。
 
 <Badge type="info">返回值:</Badge> [`EventTrackerRate`](./eventtracker#rate)
 
@@ -51,7 +47,6 @@ from bestdori import eventtracker
 |:------|:----:|:-----:|:-----|
 | server | [Server](/typing#server-id) | 服务器 ID |
 | event | int | - | 活动 ID |
-| me <Badge type="info">keyword</Badge> | Optional[[Me](./user#me)] | `None` | 登录用户类 |
 
 ### def get_top() <Badge type="tip">[async](/fast-start#async-sync)</Badge>
 
@@ -60,7 +55,7 @@ from bestdori import eventtracker
 | mid | int | 0 | 歌曲 ID 。仅在查询歌曲分数排名时为非 `0` 值 |
 | interval <Badge type="info">keyword</Badge> | int | - | 获取最新分数线间隔 |
 
-获取实时 T10 排名分数线追踪信息。
+获取实时 T10 排名分数线追踪信息（无需也不支持 `me` 参数）。
 
 <Badge type="info">返回值:</Badge> [`EventTopData`](./eventtop#data)
 

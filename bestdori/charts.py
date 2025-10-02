@@ -300,9 +300,7 @@ class Chart(List[Note]):
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = Api(API['charts']['info'].format(id=id, diff=diff)).get(
-            cookies=me.__get_cookies__() if me else None,
-        )
+        response = Api(API['charts']['info'].format(id=id, diff=diff)).get()
         return cls(response.json()).standardize()
     
     # 异步获取官方谱面
@@ -323,9 +321,7 @@ class Chart(List[Note]):
         返回:
             Chart: 获取到的谱面对象 `bestdori.chart.Chart`
         '''
-        response = await Api(API['charts']['info'].format(id=id, diff=diff)).aget(
-            cookies=await me.__get_cookies_async__() if me else None,
-        )
+        response = await Api(API['charts']['info'].format(id=id, diff=diff)).aget()
         return cls(response.json()).standardize()
     
     def copy(self) -> 'Chart':

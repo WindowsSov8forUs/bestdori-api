@@ -3,7 +3,7 @@
 BanG Dream! 活动数据相关操作'''
 from typing import TYPE_CHECKING, Literal, Optional
 
-from .user import Me
+from .user import Me  # 类型兼容保留，稍后可整体移除
 from .utils import get_api
 from . import post, eventtop
 from .utils.network import Api
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 API = get_api('bestdori.api')
 
 # 获取总活动数据信息
-def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'EventArchiveAll5':
+def get_all(index: Literal[5]=5) -> 'EventArchiveAll5':
     '''获取总活动信息
 
     参数:
@@ -32,12 +32,10 @@ def get_all(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'EventArchiveAll
     返回:
         EventArchiveAll5: 获取到的总活动信息
     '''
-    return Api(API['all']['archives'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me else None,
-    ).json()
+    return Api(API['all']['archives'].format(index=index)).get().json()
 
 # 异步获取总活动数据信息
-async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'EventArchiveAll5':
+async def get_all_async(index: Literal[5]=5) -> 'EventArchiveAll5':
     '''获取总活动信息
 
     参数:
@@ -48,9 +46,7 @@ async def get_all_async(index: Literal[5]=5, *, me: Optional[Me] = None) -> 'Eve
     返回:
         EventArchiveAll5: 获取到的总活动信息
     '''
-    return (await Api(API['all']['archives'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me else None,
-    )).json()
+    return (await Api(API['all']['archives'].format(index=index)).aget()).json()
 
 # 活动数据类
 class EventArchive:
@@ -60,7 +56,7 @@ class EventArchive:
         id (int): 活动 ID
     '''
     # 初始化
-    def __init__(self, id: int, *, me: Optional[Me] = None) -> None:
+    def __init__(self, id: int) -> None:
         '''活动数据类
 
         参数:
@@ -71,8 +67,7 @@ class EventArchive:
         self.__info: Optional['EventArchiveInfo'] = None
         '''活动信息'''
 
-        self.__me = me
-        return
+    # me 参数已移除
     
     # 获取活动数据信息
     def get_info(self) -> 'EventArchiveInfo':
@@ -81,11 +76,10 @@ class EventArchive:
         返回:
             EventArchiveInfo: 活动数据信息
         '''
-        _all = get_all(me=self.__me)
+        _all = get_all()
         if str(self.id) not in _all:
             raise NotExistException(f'Event archive {self.id}')
         self.__info = _all[str(self.id)]
-        
         return self.__info
     
     # 异步获取活动数据信息
@@ -95,11 +89,10 @@ class EventArchive:
         返回:
             EventArchiveInfo: 活动数据信息
         '''
-        _all = await get_all_async(me=self.__me)
+        _all = await get_all_async()
         if str(self.id) not in _all:
             raise NotExistException(f'Event archive {self.id}')
         self.__info = _all[str(self.id)]
-        
         return self.__info
     
     # 获取最终排名分数线
@@ -118,7 +111,7 @@ class EventArchive:
         返回:
             EventTopData: 最终排名分数线数据
         '''
-        return eventtop.get_data(server, self.id, mid, latest=1, me=self.__me)
+        return eventtop.get_data(server, self.id, mid, latest=1)
     
     # 异步获取最终排名分数线
     async def get_top_async(self, server: 'Server', mid: int = 0) -> 'EventTopData':
@@ -136,7 +129,7 @@ class EventArchive:
         返回:
             EventTopData: 最终排名分数线数据
         '''
-        return await eventtop.get_data_async(server, self.id, mid, latest=1, me=self.__me)
+        return await eventtop.get_data_async(server, self.id, mid, latest=1)
 
     # 获取活动数据评论
     def get_comment(
@@ -168,7 +161,6 @@ class EventArchive:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )
     
     # 异步获取活动数据评论
@@ -201,5 +193,4 @@ class EventArchive:
             limit=limit,
             offset=offset,
             order=order,
-            me=self.__me,
         )

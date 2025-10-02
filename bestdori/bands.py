@@ -4,7 +4,6 @@
 
 from typing import TYPE_CHECKING, Literal, Optional
 
-from .user import Me
 from .utils import get_api
 from .utils.network import Api
 
@@ -19,7 +18,7 @@ API = get_api('bestdori.api')
 ASSETS = get_api('bestdori.assets')
 
 # 获取总乐队信息
-def get_all(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'BandsAll1':
+def get_all(index: Literal[1]=1) -> 'BandsAll1':
     '''获取总乐队信息
 
     参数:
@@ -28,12 +27,10 @@ def get_all(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'BandsAll1':
     返回:
         Dict[str, Dict[str, Any]]: 获取到的总乐队名称信息
     '''
-    return Api(API['bands']['all'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).json()
+    return Api(API['bands']['all'].format(index=index)).get().json()
 
 # 异步获取总乐队信息
-async def get_all_async(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'BandsAll1':
+async def get_all_async(index: Literal[1]=1) -> 'BandsAll1':
     '''获取总乐队信息
 
     参数:
@@ -42,12 +39,10 @@ async def get_all_async(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'Ban
     返回:
         Dict[str, Dict[str, Any]]: 获取到的总乐队名称信息
     '''
-    return (await Api(API['bands']['all'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).json()
+    return (await Api(API['bands']['all'].format(index=index)).aget()).json()
 
 # 获取主要乐队信息
-def get_main(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'BandsMain1':
+def get_main(index: Literal[1]=1) -> 'BandsMain1':
     '''获取主要乐队信息
 
     参数:
@@ -56,12 +51,10 @@ def get_main(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'BandsMain1':
     返回:
         Dict[str, Dict[str, Any]]: 获取到的主要乐队信息
     '''
-    return Api(API['bands']['main'].format(index=index)).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).json()
+    return Api(API['bands']['main'].format(index=index)).get().json()
 
 # 异步获取主要乐队信息
-async def get_main_async(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'BandsMain1':
+async def get_main_async(index: Literal[1]=1) -> 'BandsMain1':
     '''获取主要乐队信息
 
     参数:
@@ -70,17 +63,13 @@ async def get_main_async(index: Literal[1]=1, *, me: Optional[Me] = None) -> 'Ba
     返回:
         Dict[str, Dict[str, Any]]: 获取到的主要乐队信息
     '''
-    return (await Api(API['bands']['main'].format(index=index)).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).json()
+    return (await Api(API['bands']['main'].format(index=index)).aget()).json()
 
 # 获取乐队 logo
 def get_logo(
     id: int,
     type: Literal['logoS', 'logoL', 'logoL_Mask'],
     server: 'ServerName',
-    *,
-    me: Optional[Me] = None,
 ) -> bytes:
     '''获取乐队 logo
 
@@ -97,17 +86,13 @@ def get_logo(
     返回:
         bytes: 乐队 logo 字节数据 `bytes`
     '''
-    return Api(ASSETS['band']['logo'].format(server=server, id=id, type=type)).get(
-        cookies=me.__get_cookies__() if me is not None else None,
-    ).content
+    return Api(ASSETS['band']['logo'].format(server=server, id=id, type=type)).get().content
 
 # 异步获取乐队 logo
 async def get_logo_async(
     id: int,
     type: Literal['logoS', 'logoL', 'logoL_Mask'],
     server: 'ServerName',
-    *,
-    me: Optional[Me] = None,
 ) -> bytes:
     '''获取乐队 logo
 
@@ -124,6 +109,4 @@ async def get_logo_async(
     返回:
         bytes: 乐队 logo 字节数据 `bytes`
     '''
-    return (await Api(ASSETS['band']['logo'].format(server=server, id=id, type=type)).aget(
-        cookies=await me.__get_cookies_async__() if me is not None else None,
-    )).content
+    return (await Api(ASSETS['band']['logo'].format(server=server, id=id, type=type)).aget()).content
