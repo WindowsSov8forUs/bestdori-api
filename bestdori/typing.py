@@ -1,9 +1,9 @@
-
 from typing_extensions import NotRequired
 from typing import (
     Any,
     Dict,
     List,
+    Tuple,
     Union,
     Literal,
     TypeVar,
@@ -13,6 +13,15 @@ from typing import (
 )
 
 _T = TypeVar('_T')
+
+PerServer: TypeAlias = Tuple[_T, _T, _T, _T, _T]
+'''服务器相关的五元组'''
+Emptiable: TypeAlias = Union[_T, 'NoneDict']
+'''可为空字典的某类型'''
+PerServerType: TypeAlias = PerServer[Optional[_T]]
+'''基础类型的五元组'''
+PerServerDict: TypeAlias = PerServer[Emptiable[_T]]
+'''字典类型的五元组'''
 
 Server: TypeAlias = Literal[0, 1, 2, 3, 4]
 '''服务器 ID
@@ -51,7 +60,7 @@ class NoneDict(TypedDict):
     pass
 
 class BandsAll1Info(TypedDict):
-    bandName: List[Optional[str]]
+    bandName: PerServerType[str]
 
 BandsAll1: TypeAlias = Dict[str, BandsAll1Info]
 
@@ -70,7 +79,7 @@ class CardAll2Info(TypedDict):
 CardAll2: TypeAlias = Dict[str, CardAll2Info]
 
 class CardAll3Info(CardAll2Info):
-    prefix: List[Optional[str]]
+    prefix: PerServerType[str]
 
 CardAll3: TypeAlias = Dict[str, CardAll3Info]
 
@@ -79,25 +88,17 @@ class CardStat(TypedDict):
     technique: int
     visual: int
 
-class CardStatEpisode(TypedDict):
-    performance: int
-    technique: int
-    visual: int
-
-class CardStatTraining(TypedDict):
+class CardStatTraining(CardStat):
     levelLimit: int
-    performance: int
-    technique: int
-    visual: int
 
 class CardAll5Info(CardAll3Info):
     rarity: CardRarity
     levelLimit: int
     resourceSetName: str
-    releasedAt: List[Optional[str]]
+    releasedAt: PerServerType[str]
     skillId: int
     type: str
-    stat: Dict[str, Union[CardStat, List[CardStatEpisode], CardStatTraining]]
+    stat: Dict[str, Union[CardStat, List[CardStat], CardStatTraining]]
 
 CardAll5: TypeAlias = Dict[str, CardAll5Info]
 
@@ -129,7 +130,7 @@ class CardEpisodesEntry(TypedDict):
     releaseLevel: int
     costs: CardEpisodesEntryCosts
     rewards: CardEpisodesEntryRewards
-    title: List[Optional[str]]
+    title: PerServerType[str]
     characterId: int
 
 class CardEpisodes(TypedDict):
@@ -146,14 +147,14 @@ class CardInfo(CardAll5Info):
     sdResourceName: str
     episodes: CardEpisodes
     costumeId: int
-    gachaText: List[Optional[str]]
-    skillName: List[Optional[str]]
-    source: List[Union[CardSource, NoneDict]]
+    gachaText: PerServerType[str]
+    skillName: PerServerType[str]
+    source: PerServerDict[CardSource]
 
 class CharacterAll2Info(TypedDict):
     characterType: str
-    characterName: List[Optional[str]]
-    nickname: List[Optional[str]]
+    characterName: PerServerType[str]
+    nickname: PerServerType[str]
     bandId: NotRequired[int]
     colorCode: NotRequired[str]
 
@@ -175,8 +176,8 @@ class CharacterSeasonCostumeListMap(TypedDict):
     entries: Dict[str, CharacterSeasonCostumeListMapEntrySeason]
 
 class CharacterAll5Info(CharacterAll2Info):
-    firstName: List[Optional[str]]
-    lastName: List[Optional[str]]
+    firstName: PerServerType[str]
+    lastName: PerServerType[str]
     seasonCostumeListMap: NotRequired[CharacterSeasonCostumeListMap]
 
 CharacterAll5: TypeAlias = Dict[str, CharacterAll5Info]
@@ -188,27 +189,27 @@ class CharacterMain1Info(TypedDict):
 CharacterMain1: TypeAlias = Dict[str, CharacterMain1Info]
 
 class CharacterMain2Info(CharacterMain1Info):
-    characterName: List[Optional[str]]
-    nickname: List[Optional[str]]
+    characterName: PerServerType[str]
+    nickname: PerServerType[str]
     colorCode: str
 
 CharacterMain2: TypeAlias = Dict[str, CharacterMain2Info]
 
 class CharacterMain3Info(CharacterMain2Info):
-    firstName: List[Optional[str]]
-    lastName: List[Optional[str]]
+    firstName: PerServerType[str]
+    lastName: PerServerType[str]
 
 CharacterMain3: TypeAlias = Dict[str, CharacterMain3Info]
 
 class CharacterProfile(TypedDict):
-    characterVoice: List[Optional[str]]
-    favoriteFood: List[Optional[str]]
-    hatedFood: List[Optional[str]]
-    hobby: List[Optional[str]]
-    selfIntroduction: List[Optional[str]]
-    school: List[Optional[str]]
-    schoolCls: List[Optional[str]]
-    schoolYear: List[Optional[str]]
+    characterVoice: PerServerType[str]
+    favoriteFood: PerServerType[str]
+    hatedFood: PerServerType[str]
+    hobby: PerServerType[str]
+    selfIntroduction: PerServerType[str]
+    school: PerServerType[str]
+    schoolCls: PerServerType[str]
+    schoolYear: PerServerType[str]
     part: str
     birthday: str
     constellation: str
@@ -224,9 +225,9 @@ class CharacterInfo(CharacterAll5Info):
 class ComicInfo(TypedDict):
     '''漫画信息'''
     assetBundleName: str
-    title: List[Optional[str]]
-    subTitle: List[Optional[str]]
-    publicStartAt: List[Optional[Union[str, Literal[1]]]]
+    title: PerServerType[str]
+    subTitle: PerServerType[str]
+    publicStartAt: PerServerType[Union[str, Literal[1]]]
     characterId: List[int]
 
 ComicsAll5: TypeAlias = Dict[str, ComicInfo]
@@ -234,26 +235,26 @@ ComicsAll5: TypeAlias = Dict[str, ComicInfo]
 class CostumesAll5Info(TypedDict):
     characterId: int
     assetBundleName: str
-    description: List[Optional[str]]
-    publishedAt: List[Optional[str]]
+    description: PerServerType[str]
+    publishedAt: PerServerType[str]
 
 CostumesAll5: TypeAlias = Dict[str, CostumesAll5Info]
 
 class CostumeInfo(CostumesAll5Info):
     '''服装信息'''
     sdResourceName: str
-    howToGet: List[Optional[str]]
+    howToGet: PerServerType[str]
     cards: List[int]
 
 class EventArchiveInfo(TypedDict):
     '''活动归档信息'''
-    cutoff: List[Union[NoneDict, Dict[str, int]]]
+    cutoff: PerServerDict[Dict[str, int]]
     board: List[List[int]]
 
 EventArchiveAll5: TypeAlias = Dict[str, EventArchiveInfo]
 
 class EventsAll1Info(TypedDict):
-    eventName: List[Optional[str]]
+    eventName: PerServerType[str]
 
 EventsAll1: TypeAlias = Dict[str, EventsAll1Info]
 
@@ -261,8 +262,8 @@ class EventsAll3Info(EventsAll1Info):
     eventType: str
     assetBundleName: str
     bannerAssetBundleName: str
-    startAt: List[Optional[str]]
-    endAt: List[Optional[str]]
+    startAt: PerServerType[str]
+    endAt: PerServerType[str]
 
 EventsAll3: TypeAlias = Dict[str, EventsAll3Info]
 
@@ -342,10 +343,10 @@ class EventStory(TypedDict):
     backgroundImage: str
     releasePt: str
     rewards: List[EventStoryReward]
-    caption: List[Optional[str]]
-    title: List[Optional[str]]
-    synopsis: List[Optional[str]]
-    releaseConditions: List[Optional[str]]
+    caption: PerServerType[str]
+    title: PerServerType[str]
+    synopsis: PerServerType[str]
+    releaseConditions: PerServerType[str]
 
 class EventMusicRankingReward(TypedDict):
     fromRank: int
@@ -360,19 +361,19 @@ class EventMusic(TypedDict):
 
 class EventInfo(EventsAll6Info):
     '''活动信息'''
-    enableFlag: List[Optional[Literal[True]]]
-    publicStartAt: List[Optional[str]]
-    publicEndAt: List[Optional[str]]
-    distributionStartAt: List[Optional[str]]
-    distributionEndAt: List[Optional[str]]
+    enableFlag: PerServerType[Literal[True]]
+    publicStartAt: PerServerType[str]
+    publicEndAt: PerServerType[str]
+    distributionStartAt: PerServerType[str]
+    distributionEndAt: PerServerType[str]
     bgmAssetBundleName: str
     bgmFileName: str
-    aggregateEndAt: List[Optional[str]]
-    exchangeEndAt: List[Optional[str]]
-    pointRewards: List[Optional[List[EventPointReward]]]
-    rankingRewards: List[Optional[List[EventRankingReward]]]
+    aggregateEndAt: PerServerType[str]
+    exchangeEndAt: PerServerType[str]
+    pointRewards: PerServerType[List[EventPointReward]]
+    rankingRewards: PerServerType[List[EventRankingReward]]
     stories: List[EventStory]
-    musics: List[Optional[List[EventMusic]]]
+    musics: PerServerType[List[EventMusic]]
 
 class EventTopPoint(TypedDict):
     time: float
@@ -422,21 +423,21 @@ class FestivalStage(TypedDict):
     endAt: str
 
 class GachaAll1Info(TypedDict):
-    gachaName: List[Optional[str]]
+    gachaName: PerServerType[str]
 
 GachaAll1: TypeAlias = Dict[str, GachaAll1Info]
 
 class GachaAll3Info(GachaAll1Info):
     resourceName: str
     bannerAssetBundleName: NotRequired[str]
-    publishedAt: List[Optional[str]]
+    publishedAt: PerServerType[str]
     type: str
     newCards: List[int]
 
 GachaAll3: TypeAlias = Dict[str, GachaAll3Info]
 
 class GachaAll5Info(GachaAll3Info):
-    closedAt: List[Optional[str]]
+    closedAt: PerServerType[str]
 
 GachaAll5: TypeAlias = Dict[str, GachaAll5Info]
 
@@ -462,31 +463,31 @@ class GachaPaymentMethod(TypedDict):
     ticketId: NotRequired[int]
 
 class GachaInformation(TypedDict):
-    description: List[Optional[str]]
-    term: List[Optional[str]]
-    newMemberInfo: List[Optional[str]]
-    notice: List[Optional[str]]
+    description: PerServerType[str]
+    term: PerServerType[str]
+    newMemberInfo: PerServerType[str]
+    notice: PerServerType[str]
 
 class GachaInfo(GachaAll5Info):
     '''招募信息'''
-    details: List[Optional[Dict[str, GachaDetail]]]
-    rates: List[Optional[Dict[str, GachaRate]]]
+    details: PerServerType[Dict[str, GachaDetail]]
+    rates: PerServerType[Dict[str, GachaRate]]
     paymentMethods: List[GachaPaymentMethod]
-    description: List[Optional[str]]
-    annotation: List[Optional[str]]
-    gachaPeriod: List[Optional[str]]
+    description: PerServerType[str]
+    annotation: PerServerType[str]
+    gachaPeriod: PerServerType[str]
     information: GachaInformation
 
 class LoginCampaignsAll1Info(TypedDict):
-    caption: List[Optional[str]]
+    caption: PerServerType[str]
 
 LoginCampaignsAll1: TypeAlias = Dict[str, LoginCampaignsAll1Info]
 
 class LoginCampaignsAll5Info(LoginCampaignsAll1Info):
     loginBonusType: str
-    assetBundleName: List[Optional[str]]
-    publishedAt: List[Optional[str]]
-    closedAt: List[Optional[str]]
+    assetBundleName: PerServerType[str]
+    publishedAt: PerServerType[str]
+    closedAt: PerServerType[str]
 
 LoginCampaignsAll5: TypeAlias = Dict[str, LoginCampaignsAll5Info]
 
@@ -503,22 +504,22 @@ class LoginCampaignDetail(TypedDict):
 class LoginCampaignInfo(LoginCampaignsAll5Info):
     '''登录奖励信息'''
     assetMap: Dict[str, Any]
-    details: List[Optional[List[LoginCampaignDetail]]]
+    details: PerServerType[List[LoginCampaignDetail]]
 
 class MiracleTicketExchangeInfo(TypedDict):
     '''自选券兑换信息'''
-    name: List[Optional[str]]
-    ids: List[Optional[List[int]]]
-    exchangeStartAt: List[Optional[str]]
-    exchangeEndAt: List[Optional[str]]
+    name: PerServerType[str]
+    ids: PerServerType[List[int]]
+    exchangeStartAt: PerServerType[str]
+    exchangeEndAt: PerServerType[str]
 
 MiracleTicketExchangesAll5: TypeAlias = Dict[str, MiracleTicketExchangeInfo]
 
 class MissionsAll5Info(TypedDict):
     type: str
-    startAt: List[Optional[str]]
-    endAt: List[Optional[str]]
-    title: List[Optional[str]]
+    startAt: PerServerType[str]
+    endAt: PerServerType[str]
+    title: PerServerType[str]
 
 MissionsAll5: TypeAlias = Dict[str, MissionsAll5Info]
 
@@ -539,7 +540,7 @@ class MissionDetail(TypedDict):
 
 class MissionInfo(MissionsAll5Info):
     '''任务信息'''
-    details: List[Optional[List[MissionDetail]]]
+    details: PerServerType[List[MissionDetail]]
 
 class PlayerDataProfileMainDeckUserSituationsEntryUserAppendParameter(TypedDict):
     userId: str
@@ -820,20 +821,20 @@ _SongsMetaAll5Field: TypeAlias = Literal[
 SongsMetaAll5 = _SongsMetaAll[_SongsMetaAll5Field]
 
 class SongsAll1Info(TypedDict):
-    musicTitle: List[Optional[str]]
+    musicTitle: PerServerType[str]
 
 SongsAll1: TypeAlias = Dict[str, SongsAll1Info]
 
 class SongsAll5Difficulty(TypedDict):
     playLevel: int
-    publishedAt: NotRequired[List[Optional[str]]]
+    publishedAt: NotRequired[PerServerType[str]]
 
 class SongsAll5Info(SongsAll1Info):
     tag: str
     bandId: int
     jacketImage: List[str]
-    publishedAt: List[Optional[str]]
-    closedAt: List[Optional[str]]
+    publishedAt: PerServerType[str]
+    closedAt: PerServerType[str]
     difficulty: Dict[_DifficultyString, SongsAll5Difficulty]
 
 SongsAll5: TypeAlias = Dict[str, SongsAll5Info]
@@ -851,11 +852,11 @@ class SongsAll7Info(SongsAll5Info):
 SongsAll7: TypeAlias = Dict[str, SongsAll7Info]
 
 class SongsAll8Info(SongsAll7Info):
-    ruby: List[Optional[str]]
-    phonetic: List[Optional[str]]
-    lyricist: List[Optional[str]]
-    composer: List[Optional[str]]
-    arranger: List[Optional[str]]
+    ruby: PerServerType[str]
+    phonetic: PerServerType[str]
+    lyricist: PerServerType[str]
+    composer: PerServerType[str]
+    arranger: PerServerType[str]
 
 SongsAll8: TypeAlias = Dict[str, SongsAll8Info]
 
@@ -886,7 +887,7 @@ class SongDifficulty(TypedDict):
     scoreA: int
     scoreS: int
     scoreSS: int
-    publishedAt: NotRequired[List[Optional[str]]]
+    publishedAt: NotRequired[PerServerType[str]]
 
 class SongInfo(SongsAll8Info):
     '''歌曲信息'''
@@ -894,8 +895,8 @@ class SongInfo(SongsAll8Info):
     bgmFile: str
     achievements: List[SongAchievement]
     seq: int
-    howToGet: List[Optional[str]]
-    description: List[Optional[str]]
+    howToGet: PerServerType[str]
+    description: PerServerType[str]
     difficulty: Dict[_DifficultyString, SongDifficulty]
 
 class StampInfo(TypedDict):
@@ -904,12 +905,12 @@ class StampInfo(TypedDict):
 StampsAll2: TypeAlias = Dict[str, StampInfo]
 
 class SkillsAll2Info(TypedDict):
-    simpleDescription: List[Optional[str]]
+    simpleDescription: PerServerType[str]
 
 SkillsAll2: TypeAlias = Dict[str, SkillsAll2Info]
 
 class SkillsAll5Info(SkillsAll2Info):
-    description: List[Optional[str]]
+    description: PerServerType[str]
     duration: List[float]
 
 SkillsAll5: TypeAlias = Dict[str, SkillsAll5Info]
