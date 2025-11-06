@@ -48,7 +48,7 @@ class AsyncClient(_AsyncClient):
     _client_session: aiohttp.ClientSession
 
     @override
-    async def set_cookies(self, cookies: CookieJar) -> None:
+    def set_cookies(self, cookies: CookieJar) -> None:
         # 用新的 CookieJar 替换现有的，并保持后续自动管理
         jar = aiohttp.CookieJar()
         for cookie in cookies:
