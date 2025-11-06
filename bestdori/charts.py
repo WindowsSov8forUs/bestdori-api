@@ -128,7 +128,7 @@ class Chart(List[Note]):
         offset: float = 0
         for note in self:
             if isinstance(note, BPM):
-                offset = note.bpm
+                offset = note.beat
                 break
         
         # 规范化处理
