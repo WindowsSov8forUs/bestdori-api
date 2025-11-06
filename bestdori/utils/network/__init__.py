@@ -81,11 +81,13 @@ def get_client(*, proxy: Optional[str], timeout: int, cookies: Optional[CookieJa
                 try:
                     __Client__ = _import_client(name)
                     break
-                except ImportError as e:
-                    print(e)
+                except ImportError:
                     continue
         else:
-            raise ImportError('no available client.')
+            raise ImportError(
+                'module \'aiohttp\' and \'httpx\' are not installed, '
+                'please install it by running \'pip install aiohttp\' or \'pip install httpx\'',
+            )
     
     client = __Client__(proxy, timeout)
     if cookies is not None:
