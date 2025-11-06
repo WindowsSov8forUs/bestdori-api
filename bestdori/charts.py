@@ -96,6 +96,9 @@ class Chart(List[Note]):
             NoteType = NOTE_TYPE.get(note.get('type', ''), None)
             if NoteType is None:
                 continue
+            # 处理多余属性
+            if "charge" in note:
+                del note["charge"]
             self.append(NoteType(**note))
     
     # 检查是否为 SP 谱面
