@@ -6,7 +6,9 @@ from io import BufferedReader
 from multidict import CIMultiDict
 from abc import ABC, abstractmethod
 from http.cookiejar import CookieJar
-from typing import Any, Dict, Self, Tuple, Union, Optional, TypeAlias
+from typing import Any, Dict, Tuple, Optional, TypeAlias
+
+from typing_extensions import Self
 
 from bestdori.exceptions import HTTPStatusError
 
