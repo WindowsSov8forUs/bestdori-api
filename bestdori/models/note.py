@@ -12,6 +12,7 @@ class Connection:
     flick: bool = False
     skill: bool = False
     hidden: bool = False
+    charge: bool = False
 
 @dataclass(kw_only=True)
 class _Note:
@@ -24,6 +25,7 @@ class Single(_Note):
     flick: bool = False
     skill: bool = False
     hidden: bool = False
+    charge: bool = False
 
 @dataclass(kw_only=True)
 class Slide(_Note):
@@ -34,8 +36,6 @@ class Slide(_Note):
             if isinstance(note, Connection):
                 connections.append(note)
             elif isinstance(note, dict):
-                if "charge" in note:
-                    del note["charge"]
                 connections.append(Connection(**note))
         self.connections = connections
 
@@ -48,7 +48,7 @@ class BPM(_Note):
 class Directional(_Note):
     beat: float
     lane: float
-    width: float
+    width: int
     direction: Literal['Left', 'Right']
 
 Note: TypeAlias = Union[Single, Slide, BPM, Directional]
