@@ -28,6 +28,16 @@ class Single(_Note):
 @dataclass(kw_only=True)
 class Slide(_Note):
     connections: List[Connection] = field(default_factory=list)
+    def __post_init__(self):
+        connections = []
+        for note in self.connections:
+            if isinstance(note, Connection):
+                connections.append(note)
+            elif isinstance(note, dict):
+                if "charge" in note:
+                    del note["charge"]
+                connections.append(Connection(**note))
+        self.connections = connections
 
 @dataclass(kw_only=True)
 class BPM(_Note):
@@ -38,6 +48,7 @@ class BPM(_Note):
 class Directional(_Note):
     beat: float
     lane: float
+    width: float
     direction: Literal['Left', 'Right']
 
 Note: TypeAlias = Union[Single, Slide, BPM, Directional]
