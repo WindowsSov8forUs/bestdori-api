@@ -81,7 +81,8 @@ def get_client(*, proxy: Optional[str], timeout: int, cookies: Optional[CookieJa
                 try:
                     __Client__ = _import_client(name)
                     break
-                except ImportError:
+                except ImportError as e:
+                    print(e)
                     continue
         else:
             raise ImportError('no available client.')
@@ -102,7 +103,8 @@ def get_async_client(*, proxy: Optional[str], timeout: int, cookies: Optional[Co
                 try:
                     __AsyncClient__ = _import_client(name, _async=True)
                     break
-                except ImportError:
+                except ImportError as e:
+                    print(e)
                     continue
         else:
             raise ImportError('no available client.')
