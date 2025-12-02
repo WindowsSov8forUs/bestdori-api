@@ -8,11 +8,13 @@ from functools import lru_cache
 from importlib import resources
 from typing import Dict, List, Tuple, Optional, Protocol
 
+from bestdori.typing import PerServerType
+
 class _NamedObject(Protocol):
     '''可获取 `__name__` 属性方法的类型'''
 
     @property
-    def __name__(self) -> List[Optional[str]]: ...
+    def __name__(self) -> PerServerType[str]: ...
 
 @lru_cache(maxsize=128)
 def get_api(*paths: str) -> Dict[str, Dict[str, str]]:

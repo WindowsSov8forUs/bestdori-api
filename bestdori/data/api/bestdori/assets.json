@@ -44,5 +44,12 @@
     },
     "llsif": {
         "assets": "https://card.niconi.co.ni/{assets}"
+    },
+    "noteskin": {
+        "longNoteLine": "/assets/{server}/ingameskin/noteskin/skin{type:>02d}_rip/longNoteLine.png",
+        "longNoteLine2": "/assets/{server}/ingameskin/noteskin/skin{type:>02d}_rip/longNoteLine2.png",
+        "simultaneous_line": "/assets/{server}/ingameskin/noteskin/skin{type:>02d}_rip/simultaneous_line.png",
+        "rhythmGameSprites": "/assets/{server}/ingameskin/noteskin/skin{type:>02d}_rip/RhythmGameSprites.png",
+        "directionalFlickSprites": "/assets/{server}/ingameskin/noteskin/directionalflickskin{type:>02d}_rip/DirectionalFlickSprites.png"
     }
 }

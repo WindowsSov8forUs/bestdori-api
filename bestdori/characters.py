@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from .typing import (
         NoneDict,
         PostList,
+        PerServerType,
         CharacterAll2,
         CharacterAll5,
         CharacterInfo,
@@ -212,7 +213,7 @@ class Character:
 
     # 角色名称
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''角色名称'''
         return self.info['characterName']
     

@@ -22,6 +22,7 @@ if TYPE_CHECKING:
         ServerName,
         CostumeInfo,
         CostumesAll5,
+        PerServerType,
     )
 
 API = get_api('bestdori.api')
@@ -174,7 +175,7 @@ class Costume:
     
     # 服装标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''服装标题'''
         return self.info['description']
     

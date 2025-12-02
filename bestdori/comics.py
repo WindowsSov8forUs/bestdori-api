@@ -4,9 +4,9 @@ BanG Dream! 漫画相关操作'''
 from typing import TYPE_CHECKING, List, Literal, Optional
 
 from . import post
-from .user import Me  # 仅用于类型兼容，可后续移除
 from .utils.network import Api
 from .utils import name, get_api
+from .typing import PerServerType
 from .exceptions import (
     NoDataException,
     NotExistException,
@@ -113,13 +113,13 @@ class Comic:
 
     # 漫画标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''漫画标题'''
         return self.info['title']
     
     # 漫画副标题
     @property
-    def __sub_title__(self) -> List[Optional[str]]:
+    def __sub_title__(self) -> PerServerType[str]:
         '''漫画副标题'''
         return self.info['subTitle']
     

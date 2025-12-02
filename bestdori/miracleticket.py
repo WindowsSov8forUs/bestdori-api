@@ -14,6 +14,7 @@ from .exceptions import (
 if TYPE_CHECKING:
     from .typing import (
         ServerName,
+        PerServerType,
         MiracleTicketExchangeInfo,
         MiracleTicketExchangesAll5,
     )
@@ -77,7 +78,7 @@ class MiracleTicketExchange:
     
     # 自选券标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''自选券标题'''
         return self.info['name']
     

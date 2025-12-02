@@ -6,7 +6,6 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
-from .user import Me  # Me 引用保留仅用于类型检查（可后续移除）
 from .utils.network import Api
 from .utils import name, get_api
 from .exceptions import (
@@ -26,6 +25,7 @@ if TYPE_CHECKING:
         GachaAll5,
         GachaInfo,
         ServerName,
+        PerServerType,
     )
 
 API = get_api('bestdori.api')
@@ -159,7 +159,7 @@ class Gacha:
     
     # 招募标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''招募标题'''
         return self.info['gachaName']
     

@@ -182,8 +182,8 @@ class Chart(List[Note]):
         return notes
     
     # 谱面数据统计
-    def count(self) -> Stats:
-        '''谱面数据统计
+    def stats(self) -> Stats:
+        '''谱面数据统计（重命名以避免覆盖 list.count）
 
         返回:
             Stats: 统计到的谱面详细数据

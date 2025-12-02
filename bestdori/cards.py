@@ -22,6 +22,7 @@ if TYPE_CHECKING:
         CardInfo,
         NoneDict,
         PostList,
+        PerServerType,
         ServerName,
     )
 
@@ -307,7 +308,7 @@ class Card:
     
     # 提取卡牌标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''提取卡牌标题'''
         return self.info['prefix']
     

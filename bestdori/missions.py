@@ -22,6 +22,7 @@ if TYPE_CHECKING:
         ServerName,
         MissionInfo,
         MissionsAll5,
+        PerServerType,
     )
 
 API = get_api('bestdori.api')
@@ -111,7 +112,7 @@ class Mission:
 
     # 任务标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''任务标题'''
         return self.info['title']
     

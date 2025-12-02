@@ -5,7 +5,6 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
-from .user import Me  # 仅用于类型兼容，可后续移除
 from .stamps import Stamp
 from .utils.network import Api
 from .utils import name, get_api
@@ -38,6 +37,7 @@ if TYPE_CHECKING:
         ServerName,
         EventTopData,
         FestivalStage,
+        PerServerType,
         FestivalRotationMusic,
     )
 
@@ -234,7 +234,7 @@ class Event:
 
     # 活动标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''活动标题'''
         return self.info['eventName']
     

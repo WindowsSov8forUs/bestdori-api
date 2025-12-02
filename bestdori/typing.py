@@ -878,8 +878,7 @@ class SongDifficultyMultiLiveScoreMap(TypedDict):
     scoreSS: int
     scoreSSS: int
 
-class SongDifficulty(TypedDict):
-    playLevel: int
+class SongDifficulty(SongsAll5Difficulty):
     multiLiveScoreMap: Dict[str, SongDifficultyMultiLiveScoreMap]
     notesQuantity: int
     scoreC: int
@@ -887,7 +886,6 @@ class SongDifficulty(TypedDict):
     scoreA: int
     scoreS: int
     scoreSS: int
-    publishedAt: NotRequired[PerServerType[str]]
 
 class SongInfo(SongsAll8Info):
     '''歌曲信息'''
@@ -897,7 +895,7 @@ class SongInfo(SongsAll8Info):
     seq: int
     howToGet: PerServerType[str]
     description: PerServerType[str]
-    difficulty: Dict[_DifficultyString, SongDifficulty]
+    difficulty: Dict[_DifficultyString, SongDifficulty] # type: ignore
 
 class StampInfo(TypedDict):
     imageName: str

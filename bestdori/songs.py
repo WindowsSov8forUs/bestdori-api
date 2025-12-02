@@ -24,6 +24,7 @@ if TYPE_CHECKING:
         SongsAll5,
         SongsAll7,
         SongsAll8,
+        PerServerType,
         ServerName,
         DifficultyName,
     )
@@ -301,7 +302,7 @@ class Song:
             raise NoDataException('song server')
     
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         return self.info['musicTitle']
     
     # 获取歌曲封面

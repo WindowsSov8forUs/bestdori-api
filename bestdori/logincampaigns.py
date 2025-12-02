@@ -6,7 +6,6 @@ from typing_extensions import overload
 from typing import TYPE_CHECKING, Dict, List, Union, Literal, Optional
 
 from . import post
-from .user import Me  # 保留以兼容类型，稍后可移除
 from .utils.network import Api
 from .utils import name, get_api
 from .exceptions import (
@@ -21,6 +20,7 @@ if TYPE_CHECKING:
         NoneDict,
         PostList,
         ServerName,
+        PerServerType,
         LoginCampaignInfo,
         LoginCampaignsAll1,
         LoginCampaignsAll5,
@@ -141,7 +141,7 @@ class LoginCampaign:
 
     # 奖励标题
     @property
-    def __name__(self) -> List[Optional[str]]:
+    def __name__(self) -> PerServerType[str]:
         '''登录奖励标题'''
         return self.info['caption']
     
